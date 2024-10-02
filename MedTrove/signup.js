@@ -1,6 +1,7 @@
 import React from 'react'; 
 import { StyleSheet, Text, TextInput, Alert, TouchableOpacity, View, ImageBackground } from 'react-native';
 import axios from 'axios'; 
+import CONFIG from './config.js'; 
 
 export default class SignUp extends React.Component {
   state = {
@@ -46,7 +47,7 @@ export default class SignUp extends React.Component {
 }
   // Function to sign up the user
   signUpUser = () => {
-    axios.post('http://192.168.18.21:5000/api/signup', {
+    axios.post(`${CONFIG.backendUrl}/api/signup`, {
       email: this.state.email,
       password: this.state.password,
       phone: this.state.phone,

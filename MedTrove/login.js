@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, Alert, TouchableOpacity, View, ImageBackground } from 'react-native';
+import CONFIG from './config.js'; 
 
 export default class Login extends React.Component {
   state = {
@@ -30,7 +31,7 @@ export default class Login extends React.Component {
     const { email, password } = this.state;
     
     try {
-      const response = await fetch('http://192.168.18.21:5000/api/login', {
+      const response = await fetch(`${CONFIG.backendUrl}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +44,8 @@ export default class Login extends React.Component {
 
       if (response.ok) {
         Alert.alert('Login Successful', 'Welcome back!');
-        // Handle successful login (e.g., navigate to another screen)
+        // Navigate to the search page on successful login
+        this.props.navigation.navigate('Search');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');
       }
@@ -83,7 +85,7 @@ export default class Login extends React.Component {
             <Text style={styles.forgotLabel}>Forgot Password?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.loginBtn} onPress={this.checkTextInput}>
+          <TouchableOpacity style={styles.loginBtn} onPress={this.checkTextInput} >
             <Text style={styles.loginText}>Login</Text>
           </TouchableOpacity>
 
