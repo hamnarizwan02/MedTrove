@@ -37,8 +37,7 @@ app.post('/api/signup', async (req, res) => {
     password: password, 
     phonenumber: phone   // Use the key defined in your schema
   });
-
-
+  
   console.log(email);
   console.log(phone);
 
