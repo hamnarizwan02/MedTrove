@@ -83,6 +83,15 @@ app.post('/api/login', async (req, res) => {
 
 // -> MED INFO PAGE FUNCTIONALITY <-
 
+const medicineSchema = new mongoose.Schema({
+  drug_name: String,
+  medical_condition: String,
+  side_effects: String,
+  generic_name: String
+}, { collection: 'Med_Info', versionKey: false });
+
+const Medicine = mongoose.model('Medicine', medicineSchema);
+
 // GET route for medicine information
 app.get('/api/medicines/:id', async (req, res) => {
   const { id } = req.params;
@@ -98,7 +107,6 @@ app.get('/api/medicines/:id', async (req, res) => {
       res.status(500).json({ message: 'Server error', error: err });
   }
 });
-
 
 // Start the server
 app.listen(PORT, () => {
