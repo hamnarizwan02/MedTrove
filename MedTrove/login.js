@@ -45,7 +45,7 @@ export default class Login extends React.Component {
       if (response.ok) {
         Alert.alert('Login Successful', 'Welcome back!');
         // Navigate to the search page on successful login
-        this.props.navigation.navigate('MedInfo');
+        this.props.navigation.navigate('Search');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');
       }

@@ -41,7 +41,7 @@ export default function App() {
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
         <Stack.Screen name="Search" component={Search} options={{ headerShown: false }} />
         <Stack.Screen name="ProductList" component={ProductList} options={{ headerShown: false }} />
-        <Stack.Screen name="MedInfo" component={MedInfo} options={{ headerShown: false }} />
+        {/* <Stack.Screen name="MedInfo" component={MedInfo} options={{ headerShown: false }} />  */}
       </Stack.Navigator>
     </NavigationContainer>
   );

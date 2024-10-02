@@ -1,6 +1,7 @@
 import * as React from "react";
 import {Image, StyleSheet, TextInput, Text, View} from "react-native";
-//import { Keyboard } from 'react-native';
+import { Keyboard } from 'react-native';
+import  { useState, useEffect } from 'react';
 
 export default class Search extends React.Component {
 	// handleSearchSubmit = () => {
@@ -10,8 +11,83 @@ export default class Search extends React.Component {
 	// 	 this.props.navigation.navigate('ProductList');
 	// };
 
+	
+	// MySearchBar = () => {
+    //     // return (
+    //     //   <TextInput
+    //     //     placeholder="Search..."
+    //     //     onFocus={() => Keyboard.show()} // Show keyboard on focus
+    //     //   />
+    //     // );
+	// 	const [status, setStatus] = useState(undefined);
+
+	// 	const getKeyboardStatus = () => {
+	// 	  const isVisible = Keyboard.isVisible();
+	// 	  const currentState = isVisible ? 'opened' : 'closed';
+	// 	  setStatus(currentState);
+	// 	};
+	  
+	// 	useEffect(() => {
+	// 	  getKeyboardStatus();
+	// 	}, []);
+
+	// 	// taking input of search 
+	// 	return (
+	// 		<TextInput
+	// 		 // placeholder="Search..."
+	// 		  onFocus={() => Keyboard.show()}
+	// 		  value={searchText}
+	// 		  onChangeText={(text) => setSearchText(text)}
+	// 		/>
+	// 	  );
+		
+		
+	// };
+
+	constructor(props) {
+		super(props);
+		this.state = {
+		  searchText: 'Initial search value', // Set the initial value here
+		  status: undefined,
+		};
+	  }
+
+	MySearchBar = () => {
+        // return (
+        //   <TextInput
+        //     placeholder="Search..."
+        //     onFocus={() => Keyboard.show()} // Show keyboard on focus
+        //   />
+        // );
+		const [status, setStatus] = useState(undefined);
+
+		const getKeyboardStatus = () => {
+		  const isVisible = Keyboard.isVisible();
+		  const currentState = isVisible ? 'opened' : 'closed';
+		  setStatus(currentState);
+		};
+	  
+		useEffect(() => {
+		  getKeyboardStatus();
+		}, []);
+
+		// taking input of search 
+		return (
+			<TextInput
+			  placeholder="Search..."
+			//  onFocus={() => Keyboard.show()}
+			 // value={searchText}
+			  onChangeText={(text) => setSearchText(text)}
+			/>
+		  );
+		
+		
+	};
+
   	render(){
+		const { searchText } = this.state;
   	return (
+			
     		<View style={styles.view}>
       			<View style={[styles.header, styles.titleLayout]}>
         				<Image style={[styles.icon, styles.iconLayout1]} resizeMode="cover" source="icon.png" />
@@ -19,14 +95,15 @@ export default class Search extends React.Component {
         				<Image style={[styles.icon1, styles.icon1Position]} resizeMode="cover" source="icon.png" />
       			</View>
               <View style={styles.search}>
-                <TextInput 
-					style={styles.input}
-					returnKeyType="search"
-					//placeholder="Search"
-					//onSubmitEditing={this.handleSearchSubmit} // Trigger navigation on Enter
-				/>
+			  <TextInput
+                  placeholder="Search..."
+                 // onFocus={() => Keyboard.show()}
+                  //value={searchText}
+                  onChangeText={(text) => this.setState({ searchText: text })}
+                />
+				
 				<Image style={[styles.icon2, styles.iconLayout1]} resizeMode="cover" source="icon.png" />
-				<Text style={styles.searchText}>Search</Text>
+			
        
           </View>
       			<View style={[styles.card, styles.cardPosition]}>
