@@ -1,8 +1,11 @@
 import * as React from "react";
-import {Image, StyleSheet, Text, View} from "react-native";
+import {Image, StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import CONFIG from './config.js'; 
 
-const Frame = () => {
-  	
+export default class MedInfo extends React.Component {
+
+  	render()
+	{
   	return (
     		<View style={styles.view}>
       			<View style={[styles.header, styles.cardPosition]}>
@@ -42,7 +45,9 @@ const Frame = () => {
         				</View>
       			</View>
     		</View>);
-};
+	}
+
+ };
 
 const styles = StyleSheet.create({
   	cardPosition: {
@@ -94,7 +99,7 @@ const styles = StyleSheet.create({
     		marginLeft: -193,
     		textAlign: "left",
     		fontWeight: "500",
-    		fontFamily: "SF Pro Text",
+    		//fontFamily: "SF Pro Text",
     		letterSpacing: 1,
     		left: "50%",
     		top: "50%",
@@ -105,7 +110,7 @@ const styles = StyleSheet.create({
     		color: "#96a2a3",
     		fontSize: 12,
     		textAlign: "left",
-    		fontFamily: "SF Pro Text",
+    		//fontFamily: "SF Pro Text",
     		letterSpacing: 1,
     		top: "50%",
     		left: "0%",
@@ -129,7 +134,7 @@ const styles = StyleSheet.create({
     		marginLeft: -71.5,
     		fontWeight: "600",
     		textAlign: "center",
-    		fontFamily: "SF Pro Text",
+    		//fontFamily: "SF Pro Text",
     		letterSpacing: 1,
     		left: "50%",
     		top: "50%",
@@ -199,7 +204,7 @@ const styles = StyleSheet.create({
     		fontWeight: "500",
     		fontSize: 22,
     		color: "#252828",
-    		fontFamily: "SF Pro Text",
+    		//fontFamily: "SF Pro Text",
     		letterSpacing: 1,
     		left: "50%",
     		top: "50%",
@@ -211,7 +216,7 @@ const styles = StyleSheet.create({
     		fontSize: 12,
     		textAlign: "left",
     		marginLeft: -106,
-    		fontFamily: "SF Pro Text",
+    		//fontFamily: "SF Pro Text",
     		letterSpacing: 1,
     		left: "50%",
     		top: "50%",
@@ -232,7 +237,7 @@ const styles = StyleSheet.create({
     		fontWeight: "500",
     		textAlign: "center",
     		color: "#252828",
-    		fontFamily: "SF Pro Text",
+    		//fontFamily: "SF Pro Text",
     		letterSpacing: 1,
     		left: "50%",
     		top: "50%",
@@ -291,7 +296,7 @@ const styles = StyleSheet.create({
     		color: "#fff",
     		fontSize: 12,
     		textAlign: "center",
-    		fontFamily: "SF Pro Text",
+    		//fontFamily: "SF Pro Text",
     		letterSpacing: 1,
     		left: "50%",
     		top: "50%",
@@ -299,7 +304,9 @@ const styles = StyleSheet.create({
   	},
   	button: {
     		top: 325,
-    		width: 366,
+    		width: 360,
+			marginLeft: 18,
+			marginTop: 20,
         borderRadius:10,
   	},
   	section: {
@@ -313,5 +320,3 @@ const styles = StyleSheet.create({
     		width: "100%"
   	}
 });
-
-export default Frame;
