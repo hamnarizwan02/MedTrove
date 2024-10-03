@@ -84,20 +84,81 @@ app.post('/api/login', async (req, res) => {
 // -> MED INFO PAGE FUNCTIONALITY <-
 
 // GET route for medicine information
+
+const medicineSchema = new mongoose.Schema({
+  drug_name: String,
+  medical_condition: String,
+  side_effects: String,
+  generic_name: String
+}, { collection: 'Med_Info', versionKey: false });
+
+const Medicine = mongoose.model('Medicine', medicineSchema);
+
+
+// app.get('/api/medicines/:id', async (req, res) => {
+//   const { id } = req.params;
+
+//   try {
+//       const medicine = await Medicine.findById(id, 'drug_name medical_condition side_effects generic_name'); // Only select the required fields
+//       if (!medicine) {
+//           return res.status(404).json({ message: 'Medicine not found' });
+//       }
+//       res.status(200).json(medicine);
+//   } catch (err) {
+//       console.error('Error fetching medicine:', err);
+//       res.status(500).json({ message: 'Server error', error: err });
+//   }
+// });
+
+// GET route for medicine information
 app.get('/api/medicines/:id', async (req, res) => {
-  const { id } = req.params;
+  const { searchTerm } = req.query; // Get the search term from the query parameters
 
   try {
-      const medicine = await Medicine.findById(id, 'drug_name medical_condition side_effects generic_name'); // Only select the required fields
-      if (!medicine) {
-          return res.status(404).json({ message: 'Medicine not found' });
-      }
-      res.status(200).json(medicine);
+    // Use regular expression to search for matching drug names or medical conditions
+  
+    const searchRegex = new RegExp(searchTerm, 'i'); // Case-insensitive search
+    console.log('Search term:', searchTerm);
+
+    const medicines = await Medicine.findOne({
+      drug_name: { $regex: searchRegex }
+    }, 'drug_name medical_condition generic_name');
+    //'drug_name medical_condition side_effects generic_name');
+
+
+    // const medicines = await Medicine.find({
+    //   $or: [
+    //     { drug_name: { $regex: searchRegex } },
+    //     { medical_condition: { $regex: searchRegex } }
+    //   ]
+    // }, 'drug_name medical_condition side_effects generic_name'); // Only select the required fields
+
+    if (medicines.length === 0) {
+      return res.status(404).json({ message: 'Medicine not found' });
+    }
+
+    res.status(200).json(medicines);
   } catch (err) {
-      console.error('Error fetching medicine:', err);
-      res.status(500).json({ message: 'Server error', error: err });
+    console.error('Error fetching medicine:', err);
+    res.status(500).json({ message: 'Server error', error: err });
   }
 });
+
+// //GET medicine that has been searched 
+// app.get('/api/medicines/:id', async (req, res) => {
+//   const { id } = req.params;
+
+//   try {
+//       const medicine = await Medicine.findById(id, 'drug_name medical_condition side_effects generic_name'); // Only select the required fields
+//       if (!medicine) {
+//           return res.status(404).json({ message: 'Medicine not found' });
+//       }
+//       res.status(200).json(medicine);
+//   } catch (err) {
+//       console.error('Error fetching medicine:', err);
+//       res.status(500).json({ message: 'Server error', error: err });
+//   }
+// });
 
 
 // Start the server
