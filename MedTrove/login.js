@@ -9,6 +9,7 @@ export default class Login extends React.Component {
   };
 
   checkTextInput = async () => {
+    console.log("checkTextInput called");
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     
     if (this.state.email !== '') {

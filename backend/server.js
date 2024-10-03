@@ -82,8 +82,6 @@ app.post('/api/login', async (req, res) => {
 
 // -> MED INFO PAGE FUNCTIONALITY <-
 
-// GET route for medicine information
-
 const medicineSchema = new mongoose.Schema({
   drug_name: String,
   medical_condition: String,
@@ -92,22 +90,6 @@ const medicineSchema = new mongoose.Schema({
 }, { collection: 'Med_Info', versionKey: false });
 
 const Medicine = mongoose.model('Medicine', medicineSchema);
-
-
-// app.get('/api/medicines/:id', async (req, res) => {
-//   const { id } = req.params;
-
-//   try {
-//       const medicine = await Medicine.findById(id, 'drug_name medical_condition side_effects generic_name'); // Only select the required fields
-//       if (!medicine) {
-//           return res.status(404).json({ message: 'Medicine not found' });
-//       }
-//       res.status(200).json(medicine);
-//   } catch (err) {
-//       console.error('Error fetching medicine:', err);
-//       res.status(500).json({ message: 'Server error', error: err });
-//   }
-// });
 
 // GET route for medicine information
 app.get('/api/medicines/:searchTerm', async (req, res) => {
@@ -139,27 +121,10 @@ app.get('/api/medicines/:searchTerm', async (req, res) => {
 
     res.status(200).json(medicines);
   } catch (err) {
-    console.error('Error fetching medicine:', err);
-    res.status(500).json({ message: 'Server error', error: err });
+      console.error('Error fetching medicine:', err);
+      res.status(500).json({ message: 'Server error', error: err });
   }
 });
-
-// //GET medicine that has been searched 
-// app.get('/api/medicines/:id', async (req, res) => {
-//   const { id } = req.params;
-
-//   try {
-//       const medicine = await Medicine.findById(id, 'drug_name medical_condition side_effects generic_name'); // Only select the required fields
-//       if (!medicine) {
-//           return res.status(404).json({ message: 'Medicine not found' });
-//       }
-//       res.status(200).json(medicine);
-//   } catch (err) {
-//       console.error('Error fetching medicine:', err);
-//       res.status(500).json({ message: 'Server error', error: err });
-//   }
-// });
-
 
 // Start the server
 app.listen(PORT, () => {
