@@ -6,45 +6,7 @@ import axios from 'axios';
 import CONFIG from './config.js'; 
 
 export default class Search extends React.Component {
-	// handleSearchSubmit = () => {
-	// 	Keyboard.dismiss();
-    
-	// 	// Navigate to ProductList page when search is completed
-	// 	 this.props.navigation.navigate('ProductList');
-	// };
 
-	
-	// MySearchBar = () => {
-    //     // return (
-    //     //   <TextInput
-    //     //     placeholder="Search..."
-    //     //     onFocus={() => Keyboard.show()} // Show keyboard on focus
-    //     //   />
-    //     // );
-	// 	const [status, setStatus] = useState(undefined);
-
-	// 	const getKeyboardStatus = () => {
-	// 	  const isVisible = Keyboard.isVisible();
-	// 	  const currentState = isVisible ? 'opened' : 'closed';
-	// 	  setStatus(currentState);
-	// 	};
-	  
-	// 	useEffect(() => {
-	// 	  getKeyboardStatus();
-	// 	}, []);
-
-	// 	// taking input of search 
-	// 	return (
-	// 		<TextInput
-	// 		 // placeholder="Search..."
-	// 		  onFocus={() => Keyboard.show()}
-	// 		  value={searchText}
-	// 		  onChangeText={(text) => setSearchText(text)}
-	// 		/>
-	// 	  );
-		
-		
-	// };
 
 	constructor(props) {
 		super(props);
@@ -58,12 +20,7 @@ export default class Search extends React.Component {
 	  
 
 	  MySearchBar = () => {
-        // return (
-        //   <TextInput
-        //     placeholder="Search..."
-        //     onFocus={() => Keyboard.show()} // Show keyboard on focus
-        //   />
-        // );
+
 		const [status, setStatus] = useState(undefined);
 
 		const getKeyboardStatus = () => {
@@ -98,66 +55,23 @@ export default class Search extends React.Component {
 		Keyboard.dismiss();
 		console.log('Search text:', this.state.searchText); // Log the search text
 		const searchTerm = this.state.searchText;
-		console.log('Search term:', searchTerm);
 	
+		console.log('Search term:', searchTerm);
+
 		try {
-		  // Replace 'http://localhost:5000' with your actual backend API URL
+
 		  const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
 		  const medicine = response.data;
-		  console.log('Found medicine:', medicine); // Log the fetched medicine data
+		  console.log('Found medicine:', medicine); 
 	
-		  // Handle successful search (e.g., display medicine details)
 	
 		} catch (error) {
 		  console.error('Error fetching medicine:', error);
-		  // Handle search errors (e.g., display error message)
+
 		}
-	  };
+	}; 
+
 	
-
-
-	// MySearchBar = () => {
-    //     // return (
-    //     //   <TextInput
-    //     //     placeholder="Search..."
-    //     //     onFocus={() => Keyboard.show()} // Show keyboard on focus
-    //     //   />
-    //     // );
-	// 	const [status, setStatus] = useState(undefined);
-
-	// 	const getKeyboardStatus = () => {
-	// 	  const isVisible = Keyboard.isVisible();
-	// 	  const currentState = isVisible ? 'opened' : 'closed';
-	// 	  setStatus(currentState);
-	// 	};
-	  
-	// 	useEffect(() => {
-	// 	  getKeyboardStatus();
-	// 	}, []);
-
-	// 	// taking input of search 
-	// 	return (
-	// 		<TextInput
-	// 		  placeholder="Search..."
-	// 		//  onFocus={() => Keyboard.show()}
-	// 		 // value={searchText}
-	// 		 onChangeText={(text) => {
-	// 			setSearchText(text);
-	
-	// 		  }}
-	// 		/>
-	// 	  );
-		
-		
-	// };
-
-	// handleSearchSubmit = () => {
-	// 	Keyboard.dismiss(); // Dismiss keyboard on submit
-	// 	console.log('Search text:', this.state.searchText); // Log the search text
-	// 	// Implement your search logic here using this.state.searchText
-	// 	// For example, navigate to a product list page:
-	// 	// this.props.navigation.navigate('ProductList', { searchTerm: this.state.searchText });
-	//   };
 	
   	render(){
 		const { searchText } = this.state;
@@ -173,22 +87,12 @@ export default class Search extends React.Component {
 				  <View style={styles.search}>
 			  <TextInput
           		placeholder="Search..."
-          		//value={searchText}
           		onChangeText={(text) => {
             	this.setState({ searchText: text });
            	 	 console.log('Search text updated:', text); // Print the updated search text
           }}
           onSubmitEditing={this.handleSearchSubmit}
 
-              /* <View style={styles.search}>
-			  <TextInput
-          		placeholder="Search..."
-          		//value={searchText}
-          		onChangeText={(text) => {
-            	this.setState({ searchText: text });
-           	 	 console.log('Search text updated:', text); // Print the updated search text
-          }}
-          onSubmitEditing={this.handleSearchSubmit} */
 				
 				></TextInput><Image style={[styles.icon2, styles.iconLayout1]} resizeMode="cover" source="icon.png" />
 			
