@@ -111,6 +111,41 @@ app.get('/api/medici/:id', async (req, res) => {
   }
 });
 
+// -> ALIZA SEARCH THINGY <- 
+app.get('/api/medicines/:searchTerm', async (req, res) => {
+  const { searchTerm } = req.params; // Get the search term from the query parameters
+  console.log('Search term:', searchTerm);
+  
+  try {
+    // Use regular expression to search for matching drug names or medical conditions
+  
+    const searchRegex = new RegExp(searchTerm, 'i'); // Case-insensitive search
+    
+
+    const medicines = await Medicine.findOne({
+      drug_name: { $regex: searchRegex }
+    }, 'drug_name medical_condition generic_name');
+    //'drug_name medical_condition side_effects generic_name');
+
+
+    // const medicines = await Medicine.find({
+    //   $or: [
+    //     { drug_name: { $regex: searchRegex } },
+    //     { medical_condition: { $regex: searchRegex } }
+    //   ]
+    // }, 'drug_name medical_condition side_effects generic_name'); // Only select the required fields
+
+    if (medicines.length === 0) {
+      return res.status(404).json({ message: 'Medicine not found' });
+    }
+
+    res.status(200).json(medicines);
+  } catch (err) {
+      console.error('Error fetching medicine:', err);
+      res.status(500).json({ message: 'Server error', error: err });
+  }
+});
+
 // -> ALTERNATIVES FUNCTIONALITY <-
 
 const alternativeSchema = new mongoose.Schema({

@@ -8,8 +8,9 @@ const MedicineDetails = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState(null);
-  const id = '66e1df80bc0ca5e347fadc70';
-  // const { id } = route.params;
+  //const id = '66e1df80bc0ca5e347fadc70';
+  const { id } = route.params;
+  console.log("Medinfo "+ id);
 
   useEffect(() => {
     const fetchMedicineAndPrice = async () => {

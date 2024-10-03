@@ -6,8 +6,6 @@ import axios from 'axios';
 import CONFIG from './config.js'; 
 
 export default class Search extends React.Component {
-
-
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -17,12 +15,9 @@ export default class Search extends React.Component {
 	  }
 
 	  //This funxtion is to implement the search 
-	  
 
 	  MySearchBar = () => {
-
 		const [status, setStatus] = useState(undefined);
-
 		const getKeyboardStatus = () => {
 		  const isVisible = Keyboard.isVisible();
 		  const currentState = isVisible ? 'opened' : 'closed';
@@ -41,37 +36,59 @@ export default class Search extends React.Component {
 			 // value={searchText}
 			 onChangeText={(text) => {
 				setSearchText(text);
-	
 			  }}
 			  onSubmitEditing={this.handleSearchSubmit}
 			/>
-	
 		  );
-		
-		
 	};
 
+	// handleSearchSubmit = async () => {
+	// 	Keyboard.dismiss();
+	// 	console.log('Search text:', this.state.searchText); // Log the search text
+	// 	const searchTerm = this.state.searchText;
+	// 	console.log('Search term:', searchTerm);
+		
+	// 	try {
+
+	// 	  const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
+	// 	  const medicine = response.data;
+	// 	  console.log('Found medicine:', medicine); 
+
+	// 	   // Check if the medicine object has an 'id' property
+	// 	   if (medicine && medicine.id) {
+    //         this.props.navigation.navigate('ProductList', { id: medicine._id });
+    //     } else {
+    //         console.error('Medicine ID not found in response:', medicine);
+    //     }
+	
+	
+	// 	} catch (error) {
+	// 	  console.error('Error fetching medicine:', error);
+
+	// 	}
+	// }; 
 	handleSearchSubmit = async () => {
 		Keyboard.dismiss();
 		console.log('Search text:', this.state.searchText); // Log the search text
 		const searchTerm = this.state.searchText;
-	
 		console.log('Search term:', searchTerm);
-
+		
 		try {
-
-		  const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
-		  const medicine = response.data;
-		  console.log('Found medicine:', medicine); 
-	
-	
+			const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
+			const medicine = response.data; // Medicine object from API response
+			console.log('Found medicine:', medicine);
+			
+			// Check if the medicine is an object and contains the _id
+			if (typeof medicine === 'object' && medicine !== null && medicine._id) {
+				console.log(medicine._id);
+				this.props.navigation.navigate('ProductList', { id: medicine._id });
+			} else {
+				console.error('Medicine ID not found in response:', medicine);
+			}
 		} catch (error) {
-		  console.error('Error fetching medicine:', error);
-
+			console.error('Error fetching medicine:', error);
 		}
-	}; 
-
-	
+	};
 	
   	render(){
 		const { searchText } = this.state;
@@ -94,7 +111,7 @@ export default class Search extends React.Component {
           onSubmitEditing={this.handleSearchSubmit}
 
 				
-				></TextInput><Image style={[styles.icon2, styles.iconLayout1]} resizeMode="cover" source="icon.png" />
+		></TextInput><Image style={[styles.icon2, styles.iconLayout1]} resizeMode="cover" source="icon.png" />
 			
        
           </View>

@@ -13,15 +13,19 @@ export default class ProductList extends React.Component {
   };
 
   componentDidMount() {
-    this.fetchMedicineData();
+    const { id } = this.props.route.params;
+    //console.log("productlist id" + id);
+    this.fetchMedicineData(id);
   }
 
-  fetchMedicineData = async () => {
+  fetchMedicineData = async (medicineId) => {
     try {
-      const medicineId = '66e1df80bc0ca5e347fadf71';
+      //const medicineId = '66e1df80bc0ca5e347fadf71';
+      //console.log("medicineId" + medicineId);
       const mainMedicineResponse = await axios.get(`${CONFIG.backendUrl}/api/medici/${medicineId}`);
       const mainMedicine = mainMedicineResponse.data;
-      
+      console.log(mainMedicine);
+
       let alternatives = [];
       try {
         const alternativesResponse = await axios.get(`${CONFIG.backendUrl}/api/alternatives/${mainMedicine.drug_name}`);
@@ -81,6 +85,10 @@ export default class ProductList extends React.Component {
     this.setState({ sortBy: criteria }, this.sortAlternatives);
   };
 
+  console = (id) => {
+    console.log("shifting to medinfo id "+ id);
+  }
+
   renderMainMedicine = () => {
     const { mainMedicine } = this.state;
     if (!mainMedicine) return null;
@@ -90,6 +98,19 @@ export default class ProductList extends React.Component {
         <View style={styles.imagePlaceholder}></View>
         <Text style={styles.productName}>{mainMedicine.drug_name}</Text>
         <Text style={styles.productPrice}>{mainMedicine.price}</Text>
+        <TouchableOpacity 
+          style={styles.productButton}
+          //onPress={() => this.props.navigation.navigate('MedInfo', { id: mainMedicine.id })}
+          onPress={() => {
+            
+            this.console(mainMedicine._id); 
+            
+            this.props.navigation.navigate('MedInfo', { id: mainMedicine._id }); // Use mainMedicine._id if necessary
+          }}
+          
+        >
+          <Text style={styles.buttonText}>Details</Text>
+        </TouchableOpacity>
       </View>
     );
   };
