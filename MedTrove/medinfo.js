@@ -14,7 +14,7 @@ const MedicineDetails = ({ route }) => {
   useEffect(() => {
     const fetchMedicineAndPrice = async () => {
       try {
-        const medicineResponse = await axios.get(`${CONFIG.backendUrl}/api/medicines/${id}`);
+        const medicineResponse = await axios.get(`${CONFIG.backendUrl}/api/medici/${id}`);
         setMedicine(medicineResponse.data);
 
         // Fetch price from PakPrices

@@ -1,51 +1,109 @@
 import React from 'react';
 import { StyleSheet, Text, FlatList, View, TouchableOpacity, Dimensions } from 'react-native';
+import axios from 'axios'; 
+import CONFIG from './config';
 
 export default class ProductList extends React.Component {
   state = {
-    products: [
-      { id: '1', name: 'Paracetamol', price: 'Rs. 600', description: 'Lorem ipsum dolor sit amet.', image: null },
-      { id: '2', name: 'Ibuprofen', price: 'Rs. 210', description: 'Lorem ipsum dolor sit amet.', image: null },
-      { id: '3', name: 'Aspirin', price: 'Rs. 500', description: 'Lorem ipsum dolor sit amet.', image: null },
-      { id: '4', name: 'Antihistamine', price: 'Rs. 700', description: 'Lorem ipsum dolor sit amet.', image: null },
-    ],
-    sortedProducts: [],
-    sortBy: 'name', // Default sorting criteria
+    mainMedicine: null,
+    alternatives: [],
+    sortBy: 'name',
+    loading: true,
+    error: null,
   };
 
   componentDidMount() {
-    this.sortProducts(); // Initial sort
+    this.fetchMedicineData();
   }
 
-  // Function to sort products based on selected criteria
-  sortProducts = () => {
-    const { products, sortBy } = this.state;
-    const sorted = [...products].sort((a, b) => {
+  fetchMedicineData = async () => {
+    try {
+      const medicineId = '66e1df80bc0ca5e347fadf71';
+      const mainMedicineResponse = await axios.get(`${CONFIG.backendUrl}/api/medici/${medicineId}`);
+      const mainMedicine = mainMedicineResponse.data;
+      
+      let alternatives = [];
+      try {
+        const alternativesResponse = await axios.get(`${CONFIG.backendUrl}/api/alternatives/${mainMedicine.drug_name}`);
+        alternatives = alternativesResponse.data;
+      } catch (alternativesError) {
+        console.log('No alternatives found or error fetching alternatives:', alternativesError);
+        alternatives = [];
+      }
+
+      mainMedicine.price = await this.fetchPrice(mainMedicine.drug_name);
+      alternatives = await Promise.all(alternatives.map(async (alt) => ({
+        name: alt,
+        price: await this.fetchPrice(alt)
+      })));
+
+      this.setState({
+        mainMedicine,
+        alternatives,
+        loading: false
+      }, this.sortAlternatives);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      this.setState({ error: 'Failed to fetch data', loading: false });
+    }
+  }
+
+  fetchPrice = async (medicineName) => {
+    try {
+      //console.log('Fetching price for:', medicineName);
+      const normalizedMedicineName = medicineName.trim().toLowerCase(); // Normalize the name
+      const response = await axios.get(`${CONFIG.backendUrl}/api/price/${normalizedMedicineName}`);
+      //const response = await axios.get(`${CONFIG.backendUrl}/api/price/${medicineName}`);
+      return response.data.price;
+    } catch (error) {
+      //console.error('Error fetching price:', error);
+      return 'PKR 12345'; // Default price if not found
+    }
+  }
+
+  sortAlternatives = () => {
+    const { alternatives, sortBy } = this.state;
+    const sorted = [...alternatives].sort((a, b) => {
       if (sortBy === 'price') {
-        return parseInt(a.price.replace('Rs. ', '')) - parseInt(b.price.replace('Rs. ', ''));
+        return this.extractPrice(a.price) - this.extractPrice(b.price);
       }
       return a.name.localeCompare(b.name);
     });
-    this.setState({ sortedProducts: sorted });
+    this.setState({ alternatives: sorted });
   };
 
-  // Function to handle sorting change
+  extractPrice = (priceString) => {
+    const match = priceString.match(/\d+(\.\d+)?/);
+    return match ? parseFloat(match[0]) : 0;
+  }
+
   handleSortChange = (criteria) => {
-    this.setState({ sortBy: criteria }, this.sortProducts);
+    this.setState({ sortBy: criteria }, this.sortAlternatives);
   };
 
-  renderProduct = ({ item }) => (
+  renderMainMedicine = () => {
+    const { mainMedicine } = this.state;
+    if (!mainMedicine) return null;
+
+    return (
+      <View style={styles.mainMedicineContainer}>
+        <View style={styles.imagePlaceholder}></View>
+        <Text style={styles.productName}>{mainMedicine.drug_name}</Text>
+        <Text style={styles.productPrice}>{mainMedicine.price}</Text>
+      </View>
+    );
+  };
+
+  renderAlternative = ({ item }) => (
     <View style={styles.productContainer}>
       <View style={styles.imagePlaceholder}></View>
       <Text style={styles.productName}>{item.name}</Text>
       <Text style={styles.productPrice}>{item.price}</Text>
-      <Text style={styles.productDescription}>{item.description}</Text>
-
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.productButton}>
-          <Text style={styles.buttonText}>Buy Now</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.productButton}>
+        <TouchableOpacity 
+          style={styles.productButton}
+          onPress={() => this.props.navigation.navigate('MedInfo', { id: item.id })}
+        >
           <Text style={styles.buttonText}>Details</Text>
         </TouchableOpacity>
       </View>
@@ -53,34 +111,36 @@ export default class ProductList extends React.Component {
   );
 
   render() {
-    const { sortedProducts, products } = this.state;
+    const { alternatives, loading, error } = this.state;
+
+    if (loading) return <Text>Loading...</Text>;
+    if (error) return <Text>{error}</Text>;
 
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>Available Medicines</Text>
-        {/* Display the first product */}
-        {products.length > 0 && (
-          <View style={styles.firstProductContainer}>
-            <View style={styles.imagePlaceholder}></View>
-            <Text style={styles.productName}>{products[0].name}</Text>
-            <Text style={styles.productPrice}>{products[0].price}</Text>
-            <Text style={styles.productDescription}>{products[0].description}</Text>
-          </View>
-        )}
-        {/* Sort by functionality */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.header}>Medicine Details</Text>
+        </View>
+        {this.renderMainMedicine()}
+        <Text style={styles.subHeader}>Alternatives</Text>
         <View style={styles.sortContainer}>
-          <TouchableOpacity style={styles.sortButton} onPress={() => this.handleSortChange('name')}>
+          <TouchableOpacity 
+            style={[styles.sortButton, this.state.sortBy === 'name' && styles.activeSortButton]}
+            onPress={() => this.handleSortChange('name')}
+          >
             <Text style={styles.sortButtonText}>Sort by Name</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sortButton} onPress={() => this.handleSortChange('price')}>
+          <TouchableOpacity 
+            style={[styles.sortButton, this.state.sortBy === 'price' && styles.activeSortButton]}
+            onPress={() => this.handleSortChange('price')}
+          >
             <Text style={styles.sortButtonText}>Sort by Price</Text>
           </TouchableOpacity>
         </View>
-        {/* Display the rest of the products */}
         <FlatList
-          data={sortedProducts.slice(1)} // Skip the first product
-          renderItem={this.renderProduct}
-          keyExtractor={item => item.id}
+          data={alternatives}
+          renderItem={this.renderAlternative}
+          keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={styles.productList}
         />
       </View>
@@ -96,16 +156,26 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
+  headerContainer: {
+    marginTop: 40,
+    marginBottom: 20,
+  },
   header: {
     fontSize: 28,
     fontWeight: 'bold',
+    color: '#074d66',
+    textAlign: 'center',
+  },
+  subHeader: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginTop: 20,
     marginBottom: 10,
     color: '#074d66',
-    textAlign: 'center', // Centered header
   },
-  firstProductContainer: {
+  mainMedicineContainer: {
     backgroundColor: '#fff',
-    padding: 10,
+    padding: 15,
     marginBottom: 15,
     borderRadius: 10,
     shadowColor: '#000',
@@ -113,18 +183,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
-    alignItems: 'center', // Center text and image
   },
   sortContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     marginBottom: 15,
   },
   sortButton: {
     backgroundColor: '#074d66',
     borderRadius: 10,
     padding: 10,
-    width: '45%', // Button width to fit side by side
+    width: '48%',
+  },
+  activeSortButton: {
+    backgroundColor: '#0a6d8a',
   },
   sortButtonText: {
     color: '#fff',
@@ -156,33 +228,27 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 5,
   },
   productPrice: {
     fontSize: 16,
-    color: '#074d66',
-    marginBottom: 5,
-  },
-  productDescription: {
-    fontSize: 14,
     color: '#666',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
+    marginTop: 10,
   },
   productButton: {
     backgroundColor: '#074d66',
     borderRadius: 10,
     paddingVertical: 8,
-    paddingHorizontal: 10,
-    marginHorizontal: 5,
-    flex: 1,
+    paddingHorizontal: 15,
     alignItems: 'center',
   },
   buttonText: {
     color: '#fff',
     fontSize: 14,
-    textAlign: 'center',
   },
 });

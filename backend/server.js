@@ -92,20 +92,157 @@ const medicineSchema = new mongoose.Schema({
 const Medicine = mongoose.model('Medicine', medicineSchema);
 
 // GET route for medicine information
-app.get('/api/medicines/:id', async (req, res) => {
+
+app.get('/api/medici/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-      const medicine = await Medicine.findById(id, 'drug_name medical_condition side_effects generic_name'); // Only select the required fields
-      if (!medicine) {
-          return res.status(404).json({ message: 'Medicine not found' });
-      }
-      res.status(200).json(medicine);
+   // console.log(`Fetching medicine with id: ${id}`);
+    const medicine = await Medicine.findById(id, 'drug_name medical_condition side_effects generic_name');
+    if (!medicine) {
+      console.log(`Medicine with id ${id} not found`);
+      return res.status(404).json({ message: 'Medicine not found' });
+    }
+    //console.log(`Medicine found:`, medicine);
+    res.status(200).json(medicine);
   } catch (err) {
-      console.error('Error fetching medicine:', err);
-      res.status(500).json({ message: 'Server error', error: err });
+    console.error('Error fetching medicine:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
+// -> ALTERNATIVES FUNCTIONALITY <-
+
+const alternativeSchema = new mongoose.Schema({
+  name: String,
+  substitute0: String,
+  substitute1: String,
+  substitute2: String,
+  substitute3: String,
+}, { collection: 'Alternative', versionKey: false });
+
+const Alternative = mongoose.model('Alternative', alternativeSchema);
+
+app.get('/api/alternatives/:name', async (req, res) => {
+  const { name } = req.params;
+  console.log('Received search request for:', name);
+
+  // Convert the name to lowercase for case-insensitive matching
+  const searchTerm = name.toLowerCase();
+  console.log('Converted search term:', searchTerm);
+
+  try {
+    console.log('Executing database query...');
+    // Find all entries in the alternatives table that match the medicine name or its substitutes
+    const alternatives = await Alternative.find({
+      $or: [
+        { name: { $regex: searchTerm, $options: 'i' } },
+        { substitute0: { $regex: searchTerm, $options: 'i' } },
+        { substitute1: { $regex: searchTerm, $options: 'i' } },
+        { substitute2: { $regex: searchTerm, $options: 'i' } },
+        { substitute3: { $regex: searchTerm, $options: 'i' } },
+      ]
+    });
+
+    console.log('Query completed. Number of results:', alternatives.length);
+    console.log('Raw query results:', JSON.stringify(alternatives, null, 2));
+
+    // Collect unique alternative names from the results
+    const alternativeSet = new Set();
+    alternatives.forEach(alt => {
+      // Add all relevant fields to the set
+      if (alt.name) alternativeSet.add(alt.name.trim());
+      if (alt.substitute0) alternativeSet.add(alt.substitute0.trim());
+      if (alt.substitute1) alternativeSet.add(alt.substitute1.trim());
+      if (alt.substitute2) alternativeSet.add(alt.substitute2.trim());
+      if (alt.substitute3) alternativeSet.add(alt.substitute3.trim());
+    });
+
+    const alternativeArray = Array.from(alternativeSet);
+    console.log('Final processed alternatives:', alternativeArray);
+
+    if (alternativeArray.length === 0) {
+      console.log('No alternatives found after processing');
+      return res.status(404).json({ message: 'No alternatives found for this medicine' });
+    }
+
+    console.log('Sending response with alternatives');
+    res.status(200).json(alternativeArray);
+  } catch (err) {
+    console.error('Error in alternatives search:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+app.get('/api/check-alternatives', async (req, res) => {
+  try {
+    const allAlternatives = await Alternative.find({});
+    console.log('All alternatives in database:', JSON.stringify(allAlternatives, null, 2));
+    res.json({ count: allAlternatives.length, sample: allAlternatives.slice(0, 5) });
+  } catch (err) {
+    console.error('Error checking alternatives:', err);
+    res.status(500).json({ message: 'Error checking alternatives', error: err.message });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Schema for PakPrices
+const pakPriceSchema = new mongoose.Schema({
+  "Brand Name": String,
+  "MRP": String
+}, { collection: 'PakPrices', versionKey: false });
+
+const PakPrice = mongoose.model('PakPrice', pakPriceSchema);
+
+// Schema for IndiaPrices
+const indiaPriceSchema = new mongoose.Schema({
+  name: String,
+  "price(₹)": Number
+}, { collection: 'IndiaPrices', versionKey: false });
+
+const IndiaPrice = mongoose.model('IndiaPrice', indiaPriceSchema);
+
+// GET route to fetch price based on medicine name
+app.get('/api/price/:name', async (req, res) => {
+  const { name } = req.params;
+
+  try {
+    // Check PakPrices first
+    let price = await PakPrice.findOne({ "Brand Name": { $regex: new RegExp(name, 'i') } });
+    if (price) {
+      return res.json({ price: price.MRP });
+    }
+
+    // If not found in PakPrices, check IndiaPrices
+    price = await IndiaPrice.findOne({ name: { $regex: new RegExp(name, 'i') } });
+    if (price) {
+      // Convert to PKR (you might want to use a real conversion rate)
+      const pkrPrice = price["price(₹)"] * 3.5; // Assuming 1 INR = 3.5 PKR
+      return res.json({ price: `PKR ${pkrPrice.toFixed(2)}` });
+    }
+
+    // If not found in either, return default price
+    return res.json({ price: 'PKR 12345' });
+  } catch (err) {
+    console.error('Error fetching price:', err);
+    res.status(500).json({ message: 'Server error', error: err });
+  }
+});
+
 
 // Start the server
 app.listen(PORT, () => {
