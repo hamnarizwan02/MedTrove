@@ -110,14 +110,15 @@ const Medicine = mongoose.model('Medicine', medicineSchema);
 // });
 
 // GET route for medicine information
-app.get('/api/medicines/:id', async (req, res) => {
-  const { searchTerm } = req.query; // Get the search term from the query parameters
-
+app.get('/api/medicines/:searchTerm', async (req, res) => {
+  const { searchTerm } = req.params; // Get the search term from the query parameters
+  console.log('Search term:', searchTerm);
+  
   try {
     // Use regular expression to search for matching drug names or medical conditions
   
     const searchRegex = new RegExp(searchTerm, 'i'); // Case-insensitive search
-    console.log('Search term:', searchTerm);
+    
 
     const medicines = await Medicine.findOne({
       drug_name: { $regex: searchRegex }
