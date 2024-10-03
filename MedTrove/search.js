@@ -1,9 +1,6 @@
 import * as React from "react";
 import {Image, StyleSheet, TextInput, Text, View} from "react-native";
-import { Keyboard } from 'react-native';
-import  { useState, useEffect } from 'react';
-import axios from 'axios';
-import CONFIG from './config.js'; 
+//import { Keyboard } from 'react-native';
 
 export default class Search extends React.Component {
 	// handleSearchSubmit = () => {
@@ -13,152 +10,6 @@ export default class Search extends React.Component {
 	// 	 this.props.navigation.navigate('ProductList');
 	// };
 
-	
-	// MySearchBar = () => {
-    //     // return (
-    //     //   <TextInput
-    //     //     placeholder="Search..."
-    //     //     onFocus={() => Keyboard.show()} // Show keyboard on focus
-    //     //   />
-    //     // );
-	// 	const [status, setStatus] = useState(undefined);
-
-	// 	const getKeyboardStatus = () => {
-	// 	  const isVisible = Keyboard.isVisible();
-	// 	  const currentState = isVisible ? 'opened' : 'closed';
-	// 	  setStatus(currentState);
-	// 	};
-	  
-	// 	useEffect(() => {
-	// 	  getKeyboardStatus();
-	// 	}, []);
-
-	// 	// taking input of search 
-	// 	return (
-	// 		<TextInput
-	// 		 // placeholder="Search..."
-	// 		  onFocus={() => Keyboard.show()}
-	// 		  value={searchText}
-	// 		  onChangeText={(text) => setSearchText(text)}
-	// 		/>
-	// 	  );
-		
-		
-	// };
-
-	constructor(props) {
-		super(props);
-		this.state = {
-		  searchText: 'Initial search value', // Set the initial value here
-		  status: undefined,
-		};
-	  }
-
-	  //This funxtion is to implement the search 
-	  
-
-	  MySearchBar = () => {
-        // return (
-        //   <TextInput
-        //     placeholder="Search..."
-        //     onFocus={() => Keyboard.show()} // Show keyboard on focus
-        //   />
-        // );
-		const [status, setStatus] = useState(undefined);
-
-		const getKeyboardStatus = () => {
-		  const isVisible = Keyboard.isVisible();
-		  const currentState = isVisible ? 'opened' : 'closed';
-		  setStatus(currentState);
-		};
-	  
-		useEffect(() => {
-		  getKeyboardStatus();
-		}, []);
-
-		// taking input of search 
-		return (
-			<TextInput
-			  placeholder="Search..."
-			//  onFocus={() => Keyboard.show()}
-			 // value={searchText}
-			 onChangeText={(text) => {
-				setSearchText(text);
-	
-			  }}
-			  onSubmitEditing={this.handleSearchSubmit}
-			/>
-	
-		  );
-		
-		
-	};
-
-	handleSearchSubmit = async () => {
-		Keyboard.dismiss();
-		console.log('Search text:', this.state.searchText); // Log the search text
-		const searchTerm = this.state.searchText;
-		console.log('Search term:', searchTerm);
-	
-		try {
-		  // Replace 'http://localhost:5000' with your actual backend API URL
-		  const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
-		  const medicine = response.data;
-		  console.log('Found medicine:', medicine); // Log the fetched medicine data
-	
-		  // Handle successful search (e.g., display medicine details)
-	
-		} catch (error) {
-		  console.error('Error fetching medicine:', error);
-		  // Handle search errors (e.g., display error message)
-		}
-	  };
-	
-
-
-	// MySearchBar = () => {
-    //     // return (
-    //     //   <TextInput
-    //     //     placeholder="Search..."
-    //     //     onFocus={() => Keyboard.show()} // Show keyboard on focus
-    //     //   />
-    //     // );
-	// 	const [status, setStatus] = useState(undefined);
-
-	// 	const getKeyboardStatus = () => {
-	// 	  const isVisible = Keyboard.isVisible();
-	// 	  const currentState = isVisible ? 'opened' : 'closed';
-	// 	  setStatus(currentState);
-	// 	};
-	  
-	// 	useEffect(() => {
-	// 	  getKeyboardStatus();
-	// 	}, []);
-
-	// 	// taking input of search 
-	// 	return (
-	// 		<TextInput
-	// 		  placeholder="Search..."
-	// 		//  onFocus={() => Keyboard.show()}
-	// 		 // value={searchText}
-	// 		 onChangeText={(text) => {
-	// 			setSearchText(text);
-	
-	// 		  }}
-	// 		/>
-	// 	  );
-		
-		
-	// };
-
-	// handleSearchSubmit = () => {
-	// 	Keyboard.dismiss(); // Dismiss keyboard on submit
-	// 	console.log('Search text:', this.state.searchText); // Log the search text
-	// 	// Implement your search logic here using this.state.searchText
-	// 	// For example, navigate to a product list page:
-	// 	// this.props.navigation.navigate('ProductList', { searchTerm: this.state.searchText });
-	//   };
-	
   	render(){
 		const { searchText } = this.state;
   	return (
@@ -169,29 +20,15 @@ export default class Search extends React.Component {
         				<Text style={[styles.home, styles.homePosition]}>Home</Text>
         				<Image style={[styles.icon1, styles.icon1Position]} resizeMode="cover" source="icon.png" />
       			</View>
-
-				  <View style={styles.search}>
-			  <TextInput
-          		placeholder="Search..."
-          		//value={searchText}
-          		onChangeText={(text) => {
-            	this.setState({ searchText: text });
-           	 	 console.log('Search text updated:', text); // Print the updated search text
-          }}
-          onSubmitEditing={this.handleSearchSubmit}
-
-              /* <View style={styles.search}>
-			  <TextInput
-          		placeholder="Search..."
-          		//value={searchText}
-          		onChangeText={(text) => {
-            	this.setState({ searchText: text });
-           	 	 console.log('Search text updated:', text); // Print the updated search text
-          }}
-          onSubmitEditing={this.handleSearchSubmit} */
-				
-				></TextInput><Image style={[styles.icon2, styles.iconLayout1]} resizeMode="cover" source="icon.png" />
-			
+              <View style={styles.search}>
+                <TextInput 
+					style={styles.input}
+					returnKeyType="search"
+					//placeholder="Search"
+					//onSubmitEditing={this.handleSearchSubmit} // Trigger navigation on Enter
+				/>
+				<Image style={[styles.icon2, styles.iconLayout1]} resizeMode="cover" source="icon.png" />
+				<Text style={styles.searchText}>Search</Text>
        
           </View>
       			<View style={[styles.card, styles.cardPosition]}>
