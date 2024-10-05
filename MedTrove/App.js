@@ -7,6 +7,7 @@ import Splash from './splash';
 import Search from './search';
 import MedicineDetails from './medinfo';
 import ProductList from './productList';
+import ProfileManagement from './profilemangement';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,7 +21,9 @@ export default function App() {
         <Stack.Screen name="Search" component={Search} options={{ headerShown: false }} />
         <Stack.Screen name="ProductList" component={ProductList} options={{ headerShown: false }} />
         <Stack.Screen name="MedInfo" component={MedicineDetails} options={{ headerShown: false }} /> 
+        <Stack.Screen name="ProfileManagement" component={ProfileManagement} options={{ headerShown: false }} />
+     
       </Stack.Navigator>
     </NavigationContainer>
-  );
+    );
 }
