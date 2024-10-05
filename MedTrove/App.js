@@ -22,7 +22,6 @@ export default function App() {
         <Stack.Screen name="ProductList" component={ProductList} options={{ headerShown: false }} />
         <Stack.Screen name="MedInfo" component={MedicineDetails} options={{ headerShown: false }} /> 
         <Stack.Screen name="ProfileManagement" component={ProfileManagement} options={{ headerShown: false }} />
-     
       </Stack.Navigator>
     </NavigationContainer>
     );

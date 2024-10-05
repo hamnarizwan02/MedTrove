@@ -134,12 +134,12 @@ export default class Search extends React.Component {
           					<Text style={[styles.camelia, styles.wendyPosition]}>{`Medibot `}</Text>
         				</View>
 
-                                  {/* ADD DDI IMAGE HERE HAMNA */}
+                                  {/* ADD DDI IMAGE HERE HAMNA OK ALIZA */}
         				<View style={[styles.card3, styles.cardLayout1]}>
           					<View style={[styles.rectangle5, styles.rectangleShadowBox]} />
-                                        <Image source={require('./assets/DrugIdentifier.jpeg')} style={[styles.imageCard]} resizeMode="cover" />
+                                        <Image source={require('./assets/DrugIdentifier.png')} style={[styles.imageCard]} resizeMode="cover" />
           				
-          					<Text style={[styles.jordan, styles.wendyPosition]}>Jordan</Text>
+          					<Text style={[styles.jordan, styles.wendyPosition1]}>DDI</Text>
         				</View>
         				{/* <TouchableOpacity onPress={() => navigateToProfilePage()}>
                                     <View style={[styles.card4, styles.cardLayout1]}>
@@ -153,7 +153,7 @@ export default class Search extends React.Component {
                               <View style={[styles.card4, styles.cardLayout1]}>
                                           <View style={[styles.rectangle6, styles.rectangleShadowBox]} />
                                           <TouchableOpacity onPress={() => this.props.navigation.navigate("ProfileManagement")}>
-                                                 <Image source={require('./assets/profilebtn.png')} style={[styles.imageCard]} resizeMode="cover" />
+                                                 <Image source={require('./assets/profilebtn.png')} style={[styles.imageCard1]} resizeMode="cover" />
                                                  </TouchableOpacity>
                                                  <Text style={[styles.brian, styles.wendyPosition]}>Profile</Text>
                                            </View>
@@ -280,7 +280,8 @@ const styles = StyleSheet.create({
               overflow: "hidden"
         },
         wendyPosition: {
-              marginTop: 33,
+              marginTop: 40,
+              marginLeft: -30,
               color: "#96a2a3",
               fontSize: 12,
               fontWeight: "500",
@@ -291,6 +292,19 @@ const styles = StyleSheet.create({
               top: "50%",
               position: "absolute"
         },
+        wendyPosition1: {     //DDI text
+            marginTop: 40,
+            marginLeft: -20,
+            color: "#96a2a3",
+            fontSize: 12,
+            fontWeight: "500",
+            textAlign: "center",
+            //fontFamily: "SF Pro Text",
+            letterSpacing: 1,
+            left: "50%",
+            top: "50%",
+            position: "absolute"
+      },
        
         mask5Layout: {
               height: 100,
@@ -498,8 +512,19 @@ const styles = StyleSheet.create({
               left: "0%",
               bottom: "0%",
               position: "absolute",
-              width: 100
+              width: 100,
+              marginLeft: -8
 
+        },
+        imageCard1:{          //profile ki
+            top: "0%",
+              height: 100,
+              right: "0%",
+              left: "0%",
+              bottom: "0%",
+              position: "absolute",
+              width: 100,
+              marginLeft: -18
         },
         image: {
               height: "78.13%",
@@ -704,7 +729,8 @@ const styles = StyleSheet.create({
 
         cardLayout: {
             height:'100%',
-            width: '100%',
+            width: '80%',
+            marginLeft: 4
           
       },
 
