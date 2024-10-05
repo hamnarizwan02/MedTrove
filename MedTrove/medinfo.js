@@ -10,7 +10,7 @@ const MedicineDetails = ({ route }) => {
   const [price, setPrice] = useState(null);
   //const id = '66e1df80bc0ca5e347fadc70';
   const { id } = route.params;
-  console.log("Medinfo "+ id);
+  //console.log("Medinfo "+ id);
 
   useEffect(() => {
     const fetchMedicineAndPrice = async () => {
@@ -18,19 +18,10 @@ const MedicineDetails = ({ route }) => {
         const medicineResponse = await axios.get(`${CONFIG.backendUrl}/api/medici/${id}`);
         setMedicine(medicineResponse.data);
 
-        // Fetch price from PakPrices
-        const pakPriceResponse = await axios.get(`${CONFIG.backendUrl}/api/pak-prices/${medicineResponse.data.drug_name}`);
-        if (pakPriceResponse.data) {
-          setPrice(parsePakPrice(pakPriceResponse.data.MRP));
-        } else {
-          // If not found in PakPrices, fetch from IndiaPrices
-          const indiaPriceResponse = await axios.get(`${CONFIG.backendUrl}/api/india-prices/${medicineResponse.data.drug_name}`);
-          if (indiaPriceResponse.data) {
-            setPrice(convertToPackRupees(indiaPriceResponse.data['price(₹)']));
-          } else {
-            setPrice(12345); // Default price if not found in both databases
-          }
-        }
+      const priceee = await this.fetchPrice(medicineResponse.data.drug_name);
+      //console.log("priceee" + priceee);
+      setPrice(priceee);
+
       } catch (error) {
         //console.error('Error fetching medicine or price:', error);
         setPrice(12345); // Set default price in case of any error
@@ -42,16 +33,27 @@ const MedicineDetails = ({ route }) => {
     fetchMedicineAndPrice();
   }, [id]);
 
-  const parsePakPrice = (priceString) => {
-    // Remove "Rs. " and any commas, then parse to float
-    return parseFloat(priceString.replace('Rs. ', '').replace(',', ''));
-  };
 
-  const convertToPackRupees = (indianPrice) => {
-    // Assuming 1 Indian Rupee = 3.5 Pakistani Rupees (you should use real-time exchange rates)
-    const exchangeRate = 3.5;
-    return indianPrice * exchangeRate;
+  fetchPrice = async (medicineName) => {
+    try {
+      const normalizedMedicineName = medicineName.trim().toLowerCase(); // Normalize the name
+      const response = await axios.get(`${CONFIG.backendUrl}/api/price/${normalizedMedicineName}`);
+      
+      // If the price comes as a string, extract the number part and convert it to float
+      const priceString = response.data.price;
+      const price = parseFloat(priceString.replace('PKR', '').trim());
+  
+      // Return the parsed price or a default price if parsing fails
+      return !isNaN(price) ? price : 12345; // Default price in case parsing fails
+    } catch (error) {
+      // Log the error if needed
+      console.error('Error fetching price:', error);
+      
+      // Return default price
+      return 12345;
+    }
   };
+  
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));

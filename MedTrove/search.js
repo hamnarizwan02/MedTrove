@@ -76,11 +76,11 @@ export default class Search extends React.Component {
 		try {
 			const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
 			const medicine = response.data; // Medicine object from API response
-			console.log('Found medicine:', medicine);
+			//console.log('Found medicine:', medicine);
 			
 			// Check if the medicine is an object and contains the _id
 			if (typeof medicine === 'object' && medicine !== null && medicine._id) {
-				console.log(medicine._id);
+				//console.log(medicine._id);
 				this.props.navigation.navigate('ProductList', { id: medicine._id });
 			} else {
 				console.error('Medicine ID not found in response:', medicine);

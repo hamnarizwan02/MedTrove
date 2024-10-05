@@ -18,13 +18,67 @@ export default class ProductList extends React.Component {
     this.fetchMedicineData(id);
   }
 
+  // fetchMedicineData = async (medicineId) => {
+  //   try {
+  //     //const medicineId = '66e1df80bc0ca5e347fadf71';
+  //     //console.log("medicineId" + medicineId);
+  //     const mainMedicineResponse = await axios.get(`${CONFIG.backendUrl}/api/medici/${medicineId}`);
+  //     const mainMedicine = mainMedicineResponse.data;
+  //     //console.log(mainMedicine);
+
+  //     let alternatives = [];
+  //     try {
+  //       const alternativesResponse = await axios.get(`${CONFIG.backendUrl}/api/alternatives/${mainMedicine.drug_name}`);
+  //       alternatives = alternativesResponse.data;
+  //     } catch (alternativesError) {
+  //       console.log('No alternatives found or error fetching alternatives:', alternativesError);
+  //       alternatives = [];
+  //     }
+
+  //     mainMedicine.price = await this.fetchPrice(mainMedicine.drug_name);
+  //     alternatives = await Promise.all(alternatives.map(async (alt) => ({
+  //       name: alt,
+  //       price: await this.fetchPrice(alt)
+  //     })));
+
+  //     this.setState({
+  //       mainMedicine,
+  //       alternatives,
+  //       loading: false
+  //     }, this.sortAlternatives);
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //     this.setState({ error: 'Failed to fetch data', loading: false });
+  //   }
+  // }
+
+  // checkMedicineExists = async (medicineName) => {
+  //   try {
+  //     const response = await axios.get(`${CONFIG.backendUrl}/api/medicine-exists/${medicineName}`);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error('Error checking medicine existence:', error);
+  //     return { exists: false, id: null };
+  //   }
+  // }
+
+  // fetchPrice = async (medicineName) => {
+  //   try {
+  //     //console.log('Fetching price for:', medicineName);
+  //     const normalizedMedicineName = medicineName.trim().toLowerCase(); // Normalize the name
+  //     const response = await axios.get(`${CONFIG.backendUrl}/api/price/${normalizedMedicineName}`);
+
+  //     return response.data.price;
+  //   } catch (error) {
+  //     //console.error('Error fetching price:', error);
+  //     return 'PKR 12345'; // Default price if not found
+  //   }
+  // }
+
   fetchMedicineData = async (medicineId) => {
     try {
-      //const medicineId = '66e1df80bc0ca5e347fadf71';
-      //console.log("medicineId" + medicineId);
       const mainMedicineResponse = await axios.get(`${CONFIG.backendUrl}/api/medici/${medicineId}`);
       const mainMedicine = mainMedicineResponse.data;
-      console.log(mainMedicine);
 
       let alternatives = [];
       try {
@@ -36,10 +90,16 @@ export default class ProductList extends React.Component {
       }
 
       mainMedicine.price = await this.fetchPrice(mainMedicine.drug_name);
-      alternatives = await Promise.all(alternatives.map(async (alt) => ({
-        name: alt,
-        price: await this.fetchPrice(alt)
-      })));
+      alternatives = await Promise.all(alternatives.map(async (alt) => {
+        const price = await this.fetchPrice(alt);
+        const existsData = await this.checkMedicineExists(alt);
+        return {
+          name: alt,
+          price,
+          exists: existsData.exists,
+          id: existsData.id
+        };
+      }));
 
       this.setState({
         mainMedicine,
@@ -52,16 +112,23 @@ export default class ProductList extends React.Component {
     }
   }
 
+  checkMedicineExists = async (medicineName) => {
+    try {
+      const response = await axios.get(`${CONFIG.backendUrl}/api/medicine-exists/${medicineName}`);
+      return response.data;
+    } catch (error) {
+      //console.error('Error checking medicine existence:', error);
+      return { exists: false, id: null };
+    }
+  }
+
   fetchPrice = async (medicineName) => {
     try {
-      //console.log('Fetching price for:', medicineName);
-      const normalizedMedicineName = medicineName.trim().toLowerCase(); // Normalize the name
-      const response = await axios.get(`${CONFIG.backendUrl}/api/price/${normalizedMedicineName}`);
-      //const response = await axios.get(`${CONFIG.backendUrl}/api/price/${medicineName}`);
+      const response = await axios.get(`${CONFIG.backendUrl}/api/price/${medicineName}`);
       return response.data.price;
     } catch (error) {
       //console.error('Error fetching price:', error);
-      return 'PKR 12345'; // Default price if not found
+      return 'Price unavailable setting PKR 123455';
     }
   }
 
@@ -103,7 +170,7 @@ export default class ProductList extends React.Component {
           //onPress={() => this.props.navigation.navigate('MedInfo', { id: mainMedicine.id })}
           onPress={() => {
             
-            this.console(mainMedicine._id); 
+            //this.console(mainMedicine._id); 
             
             this.props.navigation.navigate('MedInfo', { id: mainMedicine._id }); // Use mainMedicine._id if necessary
           }}
@@ -115,21 +182,85 @@ export default class ProductList extends React.Component {
     );
   };
 
+  // renderAlternative = ({ item }) => (
+  //   <View style={styles.productContainer}>
+  //     <View style={styles.imagePlaceholder}></View>
+  //     <Text style={styles.productName}>{item.name}</Text>
+  //     <Text style={styles.productPrice}>{item.price}</Text>
+  //     <View style={styles.buttonContainer}>
+  //       <TouchableOpacity 
+  //         style={styles.productButton}
+  //        // onPress={() => this.props.navigation.navigate('MedInfo', { id: item.id })}
+  //        onPress={() => {
+            
+  //         this.console(item._id); 
+          
+  //         this.props.navigation.navigate('MedInfo', { id: item._id }); // Use mainMedicine._id if necessary
+  //       }}
+  //       >
+  //         <Text style={styles.buttonText}>Details</Text>
+  //       </TouchableOpacity>
+  //     </View>
+  //   </View>
+  // );
+
   renderAlternative = ({ item }) => (
     <View style={styles.productContainer}>
       <View style={styles.imagePlaceholder}></View>
       <Text style={styles.productName}>{item.name}</Text>
       <Text style={styles.productPrice}>{item.price}</Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={styles.productButton}
-          onPress={() => this.props.navigation.navigate('MedInfo', { id: item.id })}
-        >
-          <Text style={styles.buttonText}>Details</Text>
-        </TouchableOpacity>
+        {item.exists && (
+          <TouchableOpacity 
+            style={styles.productButton}
+            onPress={() => {
+              console.log("shifting to medinfo id in alternative " + item.id);
+              this.props.navigation.navigate('MedInfo', { id: item.id }); 
+            }}
+          >
+            <Text style={styles.buttonText}>Details</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
+
+  // render() {
+  //   const { alternatives, loading, error } = this.state;
+
+  //   if (loading) return <Text>Loading...</Text>;
+  //   if (error) return <Text>{error}</Text>;
+
+    // return (
+    //   <View style={styles.container}>
+    //     <View style={styles.headerContainer}>
+    //       <Text style={styles.header}>Medicine Details</Text>
+    //     </View>
+    //     {this.renderMainMedicine()}
+    //     <Text style={styles.subHeader}>Alternatives</Text>
+    //     <View style={styles.sortContainer}>
+    //       <TouchableOpacity 
+    //         style={[styles.sortButton, this.state.sortBy === 'name' && styles.activeSortButton]}
+    //         onPress={() => this.handleSortChange('name')}
+    //       >
+    //         <Text style={styles.sortButtonText}>Sort by Name</Text>
+    //       </TouchableOpacity>
+    //       <TouchableOpacity 
+    //         style={[styles.sortButton, this.state.sortBy === 'price' && styles.activeSortButton]}
+    //         onPress={() => this.handleSortChange('price')}
+    //       >
+    //         <Text style={styles.sortButtonText}>Sort by Price</Text>
+    //       </TouchableOpacity>
+    //     </View>
+    //     <FlatList
+    //       data={alternatives}
+    //       renderItem={this.renderAlternative}
+    //       keyExtractor={(item, index) => index.toString()}
+    //       contentContainerStyle={styles.productList}
+    //     />
+    //   </View>
+    // );
+  // }
 
   render() {
     const { alternatives, loading, error } = this.state;
@@ -139,25 +270,25 @@ export default class ProductList extends React.Component {
 
     return (
       <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.header}>Medicine Details</Text>
-        </View>
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>Medicine Details</Text>
+      </View>
         {this.renderMainMedicine()}
         <Text style={styles.subHeader}>Alternatives</Text>
-        <View style={styles.sortContainer}>
-          <TouchableOpacity 
-            style={[styles.sortButton, this.state.sortBy === 'name' && styles.activeSortButton]}
-            onPress={() => this.handleSortChange('name')}
-          >
-            <Text style={styles.sortButtonText}>Sort by Name</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.sortButton, this.state.sortBy === 'price' && styles.activeSortButton]}
-            onPress={() => this.handleSortChange('price')}
-          >
-            <Text style={styles.sortButtonText}>Sort by Price</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.sortContainer}>
+        <TouchableOpacity 
+          style={[styles.sortButton, this.state.sortBy === 'name' && styles.activeSortButton]}
+          onPress={() => this.handleSortChange('name')}
+        >
+          <Text style={styles.sortButtonText}>Sort by Name</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.sortButton, this.state.sortBy === 'price' && styles.activeSortButton]}
+          onPress={() => this.handleSortChange('price')}
+        >
+          <Text style={styles.sortButtonText}>Sort by Price</Text>
+        </TouchableOpacity>
+      </View>
         <FlatList
           data={alternatives}
           renderItem={this.renderAlternative}

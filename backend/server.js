@@ -220,21 +220,6 @@ app.get('/api/check-alternatives', async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Schema for PakPrices
 const pakPriceSchema = new mongoose.Schema({
   "Brand Name": String,
@@ -278,6 +263,49 @@ app.get('/api/price/:name', async (req, res) => {
   }
 });
 
+// app.get('/api/medicine-exists/:name', async (req, res) => {
+//   const { name } = req.params;
+//   try {
+//     const medicine = await Medicine.findOne({ drug_name: { $regex: new RegExp(name, 'i') } });
+//     res.json({ exists: !!medicine, id: medicine ? medicine._id : null });
+//   } catch (err) {
+//     console.error('Error checking medicine existence:', err);
+//     res.status(500).json({ message: 'Server error', error: err.message });
+//   }
+// });
+
+app.get('/api/medicine-exists/:name', async (req, res) => {
+  const { name } = req.params;
+  try {
+    // Split the name into words
+    const words = name.split(' ');
+    
+    // Create a regex pattern that matches any of the words
+    const regexPattern = words.map(word => `(?=.*${word})`).join('');
+    const regex = new RegExp(regexPattern, 'i');
+
+    // Search for medicines where the drug_name contains all the words in any order
+    const medicine = await Medicine.findOne({ drug_name: { $regex: regex } });
+
+    if (medicine) {
+      res.json({ exists: true, id: medicine._id, name: medicine.drug_name });
+    } else {
+      // If no exact match, try to find a partial match
+      const partialMatch = await Medicine.findOne({ 
+        drug_name: { $regex: new RegExp(words[0], 'i') } 
+      });
+
+      if (partialMatch) {
+        res.json({ exists: true, id: partialMatch._id, name: partialMatch.drug_name, partialMatch: true });
+      } else {
+        res.json({ exists: false, id: null, name: null });
+      }
+    }
+  } catch (err) {
+    console.error('Error checking medicine existence:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 
 // Start the server
 app.listen(PORT, () => {
