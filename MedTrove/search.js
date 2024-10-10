@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Image,Text,View, TextInput, Button,TouchableOpacity,ScrollView } from 'react-native';
+import { Image,Text,View, TextInput, Alert, Button,TouchableOpacity,ScrollView } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { Keyboard } from 'react-native';
 import  { useState, useEffect } from 'react';
@@ -51,7 +51,7 @@ export default class Search extends React.Component {
 		  );
 	};
 
-
+//OG
 	handleSearchSubmit = async () => {
 		Keyboard.dismiss();
 		console.log('Search text:', this.state.searchText); // Log the search text
@@ -71,10 +71,11 @@ export default class Search extends React.Component {
 				console.error('Medicine ID not found in response:', medicine);
 			}
 		} catch (error) {
-			console.error('Error fetching medicine:', error);
-		}
+			//console.error('Error fetching medicine:', error);
+            Alert.alert('Medicine Not Available', 'The medicine you searched for is not available.', [{ text: 'OK' }]);
+		} 
 	};
-	
+
   	render(){
 		const { searchText } = this.state;
   	return (

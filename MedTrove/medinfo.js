@@ -1,231 +1,241 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
-import CONFIG from './config.js';
+import CONFIG from './config';
 
-const MedicineDetails = ({ route }) => {
-  const [medicine, setMedicine] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [quantity, setQuantity] = useState(1);
-  const [price, setPrice] = useState(null);
-  //const id = '66e1df80bc0ca5e347fadc70';
+export default function MedInfo({ route, navigation }) {
+  //const id = '66e1df80bc0ca5e347fadc6a';
   const { id } = route.params;
-  //console.log("Medinfo "+ id);
+  const [medicine, setMedicine] = useState(null);
+  const [price, setPrice] = useState('Loading...');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [imageUrl, setImageUrl] = useState('https://via.placeholder.com/300'); // Add this state
 
   useEffect(() => {
-    const fetchMedicineAndPrice = async () => {
+    const fetchMedicineData = async () => {
       try {
-        const medicineResponse = await axios.get(`${CONFIG.backendUrl}/api/medici/${id}`);
-        setMedicine(medicineResponse.data);
+        setLoading(true);
+        const response = await axios.get(`${CONFIG.backendUrl}/api/medici/${id}`);
+        setMedicine(response.data);
+        
+        const priceResponse = await axios.get(`${CONFIG.backendUrl}/api/price/${response.data.drug_name}`);
+        setPrice(priceResponse.data.price || 'Price not available');
 
-      const priceee = await this.fetchPrice(medicineResponse.data.drug_name);
-      //console.log("priceee" + priceee);
-      setPrice(priceee);
+        await fetchDrugImage(response.data.drug_name); // Fetch drug image
 
+        setLoading(false);
       } catch (error) {
-        //console.error('Error fetching medicine or price:', error);
-        setPrice(12345); // Set default price in case of any error
-      } finally {
+        console.error('Error fetching medicine data:', error);
+        setError('Failed to fetch medicine data. Please try again.');
         setLoading(false);
       }
     };
 
-    fetchMedicineAndPrice();
+    fetchMedicineData();
   }, [id]);
 
+  // const fetchDrugImage = async (drugName) => {
+  //   const apiKey = 'AIzaSyDE6AOUqSxH5E6xUD4IlU2Sn2Cbdffazvo'; // Replace with your API key
+  //   const searchEngineId = 'e7a8780e6245241cf'; // Replace with your Search Engine ID
+  //   const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(drugName)}&cx=${searchEngineId}&searchType=image&key=${apiKey}`;
 
-  fetchPrice = async (medicineName) => {
+  //   try {
+  //       const response = await fetch(url);
+  //       const data = await response.json();
+
+  //       // Check if there are items in the response
+  //       if (data.items && data.items.length > 0) {
+  //           const firstImageUrl = data.items[0].link; // Get the link of the first image
+  //           setImageUrl(firstImageUrl); // Update the state with the image URL
+  //           console.log(firstImageUrl); // You can use this URL in your application
+  //       } else {
+  //           console.log('No images found.');
+  //           setImageUrl('https://via.placeholder.com/300'); // Fallback image
+  //       }
+  //   } catch (error) {
+  //       console.error('Error fetching images:', error);
+  //       setImageUrl('https://via.placeholder.com/300'); // Fallback image
+  //   }
+  // };
+
+  const fetchDrugImage = async (drugName) => {
+    const apiKey = 'AIzaSyBvUCHLP2EraPIlJUEJCeYv9JMZ6X_AAog';
+    const searchEngineId = 'e7a8780e6245241cf';
+    const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(drugName)}&cx=${searchEngineId}&searchType=image&key=${apiKey}`;
+
     try {
-      const normalizedMedicineName = medicineName.trim().toLowerCase(); // Normalize the name
-      const response = await axios.get(`${CONFIG.backendUrl}/api/price/${normalizedMedicineName}`);
+      console.log('Fetching image for:', drugName);
+      const response = await fetch(url);
       
-      // If the price comes as a string, extract the number part and convert it to float
-      const priceString = response.data.price;
-      const price = parseFloat(priceString.replace('PKR', '').trim());
-  
-      // Return the parsed price or a default price if parsing fails
-      return !isNaN(price) ? price : 12345; // Default price in case parsing fails
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('API Response:', JSON.stringify(data, null, 2));
+
+      if (data.items && data.items.length > 0) {
+        const firstImageUrl = data.items[0].link;
+        console.log('Image URL found:', firstImageUrl);
+        setImageUrl(firstImageUrl);
+      } else {
+        console.log('No images found in the API response.');
+        setImageUrl('https://via.placeholder.com/300');
+      }
     } catch (error) {
-      // Log the error if needed
-      console.error('Error fetching price:', error);
-      
-      // Return default price
-      return 12345;
+      console.error('Error fetching images:', error.message);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+      }
+      setImageUrl('https://via.placeholder.com/300');
     }
   };
-  
 
-  const incrementQuantity = () => setQuantity(prev => prev + 1);
-  const decrementQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+  const handleQuantityChange = (increment) => {
+    setQuantity(prevQuantity => Math.max(1, prevQuantity + increment));
+  };
+
+  const handleAddToCart = () => {
+    console.log(`Added ${quantity} ${medicine.drug_name} to cart`);
+    // Implement actual add to cart functionality here
+  };
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#1b3c74" />
-      </View>
-    );
+    return <View style={styles.container}><Text>Loading...</Text></View>;
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Medicine Details</Text>
+  if (error) {
+    return <View style={styles.container}><Text>{error}</Text></View>;
+  }
+
+  if (!medicine) {
+    return <View style={styles.container}><Text>No medicine data available.</Text></View>;
+  }
+
+  const renderSection = (title, content) => {
+    if (!content || content.trim() === '') return null;
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        <Text style={styles.sectionText}>{content}</Text>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={styles.card}>
-          <Text style={styles.drugName}>{medicine.drug_name}</Text>
-          <Text style={styles.genericName}>Generic: {medicine.generic_name}</Text>
-          
-          <View style={styles.priceContainer}>
-            <Text style={styles.price}>PKR {price.toFixed(2)}</Text>
-            <View style={styles.quantityContainer}>
-              <TouchableOpacity 
-                onPress={decrementQuantity} 
-                style={styles.quantityButton}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.quantityButtonText}>-</Text>
-              </TouchableOpacity>
-              <Text style={styles.quantity}>{quantity}</Text>
-              <TouchableOpacity 
-                onPress={incrementQuantity} 
-                style={styles.quantityButton}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.quantityButtonText}>+</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+    );
+  };
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>About</Text>
-            <Text style={styles.sectionContent}>Condition: {medicine.medical_condition}</Text>
-            <Text style={styles.sectionContent}>Side Effects: {medicine.side_effects}</Text>
-          </View>
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.imageContainer}>
+        <Image
+            source={{ uri: imageUrl }} // Use the imageUrl state here
+            style={styles.image}
+            resizeMode="contain"
+            onError={() => setImageUrl('https://via.placeholder.com/300')} // Fallback in case of error
+        />
+      </View>
 
-          <TouchableOpacity style={styles.buttonContainer}>
-            <Text style={styles.buttonText}>Add To Cart</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.title}>{medicine.drug_name}</Text>
+        {medicine.generic_name && <Text style={styles.genericName}>{medicine.generic_name}</Text>}
+        <Text style={styles.price}>{price}</Text>
+
+        <View style={styles.quantityContainer}>
+          <TouchableOpacity onPress={() => handleQuantityChange(-1)} style={styles.quantityButton}>
+            <Ionicons name="remove" size={24} color="#007AFF" />
+          </TouchableOpacity>
+          <Text style={styles.quantityText}>{quantity}</Text>
+          <TouchableOpacity onPress={() => handleQuantityChange(1)} style={styles.quantityButton}>
+            <Ionicons name="add" size={24} color="#007AFF" />
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+        <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
+          <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+        </TouchableOpacity>
+
+        {renderSection("Medical Condition", medicine.medical_condition)}
+        {renderSection("Side Effects", medicine.side_effects)}
+      </View>
+    </ScrollView>
   );
-};
+}
+
 
 const styles = StyleSheet.create({
-    price: {
-        fontSize: 22,
-        fontWeight: '500',
-        color: '#5fd3b0',
-    },
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#f8f9fa',
   },
-  loadingContainer: {
-    flex: 1,
+  imageContainer: {
+    width: '100%',
+    height: 300,
+    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
-    paddingTop: 50,  // Increased top padding
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+  image: {
+    width: '80%',
+    height: '80%',
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#252828',
-    textAlign: 'center',
-  },
-  scrollView: {
-    flexGrow: 1,
-  },
-  card: {
-    margin: 15,
+  infoContainer: {
     padding: 20,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
-  drugName: {
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#252828',
+    color: '#333',
     marginBottom: 5,
   },
   genericName: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#666',
-    marginBottom: 15,
-  },
-  priceContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   price: {
     fontSize: 22,
-    fontWeight: '500',
-    color: '#5fd3b0',
+    fontWeight: '600',
+    color: '#007AFF',
+    marginBottom: 20,
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 20,
-    padding: 5,
+    marginBottom: 20,
   },
   quantityButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 5,
+    padding: 10,
   },
-  quantityButtonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1b3c74',
-  },
-  quantity: {
+  quantityText: {
     fontSize: 18,
     fontWeight: '500',
-    paddingHorizontal: 15,
+    marginHorizontal: 20,
+  },
+  addToCartButton: {
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  addToCartButtonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '600',
   },
   section: {
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
-    color: '#252828',
+    color: '#333',
     marginBottom: 10,
   },
-  sectionContent: {
+  sectionText: {
     fontSize: 16,
-    color: '#666',
-    marginBottom: 5,
-    lineHeight: 22,
-  },
-  buttonContainer: {
-    marginTop: 10,
-    backgroundColor: '#1b3c74',
-    borderRadius: 24,
-    paddingVertical: 12,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
-    textAlign: 'center',
-    textTransform: 'uppercase',
+    color: '#444',
+    lineHeight: 24,
   },
 });
-
-export default MedicineDetails;

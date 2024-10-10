@@ -146,6 +146,7 @@ app.get('/api/medicines/:searchTerm', async (req, res) => {
   }
 });
 
+
 // -> ALTERNATIVES FUNCTIONALITY <-
 
 const alternativeSchema = new mongoose.Schema({
@@ -158,6 +159,7 @@ const alternativeSchema = new mongoose.Schema({
 
 const Alternative = mongoose.model('Alternative', alternativeSchema);
 
+//OG
 app.get('/api/alternatives/:name', async (req, res) => {
   const { name } = req.params;
   console.log('Received search request for:', name);
@@ -209,6 +211,209 @@ app.get('/api/alternatives/:name', async (req, res) => {
   }
 });
 
+
+
+
+
+// OTHER ONE 
+// Update the medicine search endpoint
+// app.get('/api/medicines/:searchTerm', async (req, res) => {
+//   const { searchTerm } = req.params;
+//   console.log('Search term:', searchTerm);
+  
+//   try {
+//     // Split the search term into words
+//     const searchWords = searchTerm.toLowerCase().split(/\s+/);
+//     console.log('Search words:', searchWords);
+    
+//     // Create a regex pattern that matches any of the words
+//     const regexPattern = searchWords.map(word => `(?=.*${word})`).join('');
+//     const searchRegex = new RegExp(regexPattern, 'i');
+//     console.log('Search regex:', searchRegex);
+
+//     const medicines = await Medicine.find({
+//       $or: [
+//         { drug_name: { $regex: searchRegex } },
+//         { generic_name: { $regex: searchRegex } }
+//       ]
+//     }, 'drug_name medical_condition side_effects generic_name');
+
+//     console.log('Medicines found:', medicines.length);
+
+//     if (medicines.length === 0) {
+//       console.log('No medicines found');
+//       return res.status(404).json({ message: 'Medicine not found' });
+//     }
+
+//     const formattedMedicines = medicines.map(medicine => ({
+//       id: medicine._id.toString(),
+//       drug_name: medicine.drug_name,
+//       medical_condition: medicine.medical_condition,
+//       side_effects: medicine.side_effects,
+//       generic_name: medicine.generic_name
+//     }));
+
+//     console.log('Formatted medicines:', formattedMedicines);
+
+//     res.status(200).json(formattedMedicines);
+//   } catch (err) {
+//     console.error('Error fetching medicine:', err);
+//     res.status(500).json({ message: 'Server error', error: err });
+//   }
+// });
+
+// Update the alternatives search endpoint
+// app.get('/api/alternatives/:name', async (req, res) => {
+//   const { name } = req.params;
+//   console.log('Received search request for:', name);
+
+//   const searchWords = name.toLowerCase().split(/\s+/);
+//   console.log('Search words:', searchWords);
+
+//   try {
+//     console.log('Executing database query...');
+//     const alternatives = await Alternative.find({
+//       $or: [
+//         { name: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
+//         { substitute0: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
+//         { substitute1: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
+//         { substitute2: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
+//         { substitute3: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
+//       ]
+//     });
+
+//     console.log('Query completed. Number of results:', alternatives.length);
+
+//     const validAlternatives = new Set();
+
+//     for (const alt of alternatives) {
+//       const checkAndAddMedicine = async (medicineName) => {
+//         if (medicineName) {
+//           const exists = await Medicine.findOne({ 
+//             drug_name: { $in: medicineName.toLowerCase().split(/\s+/).map(word => new RegExp(word, 'i')) } 
+//           });
+//           if (exists) {
+//             validAlternatives.add(medicineName.trim());
+//           }
+//         }
+//       };
+
+//       await checkAndAddMedicine(alt.name);
+//       await checkAndAddMedicine(alt.substitute0);
+//       await checkAndAddMedicine(alt.substitute1);
+//       await checkAndAddMedicine(alt.substitute2);
+//       await checkAndAddMedicine(alt.substitute3);
+//     }
+
+//     const alternativeArray = Array.from(validAlternatives);
+//     console.log('Final processed alternatives:', alternativeArray);
+
+//     if (alternativeArray.length === 0) {
+//       console.log('No valid alternatives found after processing');
+//       return res.status(404).json({ message: 'No valid alternatives found for this medicine' });
+//     }
+
+//     console.log('Sending response with valid alternatives');
+//     res.status(200).json(alternativeArray);
+//   } catch (err) {
+//     console.error('Error in alternatives search:', err);
+//     res.status(500).json({ message: 'Server error', error: err.message });
+//   }
+// });
+
+
+// app.get('/api/alternatives/:name', async (req, res) => {
+//   const { name } = req.params;
+//   console.log('Received search request for:', name);
+
+//   const searchWords = name.toLowerCase().split(/\s+/);
+//   console.log('Search words:', searchWords);
+
+//   try {
+//     console.log('Executing database query...');
+//     const alternatives = await Alternative.find({
+//       $or: [
+//         { name: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
+//         { substitute0: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
+//         { substitute1: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
+//         { substitute2: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
+//         { substitute3: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
+//       ]
+//     });
+
+//     console.log('Query completed. Number of results:', alternatives.length);
+
+//     const validAlternatives = [];
+
+//     for (const alt of alternatives) {
+//       const checkAndAddMedicine = async (medicineName) => {
+//         if (medicineName) {
+//           const medicine = await Medicine.findOne({ 
+//             drug_name: { $in: medicineName.toLowerCase().split(/\s+/).map(word => new RegExp(word, 'i')) } 
+//           });
+//           if (medicine) {
+//             const priceData = await fetchPrice(medicineName);
+//             validAlternatives.push({
+//               name: medicineName.trim(),
+//               side_effects: medicine.side_effects,
+//               price: priceData.price || 'Price not available'
+//             });
+//           }
+//         }
+//       };
+
+//       await checkAndAddMedicine(alt.name);
+//       await checkAndAddMedicine(alt.substitute0);
+//       await checkAndAddMedicine(alt.substitute1);
+//       await checkAndAddMedicine(alt.substitute2);
+//       await checkAndAddMedicine(alt.substitute3);
+//     }
+
+//     console.log('Final processed alternatives:', validAlternatives);
+
+//     if (validAlternatives.length === 0) {
+//       console.log('No valid alternatives found after processing');
+//       return res.status(404).json({ message: 'No valid alternatives found for this medicine' });
+//     }
+
+//     console.log('Sending response with valid alternatives');
+//     res.status(200).json(validAlternatives);
+//   } catch (err) {
+//     console.error('Error in alternatives search:', err);
+//     res.status(500).json({ message: 'Server error', error: err.message });
+//   }
+// });
+
+// Helper function to fetch price
+// async function fetchPrice(medicineName) {
+//   try {
+//     const priceData = await PakPrice.findOne({ 
+//       $or: [
+//         { Title: { $regex: new RegExp(medicineName, 'i') } },
+//         { Brand_Name: { $regex: new RegExp(medicineName, 'i') } }
+//       ]
+//     });
+
+//     if (priceData) {
+//       return {
+//         price: priceData.MRP || priceData.Original_Price || 'Price not available'
+//       };
+//     }
+
+//     const indiaPriceData = await IndiaPrice.findOne({ name: { $regex: new RegExp(medicineName, 'i') } });
+//     if (indiaPriceData) {
+//       const pkrPrice = indiaPriceData["price(₹)"] * 3.5; // Assuming conversion
+//       return { price: `PKR ${pkrPrice.toFixed(2)}` };
+//     }
+
+//     return { price: 'PKR 602.34' }; // Default price
+//   } catch (err) {
+//     console.error('Error fetching price:', err);
+//     return { price: 'Price not available' };
+//   }
+// }
+
+
 app.get('/api/check-alternatives', async (req, res) => {
   try {
     const allAlternatives = await Alternative.find({});
@@ -221,9 +426,27 @@ app.get('/api/check-alternatives', async (req, res) => {
 });
 
 // Schema for PakPrices
+// const pakPriceSchema = new mongoose.Schema({
+//   "Brand Name": String,
+//   "MRP": String
+// }, { collection: 'PakPrices', versionKey: false });
+
+//const PakPrice = mongoose.model('PakPrice', pakPriceSchema);
+
+// Schema for PakPrices
 const pakPriceSchema = new mongoose.Schema({
-  "Brand Name": String,
-  "MRP": String
+  Title: { type: String, required: false },
+  Company: { type: String, required: false },
+  Pack: { type: String, required: false },
+  Link: { type: String, required: false },
+  Discounted_Price: { type: Number, required: false },
+  Original_Price: { type: Number, required: false },
+  reg_no: { type: Number, required: false },
+  Company_Name: { type: String, required: false },
+  Brand_Name: { type: String, required: false },
+  Formulation: { type: String, required: false },
+  Pack_Size: { type: String, required: false },
+  MRP: { type: String, required: false }
 }, { collection: 'PakPrices', versionKey: false });
 
 const PakPrice = mongoose.model('PakPrice', pakPriceSchema);
@@ -237,31 +460,76 @@ const indiaPriceSchema = new mongoose.Schema({
 const IndiaPrice = mongoose.model('IndiaPrice', indiaPriceSchema);
 
 // GET route to fetch price based on medicine name
+// app.get('/api/price/:name', async (req, res) => {
+//   const { name } = req.params;
+
+//   try {
+//     // Check PakPrices first
+//     let price = await PakPrice.findOne({ "Brand Name": { $regex: new RegExp(name, 'i') } });
+//     if (price) {
+//       return res.json({ price: price.MRP });
+//     }
+
+//     // If not found in PakPrices, check IndiaPrices
+//     price = await IndiaPrice.findOne({ name: { $regex: new RegExp(name, 'i') } });
+//     if (price) {
+//       // Convert to PKR (you might want to use a real conversion rate)
+//       const pkrPrice = price["price(₹)"] * 3.5; // Assuming 1 INR = 3.5 PKR
+//       return res.json({ price: `PKR ${pkrPrice.toFixed(2)}` });
+//     }
+
+//     // If not found in either, return default price
+//     return res.json({ price: 'PKR 12345' });
+//   } catch (err) {
+//     console.error('Error fetching price:', err);
+//     res.status(500).json({ message: 'Server error', error: err });
+//   }
+// });
+
+// GET route to fetch price based on medicine name
 app.get('/api/price/:name', async (req, res) => {
   const { name } = req.params;
 
   try {
-    // Check PakPrices first
-    let price = await PakPrice.findOne({ "Brand Name": { $regex: new RegExp(name, 'i') } });
-    if (price) {
-      return res.json({ price: price.MRP });
+    // Check PakPrices for matches
+    const priceData = await PakPrice.findOne({ 
+      $or: [
+        { Title: { $regex: new RegExp(name, 'i') } },
+        { Brand_Name: { $regex: new RegExp(name, 'i') } }
+      ]
+    });
+
+    if (priceData) {
+      // Prepare response object
+      const responseData = {
+        Title: priceData.Title || priceData.Brand_Name,
+        Company: priceData.Company || priceData.Company_Name,
+        Pack: priceData.Pack || priceData.Pack_Size,
+        Link: priceData.Link,
+        Discounted_Price: priceData.Discounted_Price,
+        Original_Price: priceData.Original_Price,
+        MRP: priceData.MRP
+      };
+      
+      return res.json(responseData);
     }
 
-    // If not found in PakPrices, check IndiaPrices
-    price = await IndiaPrice.findOne({ name: { $regex: new RegExp(name, 'i') } });
-    if (price) {
-      // Convert to PKR (you might want to use a real conversion rate)
-      const pkrPrice = price["price(₹)"] * 3.5; // Assuming 1 INR = 3.5 PKR
+    // If not found in PakPrices, check IndiaPrices (as before)
+    const indiaPriceData = await IndiaPrice.findOne({ name: { $regex: new RegExp(name, 'i') } });
+
+    if (indiaPriceData) {
+      const pkrPrice = indiaPriceData["price(₹)"] * 3.5; // Assuming conversion
       return res.json({ price: `PKR ${pkrPrice.toFixed(2)}` });
     }
 
-    // If not found in either, return default price
-    return res.json({ price: 'PKR 12345' });
+    // Return default price if not found
+    return res.json({ price: 'PKR 602.34' });
   } catch (err) {
     console.error('Error fetching price:', err);
     res.status(500).json({ message: 'Server error', error: err });
   }
 });
+
 
 // app.get('/api/medicine-exists/:name', async (req, res) => {
 //   const { name } = req.params;
