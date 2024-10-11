@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 import { Keyboard } from 'react-native';
 import  { useState, useEffect } from 'react';
 import axios from 'axios';
-import CONFIG from './config.js';
+import CONFIG from './config';
 import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import ProfileManagement from './profilemangement';
@@ -212,7 +212,7 @@ export default class Search extends React.Component {
 
 
       			</View>
-			{/*IMAGE SLIDESHOW FOR MEDICATION*/}
+			{/IMAGE SLIDESHOW FOR MEDICATION/}
 
             <View style={[styles.medicineRecCard]}>
                   
