@@ -74,6 +74,27 @@ export default class Search extends React.Component {
 		}
 	};
 
+
+     fetchMedicine = async(medicine)=> {
+            try {
+              const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${medicine}`);
+              const medicine = response.data; // Medicine object from API response
+              //console.log('Found medicine:', medicine);
+          
+              // Check if the medicine is an object and contains the _id
+              if (typeof medicine === 'object' && medicine !== null && medicine._id) {
+                //console.log(medicine._id);
+                this.props.navigation.navigate('MedInfo', { id: medicine._id });
+              } else {
+                console.error('Medicine ID not found in response:', medicine);
+              }
+            } catch (error) {
+              console.error('Error fetching medicine:', error);
+            }
+          };
+
+
+
   	render(){
 		const { searchText } = this.state;
             
@@ -200,11 +221,33 @@ export default class Search extends React.Component {
 
                   <View style={[styles.medslideshowCard]}>
                    {/* Add medicine images here */}
-                        <View style={[styles.medicineCard]}></View>
 
-                        <View style={[styles.medicineCard]}></View>  
+                   <TouchableOpacity onPress={() => this.props.navigation.navigate('MedInfo', { id: "66e1dfd7bc0ca5e347fae7d4" })}>
+                        <Image 
+                              source={require('./assets/panadol.png')} 
+                              style={[styles.imageFit]} 
+                              resizeMode="contain" 
+                        />
+                        </TouchableOpacity>
 
-                        <View style={[styles.medicineCard]}></View>  
+
+
+
+                        <View style={[styles.medicineCard]}>
+                        <Image source={require('./assets/panadol.png')} style={[styles.imageFit]} resizeMode="contain" 
+                        onPress={() =>this.props.navigation.navigate('MedInfo', { id:"66e1dfd7bc0ca5e347fae7e0" })}
+      
+                        /> 
+                
+                        </View>
+
+                        <View style={[styles.medicineCard]}>
+                        <Image source={require('./assets/flagyl.png')} style={[styles.imageFit]} resizeMode="contain" />       
+                        </View>  
+
+                        <View style={[styles.medicineCard]}>
+                        <Image source={require('./assets/benad.jpg')} style={[styles.imageFit]} resizeMode="contain" /> 
+                        </View>  
 
                   </View>
    
@@ -539,7 +582,7 @@ const styles = StyleSheet.create({
             top: "67%",
             width: "95%",
             height: "30%",
-            left: "3%",
+            //left: "2%",
             position: "absolute",
 
       },
@@ -550,7 +593,7 @@ const styles = StyleSheet.create({
             top: "5%",
             width: "100%",
             height: "90%",
-            left: "0.5%",
+            //left: "0.5%",
             position: "absolute",
             flexDirection: "row",
             justifyContent: "space-between",
@@ -570,15 +613,20 @@ const styles = StyleSheet.create({
 
       medicineCard:{
 
-              top: "10%",
+              top: "5%",
               height: "62%",
              // position: "absolute",
               width: "33%",
               marginLeft: 12,
               borderRadius: 15,
-              backgroundColor: "#e0eff6",
+              backgroundColor: "white",
              
       },
+      imageFit: {
+            width: '110%',
+            height: '100%',   
+          },
+
       //-----------------------------------------------------------------
       cardLayout1: {
             height: "100%",
