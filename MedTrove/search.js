@@ -4,17 +4,16 @@ import { StyleSheet } from 'react-native';
 import { Keyboard } from 'react-native';
 import  { useState, useEffect } from 'react';
 import axios from 'axios';
-import CONFIG from './config.js'; 
+import CONFIG from './config.js';
+import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import ProfileManagement from './profilemangement';
+import { Ionicons } from '@expo/vector-icons';
+import { Linking } from 'react-native';
 
-
-const navigateToProfilePage = () => {
-      const navigation = useNavigation();
-      navigation.navigate('Profilemanagement'); // Replace 'ProfilePage' with the actual name of your profile page
-    };
 
 export default class Search extends React.Component {
+      
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -23,7 +22,7 @@ export default class Search extends React.Component {
 		};
 	  }
 
-	  //This funxtion is to implement the search 
+	  //This funxtion is to implement the search
 
 	  MySearchBar = () => {
 		const [status, setStatus] = useState(undefined);
@@ -32,12 +31,12 @@ export default class Search extends React.Component {
 		  const currentState = isVisible ? 'opened' : 'closed';
 		  setStatus(currentState);
 		};
-	  
+
 		useEffect(() => {
 		  getKeyboardStatus();
 		}, []);
 
-		// taking input of search 
+		// taking input of search
 		return (
 			<TextInput
 			  placeholder="Search..."
@@ -57,12 +56,12 @@ export default class Search extends React.Component {
 		console.log('Search text:', this.state.searchText); // Log the search text
 		const searchTerm = this.state.searchText;
 		console.log('Search term:', searchTerm);
-		
+
 		try {
 			const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
 			const medicine = response.data; // Medicine object from API response
 			//console.log('Found medicine:', medicine);
-			
+
 			// Check if the medicine is an object and contains the _id
 			if (typeof medicine === 'object' && medicine !== null && medicine._id) {
 				//console.log(medicine._id);
@@ -74,19 +73,38 @@ export default class Search extends React.Component {
 			console.error('Error fetching medicine:', error);
 		}
 	};
-	
+
   	render(){
 		const { searchText } = this.state;
+            
   	return (
-			
-    		<View style={styles.view}>
-      			<View style={[styles.header, styles.titleLayout]}>
-        				<Image style={[styles.icon, styles.iconLayout1]} resizeMode="cover" source="icon.png" />
-        				<Text style={[styles.home, styles.homePosition]}>Home</Text>
-        				<Image style={[styles.icon1, styles.icon1Position]} resizeMode="cover" source="icon.png" />
-      			</View>
 
-				  <View style={styles.search}>
+
+// This section represents top part of the search page 1/3----------------------------------------------------------------
+
+
+    		<View style={styles.view}>
+      		
+                  <View style={[styles.header, styles.titleLayout]}>
+            
+                              <Text style={[styles.home, styles.homePosition]}>Home</Text>
+                            
+                            {/* This navigates to the profile page from the profile icon */}
+                               <View style={styles.iconContainer}>
+                               <TouchableOpacity onPress={() => this.props.navigation.navigate(ProfileManagement)}>
+                                   
+                                          <Ionicons name="person" size={25} color="#064D65" />
+                                    </TouchableOpacity>
+                              </View>
+                              
+                            
+
+                        
+                             
+                  </View>
+
+{/* //  The search code is below */}
+		<View style={styles.search}>
 			  <TextInput
           		placeholder="Search..."
           		onChangeText={(text) => {
@@ -95,91 +113,110 @@ export default class Search extends React.Component {
           }}
           onSubmitEditing={this.handleSearchSubmit}
 
-				
-		></TextInput><Image style={[styles.icon2, styles.iconLayout1]} resizeMode="cover" source="icon.png" />
-			
-       
+
+		></TextInput>
+
+            <View style={{ flex: 2, justifyContent: 'flex-end' }}>
+                  <Ionicons name="search" size={32} color="#064D65" style={{ textAlign: 'right' }} />
+            </View>
+
+            {/* <Ionicons name="search" size={30} color="#064D65" /> */}
+{/* ---------------------------------------------------------------- */}
+{/* ---------------------------------------------------------------- */}
+
+
           </View>
+
+{/* // This section represents the big midddle service */}
       			<View style={[styles.card, styles.cardPosition]}>
-                       
+
         				<View style={[styles.rectangle1, styles.rectangleShadowBox]} />
-        				<Text style={[styles.weWillDeliver, styles.topCompany1Typo]}>We will deliver your medicines safely</Text>
+        				<Text style={[styles.weWillDeliver, styles.topCompany1Typo]}>We will safely deliver your medications</Text>
         				<View style={[styles.button, styles.imagePosition1]}>
           					<View style={[styles.rectangle2, styles.rectanglePosition]} />
           					<Text style={[styles.orderNow, styles.text6Position]}>Order Now</Text>
         				</View>
         				<View style={[styles.image, styles.imagePosition1]}>
-                                <Image source={require('./assets/heart.png')} style={[styles.imageCard]} resizeMode="cover" />
+                                <Image source={require('./assets/medvect.jpg')} style={[styles.imageCard1]} resizeMode="cover" />
         				</View>
       			</View>
-      			<View style={styles.topCompany}>
-        				<View style={[styles.title, styles.titleLayout]}>
-          					<Text style={[styles.topCompany1, styles.topCompany1Typo]}>Services</Text>
+      			
 {/*-------------Add a scroll view---------------------	 */}
-        				</View>
-				{/* <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScrollContainer}> */}
+{/*-------------MAIN SERVICES--------------------	 */}
+                        <View style={styles.topCompany}>
         				
-                              {/* Donation Button */}
-                              <View style={[styles.card1, styles.cardLayout1]}>
-          					<View style={[styles.rectangle3, styles.rectangleShadowBox]} />
-                                        <Image source={require('./assets/virus button.png')} style={[styles.imageCard]} resizeMode="cover" />
-          					
-          					<Text style={[styles.wendy, styles.wendyPosition]}>Donations</Text>
+          					<Text style={[styles.serviceText]}>Services</Text>
+        			
+
+                               {/* Donation Button*/}
+                               <View style={[styles.card1]}>
+                               <Ionicons name="chevron-back" size={30} color="#064D65" />
+                               </View>
+                               
+                               <View style={[ styles.cardLayout1]}>
+          					<View style={[styles.rectangle3,styles.imageCard]} />
+
+                                        <View style={styles.serviceContainer}>
+                                                <Image source={require('./assets/chatbot.png')} style={styles.serviceicon} resizeMode="contain" />
+                                           </View>
+          					{/* <Text style={[styles.wendy, styles.wendyPosition]}>Donations</Text> */}
         				</View>
                                {/* Chatbot Button */}
         				<View style={[styles.card2, styles.cardLayout1]}>
-          					<View style={[styles.rectangle4, styles.rectangleShadowBox]} />
-                                        <Image source={require('./assets/chatbot.png')} style={[styles.imageCard]} resizeMode="cover" />
-          				
-          					<Text style={[styles.camelia, styles.wendyPosition]}>{`Medibot `}</Text>
+          					<View style={[styles.rectangle4, styles.imageCard]} />
+                                    
+                                        <View style={styles.serviceContainer}>
+                                           <Image source={require('./assets/medicine.png')} style={[styles.serviceicon2]} resizeMode="contain" /> 
+                                        </View>
+
+          					{/* <Text style={[styles.camelia, styles.wendyPosition]}>{`Medibot `}</Text> */}
         				</View>
 
                                   {/* ADD DDI IMAGE HERE HAMNA OK ALIZA */}
         				<View style={[styles.card3, styles.cardLayout1]}>
-          					<View style={[styles.rectangle5, styles.rectangleShadowBox]} />
-                                        <Image source={require('./assets/DrugIdentifier.png')} style={[styles.imageCard]} resizeMode="cover" />
-          				
-          					<Text style={[styles.jordan, styles.wendyPosition1]}>DDI</Text>
-        				</View>
-        				{/* <TouchableOpacity onPress={() => navigateToProfilePage()}>
-                                    <View style={[styles.card4, styles.cardLayout1]}>
-                                          <View style={[styles.rectangle6, styles.rectangleShadowBox]} />
-                                                 <Image source={require('./assets/profilebtn.png')} style={[styles.imageCard]} resizeMode="cover" />
-                                                 <Text style={[styles.brian, styles.wendyPosition]}>Profile</Text>
-                                           </View>
-                              </TouchableOpacity> */}
-                        
-                           
-                              <View style={[styles.card4, styles.cardLayout1]}>
-                                          <View style={[styles.rectangle6, styles.rectangleShadowBox]} />
-                                          <TouchableOpacity onPress={() => this.props.navigation.navigate("ProfileManagement")}>
-                                                 <Image source={require('./assets/profilebtn.png')} style={[styles.imageCard1]} resizeMode="cover" />
-                                                 </TouchableOpacity>
-                                                 <Text style={[styles.brian, styles.wendyPosition]}>Profile</Text>
-                                           </View>
+          					<View style={[styles.rectangle5, styles.imageCard]} />
                               
+                                        <View style={styles.serviceContainer}>
+                                        <Image source={require('./assets/reminders.png')} style={[styles.serviceicon3]} resizeMode="contain" /> 
+                                        </View>
+                                       
 
-						{/* </ScrollView> */}
+          					{/* <Text style={[styles.jordan, styles.wendyPosition1]}>DDI</Text> */}
+        				</View> 
+      
+
+                                <View style={[styles.frontArrow]}>
+                               <Ionicons name="chevron-forward" size={30} color="#064D65" />
+                               </View> 
+       
+
+
       			</View>
-			{/*Pharmacy Locatopr*/}
-      			<View style={styles.popularProducts}>
-        				<View style={[styles.title, styles.titleLayout]}>
-          					<Text style={[styles.topCompany1, styles.topCompany1Typo]}>Pharmacy Locator</Text>
-          					
-        				</View>
-        				
-            			<View style={[styles.card7, styles.cardLayout]}>	
-                                        <Image source={require('./assets/pharma.png')} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
-          					
-       				</View>
-      			</View>
-      			
+			{/*IMAGE SLIDESHOW FOR MEDICATION*/}
+
+            <View style={[styles.medicineRecCard]}>
+                  
+                  <Text style={[styles.RecommendedText]}>Recommended for You</Text>
+
+                  <View style={[styles.medslideshowCard]}>
+                   {/* Add medicine images here */}
+                        <View style={[styles.medicineCard]}></View>
+
+                        <View style={[styles.medicineCard]}></View>  
+
+                        <View style={[styles.medicineCard]}></View>  
+
+                  </View>
+   
+            </View>
+
     		</View>
         );
     }
 }
 
 const styles = StyleSheet.create({
+
 
 	horizontalScrollContainer: {
 		flex: 1,
@@ -193,64 +230,373 @@ const styles = StyleSheet.create({
       padding: 10, // Adds padding to the container
       backgroundColor: "#fafafa", // Set a background color if needed
     },
-  
-        titleLayout: {
-              height: 25,
-              width: 386,
-              position: "absolute",
-              overflow: "hidden"
-        },
-        iconLayout1: {
-              maxHeight: "100%",
-              maxWidth: "100%"
-        },
-        homePosition: {
-              //fontFamily: "Arial",
-              letterSpacing: 1,
-              top: "50%",
-              position: "absolute"
-        },
-        icon1Position: {
+
+
+
+// Title Page styles
+      icon: {
+            width:"100%",
+            height: "100%",
+            right: "94.3%",
+            left: "0%",
+            bottom: "0%",
+            top: "10.26%",
+            maxHeight: "100%",
+            maxWidth: "100%",
+            overflow: "hidden"
+      },
+      
+      iconContainer:{   //holds notification icon
+            width:"100%",
+            height: "100%",
+            alignContent:"right",
+            position: "absolute",
+            alignItems: "flex-end",
+            
+
+      },
+      home: { //home text styles
+            marginLeft: -25,
+            fontWeight: "600",
+            textAlign: "center",
+            color: "#252828",
+            fontSize: 16,
+            left: "50%",
+            marginTop: -9.5
+      },
+
+      homePosition: { //text for home text
+            //fontFamily: "Arial",
+            letterSpacing: 1,
+            top: "50%",
+            left:30,
+            position: "absolute",
+            alignContent:"left",
+      },
+      titleLayout: {
+            height: 25,
+            width: 386,
+            position: "absolute",
+            overflow: "hidden",
+        
+      },
+      
+//----------------------------------------------------------------
+// SEARCH STYLES
+
+      // searchCard: {
+      //       backgroundColor: "#fff",
+      //       borderRadius: 12,
+      //       shadowOpacity: 0.1,
+      //       shadowOffset: { width: 0, height: 2 },
+      //       shadowRadius: 5,
+      //       elevation: 5, // Android shadow
+      //       padding: 10, // Adds padding inside the card
+      //       // Space below the search card
+      // },
+
+      search: {
+            flexDirection: "row", // Align the icon and text horizontally
+            alignItems: "center", // Center items vertically
+            backgroundColor: "#f1f1f1", // Background for the search bar
+            borderRadius: 10,
+            top:100,
+            left:60,
+            paddingHorizontal: 10, // Horizontal padding for space inside
+            height: 40, // Height of the search bar
+            width: 300, // Width of the search bar
+            borderWidth:0.5,
+            borderColor:"#064D65",
+      },
+
+      searchText: {
+            fontSize: 16, // Font size for search text
+            color: "#999", // Light color for placeholder text
+      },
+//----------------------------------------------------------------
+// SERVICES
+
+
+      cardPosition: { // the card which holds the order now info  
+            width: 386,
+             position: "relative",
+            left: 14,
+            height:200,
+            position: "absolute",
+            borderRadius:25,
+            backgroundColor: "#e0eff6", //this is a light blue colour
+         
+         
+      },
+
+      card: { // the card which holds the order now stuff
+            top: 180,
+            height: 128,
+            overflow: "hidden",
+            shadowOpacity: 1,
+            elevation: 60,
+            shadowRadius: 48,
+            shadowOffset: {
+                  width: 0,
+                  height: 3
+            },
+            shadowColor: "rgba(0, 0, 0, 0.8)",
+            borderColor:"#064D65",
+            borderWidth:0.5,
+            
+           
+
+         
+      },
+      
+      rectangleShadowBox: {
+          
+          
+            backgroundColor: "transparent",
+            borderRadius: 12
+      },
+
+      
+      orderNow: { // button
+            marginLeft: -44,
+            textTransform: "uppercase",
+            fontWeight: "700",
+            color: "#fff",
+            marginTop: -10,
+            fontSize: 12,
+            textAlign: "center",
+
+      },
+
+      //the images for order now
+      imagePosition1: {
+            bottom: "10.94%",
+            position: "absolute"
+      },
+
+      image: {
+            height: "100",
+            width: "90%",
+            top: "10.94%",
+            right: "5.63%",
+            left: "65.28%"
+      },
+
+      imageCard1:{          //image container
+                  top: "0%",
+              height: "100",
               right: "0%",
+              left: "0%",
+              bottom: "0%",
               position: "absolute",
-              overflow: "hidden"
+              width: 140,
+              marginLeft: -10
         },
-  
-        cardPosition: {
-              width: 386,
-          position: "relative",
-              left: 14,
-          height:135,
-              position: "absolute"
+       
+
+      //---------------------------------------------------------------
+
+        
+      topCompany1Typo: {
+            fontWeight: "500",
+            color: "#252828",
+            //fontFamily: "SF Pro Text",
+            letterSpacing: 1,
+            top: "50%",
+            position: "absolute"
+      },
+      topCompany1: {
+            marginLeft: -193,
+            textAlign: "left",
+            fontSize: 20,
+            left: "50%",
+            marginTop: -15,
+      },
+
+
+      //---------------------------------------------------------------
+      //MAIN SERVICES //
+
+      card1: { //back arrow
+            left: 0,
+            top: "40%",
+            shadowOpacity: 1,
+
+            
+      },
+
+      frontArrow:{
+
+            right: "8%",
+            top: "60%",
+            shadowOpacity: 1,
+            alignContent: "right",
+            position:"absolute",
+      },
+   
+      cardLayout1: {
+            height: "100%",
+            width: "100%",
+            top: "50%",
+            position: "absolute",
+            shadowOpacity:1,
+
+           
+
+      },
+      rectangle3: { // no use i think of this
+            top: "30%",
+            height: "100%",
+            right: "0%",
+            left: "0%",
+            bottom: "0%",
+            position: "absolute",
+            width: "100%",
+            
+            
+           
+      },
+
+      imageCard:{
+              top: "10%",
+              height: "60%",
+              right: "0%",
+              left: "10%",
+              bottom: "0%",
+             // position: "absolute",
+              width: "22%",
+              marginLeft: 0,
+              backgroundColor: "#e0eff6",
+              borderRadius: 50,
+
+
         },
+
+        serviceContainer: {
+            width: '60%', // adjust this value to change the image size
+            height: '70%',
+            left:"11.5%",
+            top: "18%", // adjust this value to change the image size
+          
+          },
+          
+          serviceicon: {
+            top:6,
+            left:2,
+            width: '30%',
+            height: '50%',
+            backgroundColor: "#e0eff6",
+            borderRadius:10
+           
+          },
+
+          serviceicon2: {
+            width: '25%',
+            height: '50%',
+            backgroundColor: "#e0eff6",
+            left:"6%",
+            top: "5%",
+          },
+
+          serviceicon3: {
+            width: '30%',
+            height: '50%',
+            backgroundColor: "#e0eff6",
+            left:"3.2%",
+            top: "5%",
+            borderRadius:22
+          },
+
+
+      serviceText:{
+            fontWeight: "500",
+            color: "#252828",
+            //fontFamily: "SF Pro Text",
+            letterSpacing: 1,
+            top: "12%",
+            marginLeft: -193,
+            textAlign: "left",
+            fontSize: 20,
+            left: "50%",
+        
+            },
+
+
+          topCompany: {
+            top: "45%",
+            width: 418,
+            height: 161,
+            left: 14,
+            position: "absolute",
+           
+      },
+      //--------------------------------------------------------------
+      // IMAGE SLIDESHOW FOR MEDICATION
+
+
+      medicineRecCard:{ //contains recommended medications
+
+            top: "67%",
+            width: "95%",
+            height: "30%",
+            left: "3%",
+            position: "absolute",
+
+      },
+
+
+      medslideshowCard:{
+
+            top: "5%",
+            width: "100%",
+            height: "90%",
+            left: "0.5%",
+            position: "absolute",
+            flexDirection: "row",
+            justifyContent: "space-between",
+         
+
+      },
+      RecommendedText:{
+            fontWeight: "500",
+            color: "#252828",
+            letterSpacing: 1,
+            marginLeft: -193,
+            textAlign: "left",
+            left: "53%",
+            fontSize: 20,
+            },
+
+
+      medicineCard:{
+
+              top: "10%",
+              height: "62%",
+             // position: "absolute",
+              width: "33%",
+              marginLeft: 12,
+              borderRadius: 15,
+              backgroundColor: "#e0eff6",
+             
+      },
+      //-----------------------------------------------------------------
+      cardLayout1: {
+            height: "100%",
+            width: "100%",
+            top: "30%",
+            position: "absolute",
+            shadowOpacity:1,
+
+      },
+    
+     
+       
         text6Clr: {
               color: "#d6d9da",
               textAlign: "left"
         },
-        rectangleShadowBox: {
-              shadowOpacity: 1,
-              elevation: 48,
-              shadowRadius: 48,
-              shadowOffset: {
-                    width: 0,
-                    height: 2
-              },
-              shadowColor: "rgba(0, 0, 0, 0.04)",
-              backgroundColor: "transparent",
-              borderRadius: 12
-        },
-        topCompany1Typo: {
-              fontWeight: "500",
-              color: "#252828",
-              //fontFamily: "SF Pro Text",
-              letterSpacing: 1,
-              top: "50%",
-              position: "absolute"
-        },
-        imagePosition1: {
-              bottom: "10.94%",
-              position: "absolute"
-        },
+    
+        
         rectanglePosition: {
               top: "0%",
               height: "100%",
@@ -272,15 +618,17 @@ const styles = StyleSheet.create({
               backgroundColor: "#e8ebf1",
               borderRadius: 12
         },
-        cardLayout1: {
-              height: 122,
-              width: 94,
-              top: 39,
-              position: "absolute",
-              overflow: "hidden"
-        },
+       
         wendyPosition: {
-              marginTop: 40,
+              marginTop: 40,    rectangle3: {
+                  top: "0%",
+                  height: "100%",
+                  right: "0%",
+                  left: "0%",
+                  bottom: "0%",
+                  position: "absolute",
+                  width: "100%"
+            },
               marginLeft: -30,
               color: "#96a2a3",
               fontSize: 12,
@@ -305,7 +653,7 @@ const styles = StyleSheet.create({
             top: "50%",
             position: "absolute"
       },
-       
+
         mask5Layout: {
               height: 100,
               width: 122,
@@ -367,27 +715,8 @@ const styles = StyleSheet.create({
               top: "50%",
               position: "absolute"
         },
-        icon: {
-              width: "5.7%",
-              right: "94.3%",
-              left: "0%",
-              bottom: "0%",
-              top: "5.26%",
-              height: "94.74%",
-              maxHeight: "100%",
-              maxWidth: "100%",
-              position: "absolute",
-              overflow: "hidden"
-        },
-        home: {
-              marginLeft: -25,
-              fontWeight: "600",
-              textAlign: "center",
-              color: "#252828",
-              fontSize: 16,
-              left: "50%",
-              marginTop: -9.5
-        },
+
+        
         icon1: {
               width: "0.52%",
               left: "99.48%",
@@ -425,33 +754,8 @@ const styles = StyleSheet.create({
               position: "absolute",
               overflow: "hidden"
         },
-      searchCard: {
-          backgroundColor: "#fff",
-          borderRadius: 12,
-          shadowOpacity: 0.1,
-          shadowOffset: { width: 0, height: 2 },
-          shadowRadius: 5,
-          elevation: 5, // Android shadow
-          padding: 10, // Adds padding inside the card
-           // Space below the search card
-      },
-      search: {
-        flexDirection: "row", // Align the icon and text horizontally
-        alignItems: "center", // Center items vertically
-        backgroundColor: "#f1f1f1", // Background for the search bar
-        borderRadius: 10,
-        top:95,
-        left:60,
-        paddingHorizontal: 10, // Horizontal padding for space inside
-        height: 40, // Height of the search bar
-        width: 300, // Width of the search bar
-    },
-  
-      searchText: {
-      fontSize: 16, // Font size for search text
-      color: "#999", // Light color for placeholder text
-    },
-  
+
+
         rectangle1: {
               top: "0%",
               height: "100%",
@@ -463,7 +767,7 @@ const styles = StyleSheet.create({
         },
         weWillDeliver: {
               marginTop: -50,
-              width: "44.82%",
+              width: "60.82%",
               lineHeight: 22,
               textAlign: "left",
               left: "3.63%",
@@ -472,21 +776,11 @@ const styles = StyleSheet.create({
         rectangle2: {
               borderRadius: 21,
               backgroundColor: "#1b3c74"
-        
+
         },
-  
-      
-        orderNow: {
-              marginLeft: -42,
-              textTransform: "uppercase",
-              fontWeight: "700",
-              color: "#fff",
-              marginTop: -7,
-              fontSize: 12,
-              textAlign: "center",
-          
-        },
-  
+
+
+
       button: {
         height: 40, // set a fixed height
         width: 150, // set a fixed width
@@ -505,46 +799,10 @@ const styles = StyleSheet.create({
               position: "absolute",
               width: "100%"
         },
-        imageCard:{
-            top: "0%",
-              height: 100,
-              right: "0%",
-              left: "0%",
-              bottom: "0%",
-              position: "absolute",
-              width: 100,
-              marginLeft: -8
-
-        },
-        imageCard1:{          //profile ki
-            top: "0%",
-              height: 100,
-              right: "0%",
-              left: "0%",
-              bottom: "0%",
-              position: "absolute",
-              width: 100,
-              marginLeft: -18
-        },
-        image: {
-              height: "78.13%",
-              width: "31.09%",
-              top: "10.94%",
-              right: "3.63%",
-              left: "65.28%"
-        },
-        card: {
-              top: 175,
-              height: 128,
-              overflow: "hidden"
-        },
-        topCompany1: {
-              marginLeft: -193,
-              textAlign: "left",
-              fontSize: 16,
-              left: "50%",
-              marginTop: -9.5
-        },
+      
+       
+     
+    
         seeAll: {
               marginTop: -6.5,
               marginLeft: 148,
@@ -555,15 +813,7 @@ const styles = StyleSheet.create({
               left: 0,
               top: 0
         },
-        rectangle3: {
-              top: "0%",
-              height: "100%",
-              right: "0%",
-              left: "0%",
-              bottom: "0%",
-              position: "absolute",
-              width: "100%"
-        },
+    
         logo: {
               height: "54.1%",
               width: "70.21%",
@@ -577,9 +827,7 @@ const styles = StyleSheet.create({
               marginLeft: -22,
               color: "#96a2a3"
         },
-        card1: {
-              left: 0
-        },
+       
         rectangle4: {
               top: "0%",
               height: "100%",
@@ -628,13 +876,7 @@ const styles = StyleSheet.create({
         card4: {
               left: 324
         },
-        topCompany: {
-              top: 333,
-              width: 418,
-              height: 161,
-              left: 14,
-              position: "absolute"
-        },
+       
         rectangle7: {
               left: 0,
               top: 0,
@@ -721,7 +963,7 @@ const styles = StyleSheet.create({
         },
 
         card7: {
-   
+
             top: 39,
             width:800,
             height:1000,
@@ -731,7 +973,7 @@ const styles = StyleSheet.create({
             height:'100%',
             width: '80%',
             marginLeft: 4
-          
+
       },
 
         painkiller: {
@@ -741,7 +983,7 @@ const styles = StyleSheet.create({
               left: 39,
               width: 72
         },
-      
+
         popularProducts: {
               top: 524,
               width: 478,
@@ -861,5 +1103,5 @@ const styles = StyleSheet.create({
               width: "100%"
         }
   });
-  
+
   // export default Frame;
