@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import ProfileManagement from './profilemangement';
 import { Ionicons } from '@expo/vector-icons';
 import { Linking } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native';
 
 
 export default class Search extends React.Component {
@@ -103,7 +104,8 @@ export default class Search extends React.Component {
 
 // This section represents top part of the search page 1/3----------------------------------------------------------------
            // <ScrollView style={styles.view}>
-    		<ScrollView style={styles.view}>
+           <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
+            <ScrollView style={styles.view}>
       		
                   <View style={[styles.header, styles.titleLayout]}>
             
@@ -179,7 +181,7 @@ export default class Search extends React.Component {
                                         <View style={styles.serviceContainer}>
                                                 <Image source={require('./assets/medibot.jpeg')} style={styles.serviceicon} resizeMode="contain" />
                                            </View>
-          					{/* <Text style={[styles.wendy, styles.wendyPosition]}>Donations</Text> */}
+          					<Text style={[styles.wendy, styles.wendyPosition3]}>Medibot</Text>
         				</View>
                                {/* Chatbot Button */}
         				<View style={[styles.card2, styles.cardLayout1]}>
@@ -188,8 +190,9 @@ export default class Search extends React.Component {
                                         <View style={styles.serviceContainer}>
                                            <Image source={require('./assets/DDI.jpeg')} style={[styles.serviceicon2]} resizeMode="contain" /> 
                                         </View>
-
-          					{/* <Text style={[styles.camelia, styles.wendyPosition]}>{`Medibot `}</Text> */}
+                                        <Text style={[styles.wendy, styles.wendyPosition]}>DDI</Text>
+          				
+                        
         				</View>
 
                                   {/* ADD DDI IMAGE HERE HAMNA OK ALIZA */}
@@ -201,7 +204,7 @@ export default class Search extends React.Component {
                                         </View>
                                        
 
-          					{/* <Text style={[styles.jordan, styles.wendyPosition1]}>DDI</Text> */}
+          					<Text style={[styles.jordan, styles.wendyPosition1]}>Reminders</Text>
         				</View> 
       
 
@@ -212,7 +215,8 @@ export default class Search extends React.Component {
 
 
       			</View>
-			{/IMAGE SLIDESHOW FOR MEDICATION/}
+
+{/* // This section represents the medication slideshow 2/3 */}
 
             <View style={[styles.medicineRecCard]}>
                   
@@ -246,7 +250,8 @@ export default class Search extends React.Component {
             </View>
 
     		</ScrollView>
-            //</ScrollView>
+       </KeyboardAvoidingView>
+      
         );
     }
 }
@@ -265,7 +270,7 @@ const styles = StyleSheet.create({
             fontSize: 20,
       },
       mapImage: {
-            width: '75%',
+            width: '80%',
             height: 200, // Adjust height as needed
             Top: 0,
             marginLeft: 50,
@@ -584,13 +589,59 @@ const styles = StyleSheet.create({
             marginTop: -75
            
       },
+
+      //text fir serveices
+
+      wendyPosition: {     //DDI text
+            marginTop: 40,
+            marginLeft: -20,
+            color: "black",
+            fontSize: 12,
+            fontWeight: "500",
+            textAlign: "center",
+            //fontFamily: "SF Pro Text",
+            letterSpacing: 1,
+            left: "23%",
+            top: "50%",
+            position: "absolute"
+      },
+    
+      wendyPosition1: {     //DDI text
+          marginTop: 40,
+          marginLeft: -20,
+          color: "black",
+          fontSize: 12,
+          fontWeight: "500",
+          textAlign: "center",
+          //fontFamily: "SF Pro Text",
+          letterSpacing: 1,
+          left: "18%",
+          top: "50%",
+          position: "absolute"
+    },
+
+    wendyPosition3: {     
+      marginTop: 40,
+      marginLeft: -20,
+      color: "black",
+      fontSize: 12,
+      fontWeight: "500",
+      textAlign: "center",
+      //fontFamily: "SF Pro Text",
+      letterSpacing: 1,
+      left: "18%",
+      top: "50%",
+      position: "absolute"
+},
+
+
       //--------------------------------------------------------------
       // IMAGE SLIDESHOW FOR MEDICATION
 
 
       medicineRecCard:{ //contains recommended medications
 
-            top: "67%",
+            top: "70%",
             width: "95%",
             height: "30%",
             //left: "2%",
@@ -621,6 +672,7 @@ const styles = StyleSheet.create({
             textAlign: "left",
             left: "53%",
             fontSize: 20,
+            tope:"10%",
             },
 
 
@@ -680,40 +732,6 @@ const styles = StyleSheet.create({
               borderRadius: 12
         },
        
-        wendyPosition: {
-              marginTop: 40,    rectangle3: {
-                  top: "0%",
-                  height: "100%",
-                  right: "0%",
-                  left: "0%",
-                  bottom: "0%",
-                  position: "absolute",
-                  width: "100%"
-            },
-              marginLeft: -30,
-              color: "#96a2a3",
-              fontSize: 12,
-              fontWeight: "500",
-              textAlign: "center",
-              //fontFamily: "SF Pro Text",
-              letterSpacing: 1,
-              left: "50%",
-              top: "50%",
-              position: "absolute"
-        },
-        wendyPosition1: {     //DDI text
-            marginTop: 40,
-            marginLeft: -20,
-            color: "#96a2a3",
-            fontSize: 12,
-            fontWeight: "500",
-            textAlign: "center",
-            //fontFamily: "SF Pro Text",
-            letterSpacing: 1,
-            left: "50%",
-            top: "50%",
-            position: "absolute"
-      },
 
         mask5Layout: {
               height: 100,
