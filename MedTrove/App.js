@@ -8,8 +8,6 @@ import Search from './search';
 import MedInfo from './medinfo';
 import ProductList from './productList';
 import ProfileManagement from './profilemangement';
-import MedInfoAlt from './MedInfoAlt';
-
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -23,7 +21,6 @@ export default function App() {
         <Stack.Screen name="ProductList" component={ProductList} options={{ headerShown: false }} />
         <Stack.Screen name="MedInfo" component={MedInfo} options={{ headerShown: false }} /> 
         <Stack.Screen name="ProfileManagement" component={ProfileManagement} options={{ headerShown: false }} />
-        <Stack.Screen name="MedInfoAlt" component={MedInfoAlt} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
     );

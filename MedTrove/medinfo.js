@@ -1,3 +1,41 @@
+// import React, { useEffect, useState } from 'react';
+// import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+// import { Ionicons } from '@expo/vector-icons';
+// import axios from 'axios';
+// import CONFIG from './config';
+
+// export default function MedInfo({ route, navigation }) {
+//   //const id = '66e1df80bc0ca5e347fadc6a';
+//   const { id } = route.params;
+//   const [medicine, setMedicine] = useState(null);
+//   const [price, setPrice] = useState('Loading...');
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const [quantity, setQuantity] = useState(1);
+//   const [imageUrl, setImageUrl] = useState('https://via.placeholder.com/300'); // Add this state
+
+//   useEffect(() => {
+//     const fetchMedicineData = async () => {
+//       try {
+//         setLoading(true);
+//         const response = await axios.get(`${CONFIG.backendUrl}/api/medici/${id}`);
+//         setMedicine(response.data);
+        
+//         const priceResponse = await axios.get(`${CONFIG.backendUrl}/api/price/${response.data.drug_name}`);
+//         setPrice(priceResponse.data.price || 'Price not available');
+
+//         await fetchDrugImage(response.data.drug_name); // Fetch drug image
+
+//         setLoading(false);
+//       } catch (error) {
+//         console.error('Error fetching medicine data:', error);
+//         setError('Failed to fetch medicine data. Please try again.');
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchMedicineData();
+//   }, [id]);
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -5,26 +43,28 @@ import axios from 'axios';
 import CONFIG from './config';
 
 export default function MedInfo({ route, navigation }) {
-  //const id = '66e1df80bc0ca5e347fadc6a';
-  const { id } = route.params;
+  const { name } = route.params;
   const [medicine, setMedicine] = useState(null);
   const [price, setPrice] = useState('Loading...');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [imageUrl, setImageUrl] = useState('https://via.placeholder.com/300'); // Add this state
+  const [imageUrl, setImageUrl] = useState('https://via.placeholder.com/300');
 
   useEffect(() => {
+    console.log("nameeee " + name);
     const fetchMedicineData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${CONFIG.backendUrl}/api/medici/${id}`);
+        const response = await axios.get(`${CONFIG.backendUrl}/api/medicine-by-name/${name}`);
         setMedicine(response.data);
+
+        console.log(response.data);
         
         const priceResponse = await axios.get(`${CONFIG.backendUrl}/api/price/${response.data.drug_name}`);
         setPrice(priceResponse.data.price || 'Price not available');
 
-        await fetchDrugImage(response.data.drug_name); // Fetch drug image
+        await fetchDrugImage(response.data.drug_name);
 
         setLoading(false);
       } catch (error) {
@@ -35,7 +75,7 @@ export default function MedInfo({ route, navigation }) {
     };
 
     fetchMedicineData();
-  }, [id]);
+  }, [name]);
 
   // const fetchDrugImage = async (drugName) => {
   //   const apiKey = 'AIzaSyDE6AOUqSxH5E6xUD4IlU2Sn2Cbdffazvo'; // Replace with your API key

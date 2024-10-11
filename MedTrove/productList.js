@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, FlatList, View, TouchableOpacity, Image, Dimensions, TextInput  } from 'react-native';
+import { StyleSheet, Text, FlatList, View, TouchableOpacity, Image, Dimensions, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import CONFIG from './config';
@@ -12,6 +12,7 @@ export default class ProductList extends React.Component {
     loading: true,
     error: null,
     searchQuery: '',
+    wishlist: new Set(),
   };
 
   handleSearch = (query) => {
@@ -20,6 +21,7 @@ export default class ProductList extends React.Component {
 
   componentDidMount() {
     const { id } = this.props.route.params;
+   // const id = '66e1df80bc0ca5e347fadf71';  //benadryl
     this.fetchMedicineData(id);
   }
 
@@ -136,6 +138,22 @@ export default class ProductList extends React.Component {
     console.log("shifting to medinfo id "+ id);
   }
 
+  handleAddToWishlist = (itemName) => {
+    this.setState(prevState => {
+      const newWishlist = new Set(prevState.wishlist);
+      if (newWishlist.has(itemName)) {
+        newWishlist.delete(itemName);
+      } else {
+        newWishlist.add(itemName);
+      }
+      return { wishlist: newWishlist };
+    });
+  }
+
+  handleAlternativePress = (alternativeName) => {
+    navigation.navigate('MedInfo', { medicineName: alternativeName });
+  };
+
   renderMainMedicine = () => {
     const { mainMedicine } = this.state;
     if (!mainMedicine) return null;
@@ -151,7 +169,8 @@ export default class ProductList extends React.Component {
           <TouchableOpacity 
             style={styles.productButton}
             onPress={() => {
-              this.props.navigation.navigate('MedInfo', { id: mainMedicine._id });
+              //this.props.navigation.navigate('MedInfo', { id: mainMedicine._id });
+              this.props.navigation.navigate('MedInfo', { name: mainMedicine.drug_name });
             }}
           >
             <Text style={styles.buttonText}>Details</Text>
@@ -163,6 +182,27 @@ export default class ProductList extends React.Component {
   };
 
 
+  // renderAlternative = ({ item }) => (
+  //   <View style={styles.alternativeContainer}>
+  //     <Image source={{ uri: item.image }} style={styles.alternativeImage} />
+  //     <View style={styles.alternativeInfo}>
+  //       <Text style={styles.productName}>{item.name}</Text>
+  //       <Text style={styles.productPrice}>{item.price}</Text>
+  //     </View>
+  //     <View style={{ marginTop: 14, alignItems: 'center' }}>
+  //       <TouchableOpacity 
+  //         style={styles.productButton}
+  //         onPress={() => {
+  //           this.console(item.name + item.id);
+  //           this.props.navigation.navigate('MedInfo', { id: item.id });
+  //         }}
+  //       >
+  //         <Text style={styles.buttonText}>Details</Text>
+  //       </TouchableOpacity>
+  //     </View>
+  //   </View>
+  // );
+  
   renderAlternative = ({ item }) => (
     <View style={styles.alternativeContainer}>
       <Image source={{ uri: item.image }} style={styles.alternativeImage} />
@@ -171,19 +211,36 @@ export default class ProductList extends React.Component {
         <Text style={styles.productPrice}>{item.price}</Text>
       </View>
       <View style={{ marginTop: 14, alignItems: 'center' }}>
-        <TouchableOpacity 
-          style={styles.productButton}
-          onPress={() => {
-            this.console(item.name + item.id);
-            this.props.navigation.navigate('MedInfo', { id: item.id });
-          }}
-        >
-          <Text style={styles.buttonText}>Details</Text>
-        </TouchableOpacity>
+        {item.exists ? (
+          <TouchableOpacity 
+            style={styles.productButton}
+            onPress={() => {
+              this.console('moving to alternative ' + item.id + " " + item.name);
+              this.props.navigation.navigate('MedInfo', { name: item.name });
+              //this.props.navigation.navigate(handleAlternativePress(item.name));
+            }}
+          >
+            <Text style={styles.buttonText}>Details</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity 
+          style={[
+            styles.productButton,
+            styles.wishlistButton,
+            this.state.wishlist.has(item.name) && styles.greyButton
+          ]}
+            onPress={() => this.handleAddToWishlist(item.name)}
+          >
+            <Text style={styles.buttonText}>
+              {this.state.wishlist.has(item.name) ? 'Added to Wishlist' : 'Add to Wishlist'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
-  
+
+
   renderSortDropdown() {
     return (
       <Picker
@@ -260,13 +317,20 @@ export default class ProductList extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  greyButton: {
+    backgroundColor: '#A0A0A0',
+  },
   productButton: {
     backgroundColor: '#007AFF',
-    padding: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: 5,
-    width: 70,
     alignItems: 'center',
-    marginTop: 20
+    justifyContent: 'center',
+    minWidth: 100, // Increased minimum width
+  },
+  wishlistButton: {
+    minWidth: 150, // Even wider for the wishlist button
   },
   subHeaderContainer: {
     flexDirection: 'row',

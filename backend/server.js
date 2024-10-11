@@ -93,17 +93,37 @@ const Medicine = mongoose.model('Medicine', medicineSchema);
 
 // GET route for medicine information
 
+// app.get('/api/medici/:id', async (req, res) => {
+//   const { id } = req.params;
+
+//   try {
+//    // console.log(`Fetching medicine with id: ${id}`);
+//     const medicine = await Medicine.findById(id, 'drug_name medical_condition side_effects generic_name');
+//     if (!medicine) {
+//       console.log(`Medicine with id ${id} not found`);
+//       return res.status(404).json({ message: 'Medicine not found' });
+//     }
+//     //console.log(`Medicine found:`, medicine);
+//     res.status(200).json(medicine);
+//   } catch (err) {
+//     console.error('Error fetching medicine:', err);
+//     res.status(500).json({ message: 'Server error', error: err.message });
+//   }
+// });
+
 app.get('/api/medici/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-   // console.log(`Fetching medicine with id: ${id}`);
-    const medicine = await Medicine.findById(id, 'drug_name medical_condition side_effects generic_name');
+    console.log(`Attempting to fetch medicine with id: ${id}`);
+    const medicine = await Medicine.findById(id);
+    
     if (!medicine) {
       console.log(`Medicine with id ${id} not found`);
       return res.status(404).json({ message: 'Medicine not found' });
     }
-    //console.log(`Medicine found:`, medicine);
+    
+    console.log(`Medicine found:`, medicine);
     res.status(200).json(medicine);
   } catch (err) {
     console.error('Error fetching medicine:', err);
@@ -530,52 +550,116 @@ app.get('/api/price/:name', async (req, res) => {
   }
 });
 
-
-// app.get('/api/medicine-exists/:name', async (req, res) => {
-//   const { name } = req.params;
-//   try {
-//     const medicine = await Medicine.findOne({ drug_name: { $regex: new RegExp(name, 'i') } });
-//     res.json({ exists: !!medicine, id: medicine ? medicine._id : null });
-//   } catch (err) {
-//     console.error('Error checking medicine existence:', err);
-//     res.status(500).json({ message: 'Server error', error: err.message });
-//   }
-// });
-
 app.get('/api/medicine-exists/:name', async (req, res) => {
   const { name } = req.params;
   try {
-    // Split the name into words
-    const words = name.split(' ');
-    
-    // Create a regex pattern that matches any of the words
-    const regexPattern = words.map(word => `(?=.*${word})`).join('');
-    const regex = new RegExp(regexPattern, 'i');
-
-    // Search for medicines where the drug_name contains all the words in any order
-    const medicine = await Medicine.findOne({ drug_name: { $regex: regex } });
-
-    if (medicine) {
-      res.json({ exists: true, id: medicine._id, name: medicine.drug_name });
-    } else {
-      // If no exact match, try to find a partial match
-      const partialMatch = await Medicine.findOne({ 
-        drug_name: { $regex: new RegExp(words[0], 'i') } 
-      });
-
-      if (partialMatch) {
-        res.json({ exists: true, id: partialMatch._id, name: partialMatch.drug_name, partialMatch: true });
-      } else {
-        res.json({ exists: false, id: null, name: null });
-      }
-    }
+    const medicine = await Medicine.findOne({ drug_name: { $regex: new RegExp(name, 'i') } });
+    res.json({ exists: !!medicine, id: medicine ? medicine._id : null });
   } catch (err) {
     console.error('Error checking medicine existence:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
 
+//check substring
+// app.get('/api/medicine-exists/:name', async (req, res) => {
+//   const { name } = req.params;
+//   try {
+//     // Split the name into words
+//     const words = name.split(' ');
+    
+//     // Create a regex pattern that matches any of the words
+//     const regexPattern = words.map(word => `(?=.*${word})`).join('');
+//     const regex = new RegExp(regexPattern, 'i');
+
+//     // Search for medicines where the drug_name contains all the words in any order
+//     const medicine = await Medicine.findOne({ drug_name: { $regex: regex } });
+
+//     if (medicine) {
+//       res.json({ exists: true, id: medicine._id, name: medicine.drug_name });
+//     } else {
+//       // If no exact match, try to find a partial match
+//       const partialMatch = await Medicine.findOne({ 
+//         drug_name: { $regex: new RegExp(words[0], 'i') } 
+//       });
+
+//       if (partialMatch) {
+//         res.json({ exists: true, id: partialMatch._id, name: partialMatch.drug_name, partialMatch: true });
+//       } else {
+//         res.json({ exists: false, id: null, name: null });
+//       }
+//     }
+//   } catch (err) {
+//     console.error('Error checking medicine existence:', err);
+//     res.status(500).json({ message: 'Server error', error: err.message });
+//   }
+// });
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+
+
+app.get('/api/medicine-by-name/:name', async (req, res) => {
+  const { name } = req.params;
+  try {
+    console.log('Searching for:', name);
+    
+    // Clean and prepare the search term
+    const cleanedSearchTerm = name.trim().toLowerCase();
+    
+    // First, try to find an exact match
+    let medicine = await Medicine.findOne({
+      drug_name: new RegExp(`^${cleanedSearchTerm}$`, 'i')
+    });
+
+    if (medicine) {
+      // Exact match found
+      return res.json(medicine);
+    }
+
+    // If no exact match, search for the term within compound names
+    medicine = await Medicine.findOne({
+      drug_name: new RegExp(`\\b${cleanedSearchTerm}\\b`, 'i')
+    });
+
+    if (medicine) {
+      // Match found within a compound name
+      const drugNames = medicine.drug_name.split('/').map(drug => drug.trim());
+      const matchedDrug = drugNames.find(drug => 
+        drug.toLowerCase() === cleanedSearchTerm
+      );
+
+      if (matchedDrug) {
+        // Create a modified response focusing on the matched drug
+        const response = {
+          ...medicine.toObject(),
+          matched_drug_name: matchedDrug,
+          original_compound: medicine.drug_name,
+          is_compound: true,
+          compound_components: drugNames,
+          note: `This drug is part of a compound medication.`
+        };
+        return res.json(response);
+      } else {
+        // If somehow the matched term is not in the split array, return the whole compound
+        return res.json({
+          ...medicine.toObject(),
+          is_compound: true,
+          compound_components: drugNames,
+          note: `This is a compound medication containing multiple drugs.`
+        });
+      }
+    }
+
+    // If still no match found
+    return res.status(404).json({ message: 'Medicine not found' });
+
+  } catch (err) {
+    
+    console.error('Error fetching medicine by name:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
 });
