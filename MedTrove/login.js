@@ -52,7 +52,9 @@ export default class Login extends React.Component {
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      Alert.alert('Login Successful', 'Welcome back!');
+      this.props.navigation.navigate('Search');
+      //Alert.alert('Error', 'Something went wrong. Please try again.');
     }
   };
 

@@ -102,9 +102,8 @@ export default class Search extends React.Component {
 
 
 // This section represents top part of the search page 1/3----------------------------------------------------------------
-
-
-    		<View style={styles.view}>
+           // <ScrollView style={styles.view}>
+    		<ScrollView style={styles.view}>
       		
                   <View style={[styles.header, styles.titleLayout]}>
             
@@ -158,7 +157,7 @@ export default class Search extends React.Component {
           					<Text style={[styles.orderNow, styles.text6Position]}>Order Now</Text>
         				</View>
         				<View style={[styles.image, styles.imagePosition1]}>
-                                <Image source={require('./assets/medvect.jpg')} style={[styles.imageCard1]} resizeMode="cover" />
+                                <Image source={require('./assets/home.jpeg')} style={[styles.imageCard1]} resizeMode="cover" />
         				</View>
       			</View>
       			
@@ -178,7 +177,7 @@ export default class Search extends React.Component {
           					<View style={[styles.rectangle3,styles.imageCard]} />
 
                                         <View style={styles.serviceContainer}>
-                                                <Image source={require('./assets/chatbot.png')} style={styles.serviceicon} resizeMode="contain" />
+                                                <Image source={require('./assets/medibot.jpeg')} style={styles.serviceicon} resizeMode="contain" />
                                            </View>
           					{/* <Text style={[styles.wendy, styles.wendyPosition]}>Donations</Text> */}
         				</View>
@@ -187,7 +186,7 @@ export default class Search extends React.Component {
           					<View style={[styles.rectangle4, styles.imageCard]} />
                                     
                                         <View style={styles.serviceContainer}>
-                                           <Image source={require('./assets/medicine.png')} style={[styles.serviceicon2]} resizeMode="contain" /> 
+                                           <Image source={require('./assets/DDI.jpeg')} style={[styles.serviceicon2]} resizeMode="contain" /> 
                                         </View>
 
           					{/* <Text style={[styles.camelia, styles.wendyPosition]}>{`Medibot `}</Text> */}
@@ -198,7 +197,7 @@ export default class Search extends React.Component {
           					<View style={[styles.rectangle5, styles.imageCard]} />
                               
                                         <View style={styles.serviceContainer}>
-                                        <Image source={require('./assets/reminders.png')} style={[styles.serviceicon3]} resizeMode="contain" /> 
+                                        <Image source={require('./assets/reminder.jpeg')} style={[styles.serviceicon3]} resizeMode="contain" /> 
                                         </View>
                                        
 
@@ -220,47 +219,58 @@ export default class Search extends React.Component {
                   <Text style={[styles.RecommendedText]}>Recommended for You</Text>
 
                   <View style={[styles.medslideshowCard]}>
-                   {/* Add medicine images here */}
-
-                   <TouchableOpacity onPress={() => this.props.navigation.navigate('MedInfo', { id: "66e1dfd7bc0ca5e347fae7d4" })}>
-                        <Image 
-                              source={require('./assets/panadol.png')} 
-                              style={[styles.imageFit]} 
-                              resizeMode="contain" 
-                        />
-                        </TouchableOpacity>
-
-
-
-
                         <View style={[styles.medicineCard]}>
-                        <Image source={require('./assets/panadol.png')} style={[styles.imageFit]} resizeMode="contain" 
-                        onPress={() =>this.props.navigation.navigate('MedInfo', { id:"66e1dfd7bc0ca5e347fae7e0" })}
-      
-                        /> 
-                
+                        <TouchableOpacity  onPress={() =>this.props.navigation.navigate('MedInfo', { name :"panadol" })}>
+                        <Image source={require('./assets/panadol.jpeg')} style={[styles.imageFit]} resizeMode="contain"/> 
+                        </TouchableOpacity>
                         </View>
 
                         <View style={[styles.medicineCard]}>
-                        <Image source={require('./assets/flagyl.png')} style={[styles.imageFit]} resizeMode="contain" />       
-                        </View>  
+                        <TouchableOpacity  onPress={() =>this.props.navigation.navigate('MedInfo', { name :"flagyl" })}>
+                        <Image source={require('./assets/flagyl.jpeg')} style={[styles.imageFit]} resizeMode="contain" />    
+                        </TouchableOpacity>
+                        </View>
 
                         <View style={[styles.medicineCard]}>
-                        <Image source={require('./assets/benad.jpg')} style={[styles.imageFit]} resizeMode="contain" /> 
-                        </View>  
-
+                        <TouchableOpacity  onPress={() =>this.props.navigation.navigate('MedInfo', { name :"benadryl" })}>
+                        <Image source={require('./assets/benad.jpeg')} style={[styles.imageFit]} resizeMode="contain" />   
+                        </TouchableOpacity>
+                        </View>
                   </View>
    
             </View>
 
-    		</View>
+            <View style={styles.pharmacon}>
+                    <Text style={[styles.pharmaText]}>Pharmacy Locator</Text>
+                    <Image source={require('./assets/pharma.png')} style={styles.mapImage} resizeMode="contain" />
+            </View>
+
+    		</ScrollView>
+            //</ScrollView>
         );
     }
 }
 
 const styles = StyleSheet.create({
-
-
+      pharmacon: {
+            marginTop: 780,
+      },
+      pharmaText :{
+            fontWeight: "500",
+            color: "#252828",
+            letterSpacing: 1,
+            marginLeft: -186,
+            textAlign: "left",
+            left: "53%",
+            fontSize: 20,
+      },
+      mapImage: {
+            width: '75%',
+            height: 200, // Adjust height as needed
+            Top: 0,
+            marginLeft: 50,
+            borderRadius: 25 // Add this line
+      },
 	horizontalScrollContainer: {
 		flex: 1,
 		flexDirection: 'row',
@@ -571,6 +581,7 @@ const styles = StyleSheet.create({
             height: 161,
             left: 14,
             position: "absolute",
+            marginTop: -75
            
       },
       //--------------------------------------------------------------
@@ -584,6 +595,8 @@ const styles = StyleSheet.create({
             height: "30%",
             //left: "2%",
             position: "absolute",
+            marginTop: -120,
+            marginLeft: 15
 
       },
 
@@ -666,6 +679,17 @@ const styles = StyleSheet.create({
               backgroundColor: "#e8ebf1",
               borderRadius: 12
         },
+       
+        wendyPosition: {
+              marginTop: 40,    rectangle3: {
+                  top: "0%",
+                  height: "100%",
+                  right: "0%",
+                  left: "0%",
+                  bottom: "0%",
+                  position: "absolute",
+                  width: "100%"
+            },
        
         wendyPosition: {
               marginTop: 40,    rectangle3: {
