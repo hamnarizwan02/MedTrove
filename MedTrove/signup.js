@@ -109,6 +109,13 @@ export default class SignUp extends React.Component {
           <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>
             <Text style={styles.loginLabel}>Login</Text>
           </TouchableOpacity>
+
+          
+           
+            <View style={styles.disclaimer}>
+            <Text style={styles.disctext}>By signing up you agree that MedTrove is not a replacement for medical professionals. </Text>
+            </View>
+         
         </View>
       </ImageBackground>
     );
@@ -127,6 +134,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+ disclaimer:{
+    height:"10%",
+    width:"90%",
+
+ }
+ ,
+ disctext:{
+  color: "black",
+  marginLeft: 10,
+  marginTop: 10,
+  marginBottom: 10,
+ }
+  ,
   logo: {
     fontWeight: "bold",
     fontSize: 60,
@@ -187,7 +208,7 @@ const styles = StyleSheet.create({
   loginLabel: {
     color: "blue",
     fontSize: 15,
-    marginTop: 20
+    marginTop: 15
   },
   signUpText: {
     color: "white",

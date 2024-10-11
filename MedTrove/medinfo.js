@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#007AFF',
+    color: '#064D65',
     marginBottom: 20,
   },
   quantityContainer: {
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   addToCartButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#064D65',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
