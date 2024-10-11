@@ -279,7 +279,7 @@ export default class ProductList extends React.Component {
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.searchInput}
-            placeholder="Search medicines..."
+            placeholder="  Search medicines..."
             placeholderTextColor="#a0a0a0"
             value={searchQuery}
             onChangeText={this.handleSearch}
@@ -350,30 +350,36 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 40,
-    width: 180,
+    width: 185,
     color: '#333333',
     backgroundColor: 'transparent', // Remove any background color
   },
   searchContainer: {
-    backgroundColor: '#3B5998', // Light blue background for search
+    backgroundColor: '#064D65', // Light blue background for search
     padding: 10,
-    paddingTop: 5,
-    paddingBottom: 15,
+    //paddingTop: 5,
+    //paddingBottom: 15,
+    borderBottomEndRadius:25,
+    borderBottomLeftRadius:25,
+    height: '10%',
   },
   searchInput: {
     backgroundColor: '#ffffff',
-    padding: 10,
+   // padding: 10,
     borderRadius: 25,
-    fontSize: 16,
+    fontSize: 15,
     color: '#000000',
+    height:"60%",
+    width:"80%",
+    left:"10%"
   },
   container: {
     flex: 1,
     backgroundColor: '#f0f4f8', // Lighter background for overall UI
   },
   headerContainer: {
-    backgroundColor: '#3B5998', 
-    padding: 15
+    backgroundColor: '#064D65', 
+    padding: 15,
   },
   header: {
     fontSize: 22,
@@ -425,9 +431,9 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   productButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#064D65',
     padding: 5,
-    borderRadius: 5,
+    borderRadius: 10,
     width: 70,
     alignItems: 'center', // Center the button text
     position: 'absolute', // Move the button up
