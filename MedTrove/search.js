@@ -212,7 +212,7 @@ export default class Search extends React.Component {
 
 
       			</View>
-			{/IMAGE SLIDESHOW FOR MEDICATION/}
+			{/* {/IMAGE SLIDESHOW FOR MEDICATION/} */}
 
             <View style={[styles.medicineRecCard]}>
                   
