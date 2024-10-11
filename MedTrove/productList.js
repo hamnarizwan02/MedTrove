@@ -74,7 +74,8 @@ export default class ProductList extends React.Component {
   }
 
   fetchDrugImage = async (drugName) => {
-    const apiKey = 'AIzaSyDE6AOUqSxH5E6xUD4IlU2Sn2Cbdffazvo';
+   // const apiKey = 'AIzaSyDE6AOUqSxH5E6xUD4IlU2Sn2Cbdffazvo';
+    const apiKey = `${CONFIG.APIKEY}`;
     const searchEngineId = 'e7a8780e6245241cf';
     const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(drugName)}&cx=${searchEngineId}&searchType=image&key=${apiKey}`;
 
