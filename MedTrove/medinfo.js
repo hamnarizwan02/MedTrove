@@ -102,11 +102,12 @@ export default function MedInfo({ route, navigation }) {
   // };
 
   const fetchDrugImage = async (drugName) => {
-    //const apiKey = 'AIzaSyBvUCHLP2EraPIlJUEJCeYv9JMZ6X_AAog';
-    const apiKey = `${CONFIG.APIKEY}`;
-    const searchEngineId = 'e7a8780e6245241cf';
+    const apiKey = 'AIzaSyDRmhRhTvXFDMVwJBT1oCrm0a2wstqSxzE';
+   //const apiKey = `${CONFIG.APIKEY}`;
+    const searchEngineId = 'b1f9d3f416bd4494f';
+    //`${CONFIG.SE}`;
     const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(drugName)}&cx=${searchEngineId}&searchType=image&key=${apiKey}`;
-
+    console.log(url);
     try {
       console.log('Fetching image for:', drugName);
       const response = await fetch(url);

@@ -286,7 +286,9 @@ const styles = StyleSheet.create({
     container: {
       flex: 1, // Make the container take the full height of the screen
       padding: 10, // Adds padding to the container
-      backgroundColor: "#fafafa", // Set a background color if needed
+      backgroundColor: "#fafafa", // Set a background color if needed,
+      marginLeft: -9
+
     },
 
 
