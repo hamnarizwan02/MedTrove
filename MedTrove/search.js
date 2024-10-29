@@ -11,6 +11,7 @@ import ProfileManagement from './profilemangement';
 import { Ionicons } from '@expo/vector-icons';
 import { Linking } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default class Search extends React.Component {
@@ -20,38 +21,63 @@ export default class Search extends React.Component {
 		this.state = {
 		  searchText: 'Initial search value', // Set the initial value here
 		  status: undefined,
+              //userId: null,
 		};
 	  }
 
 	  //This funxtion is to implement the search
 
-	  MySearchBar = () => {
-		const [status, setStatus] = useState(undefined);
-		const getKeyboardStatus = () => {
-		  const isVisible = Keyboard.isVisible();
-		  const currentState = isVisible ? 'opened' : 'closed';
-		  setStatus(currentState);
-		};
+	//   MySearchBar = () => {
+	// 	const [status, setStatus] = useState(undefined);
+	// 	const getKeyboardStatus = () => {
+	// 	  const isVisible = Keyboard.isVisible();
+	// 	  const currentState = isVisible ? 'opened' : 'closed';
+	// 	  setStatus(currentState);
+	// 	};
 
-		useEffect(() => {
-		  getKeyboardStatus();
-		}, []);
+	// 	useEffect(() => {
+	// 	  getKeyboardStatus();
+	// 	}, []);
 
-		// taking input of search
-		return (
-			<TextInput
-			  placeholder="Search..."
-			//  onFocus={() => Keyboard.show()}
-			 // value={searchText}
-			 onChangeText={(text) => {
-				setSearchText(text);
-			  }}
-			  onSubmitEditing={this.handleSearchSubmit}
-			/>
-		  );
-	};
+	// 	// taking input of search
+	// 	return (
+	// 		<TextInput
+	// 		  placeholder="Search..."
+	// 		//  onFocus={() => Keyboard.show()}
+	// 		 // value={searchText}
+	// 		 onChangeText={(text) => {
+	// 			setSearchText(text);
+	// 		  }}
+	// 		  onSubmitEditing={this.handleSearchSubmit}
+	// 		/>
+	// 	  );
+	// };
+      // saveSearchHistory = async (medicineId, medicineName) => {
+      //       try {
+      //         if (!this.state.userId) {
+      //           console.error('User ID not found');
+      //           return;
+      //         }
+        
+      //         const searchData = {
+      //           UserID: this.state.userId,
+      //           Medicine: medicineName
+      //         };
+        
+      //         const response = await axios.post(
+      //           `${CONFIG.backendUrl}/api/searchHistory/add`,
+      //           searchData
+      //         );
+        
+      //         if (response.status === 200) {
+      //           console.log('Search history saved successfully');
+      //         }
+      //       } catch (error) {
+      //         console.error('Error saving search history:', error);
+      //       }
+      //     };
 
-
+            //OG
 	handleSearchSubmit = async () => {
 		Keyboard.dismiss();
 		console.log('Search text:', this.state.searchText); // Log the search text
@@ -75,6 +101,45 @@ export default class Search extends React.Component {
 		}
 	};
 
+      // handleSearchSubmit = async () => {
+      //       Keyboard.dismiss();
+      //       const searchTerm = this.state.searchText;
+      //       console.log('Search term:', searchTerm);
+        
+      //       try {
+      //         const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
+      //         const medicine = response.data;
+        
+      //         if (typeof medicine === 'object' && medicine !== null && medicine._id) {
+      //           // Save search history before navigating
+      //           await this.saveSearchHistory(medicine._id, searchTerm);
+                
+      //           // Navigate to product list
+      //           this.props.navigation.navigate('ProductList', { id: medicine._id });
+      //         } else {
+      //           console.error('Medicine ID not found in response:', medicine);
+      //         }
+      //       } catch (error) {
+      //         console.error('Error fetching medicine:', error);
+      //       }
+      //     };
+      //     componentDidMount() {
+      //       // You'll need to implement this based on your authentication system
+      //       this.getUserId();
+      //     }
+        
+      //     // Method to get user ID from your auth system
+      //     getUserId = async () => {
+      //       try {
+      //         // This is a placeholder - implement based on your auth system
+      //         // For example, you might get it from AsyncStorage or your auth context
+      //         const userId = await AsyncStorage.getItem('userId');
+      //         this.setState({ userId });
+      //       } catch (error) {
+      //         console.error('Error fetching user ID:', error);
+      //       }
+      //     };
+                
 
      fetchMedicine = async(medicine)=> {
             try {

@@ -20,13 +20,14 @@ export default class ProductList extends React.Component {
   }
 
   componentDidMount() {
-    const { id } = this.props.route.params;
-   // const id = '66e1df80bc0ca5e347fadf71';  //benadryl
+   const { id } = this.props.route.params;
+    //const id = '66e1df80bc0ca5e347fadf71';  //benadryl
     this.fetchMedicineData(id);
   }
 
   fetchMedicineData = async (medicineId) => {
     try {
+      console.log(medicineId);
       const mainMedicineResponse = await axios.get(`${CONFIG.backendUrl}/api/medici/${medicineId}`);
       const mainMedicine = mainMedicineResponse.data;
 

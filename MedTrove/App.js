@@ -8,6 +8,8 @@ import Search from './search';
 import MedInfo from './medinfo';
 import ProductList from './productList';
 import ProfileManagement from './profilemangement';
+import MedicationInfo from './APITest';
+import Cart from './Cart';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -19,8 +21,16 @@ export default function App() {
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
         <Stack.Screen name="Search" component={Search} options={{ headerShown: false }} />
         <Stack.Screen name="ProductList" component={ProductList} options={{ headerShown: false }} />
-        <Stack.Screen name="MedInfo" component={MedInfo} options={{ headerShown: false }} /> 
+        <Stack.Screen name="MedInfo" component={MedInfo} options={{ 
+              headerShown: true,  
+              headerTitle: "",    
+              headerStyle: { backgroundColor: '#f8f9fa', },
+              headerTintColor: '#064D65',    // color the back button
+            }}  /> 
         <Stack.Screen name="ProfileManagement" component={ProfileManagement} options={{ headerShown: false }} />
+        <Stack.Screen name="Cart" component={Cart} options={{ title: 'Shopping Cart' }} />    
+        {/* api test page */}
+        <Stack.Screen name="MedicationInfo" component={MedicationInfo} options={{headerShown: false}} />  
       </Stack.Navigator>
     </NavigationContainer>
     );
