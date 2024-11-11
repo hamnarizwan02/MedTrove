@@ -205,15 +205,24 @@ export default class Search extends React.Component {
                   <Text style={[styles.RecommendedText]}>Recommended for You</Text>
 
                   <View style={[styles.medslideshowCard]}>
-                        <View style={[styles.medicineCard]}>
+                        {/* <View style={[styles.medicineCard]}>
                         <TouchableOpacity  onPress={() =>this.props.navigation.navigate('MedInfo', { name :"panadol" })}>
                         <Image source={require('./assets/panadol.jpeg')} style={[styles.imageFit]} resizeMode="contain"/> 
                         </TouchableOpacity>
+                        </View> */}
+
+
+                        <View style={styles.medicineCard}>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('MedInfo', { name: "paracetamol" })}>
+                              <Image source={require('./assets/panadol.jpeg')} resizeMode="cover" style={{ width: '100%', height: '100%' }} />
+                        </TouchableOpacity>
                         </View>
+
+
 
                         <View style={[styles.medicineCard]}>
                         <TouchableOpacity  onPress={() =>this.props.navigation.navigate('MedInfo', { name :"flagyl" })}>
-                        <Image source={require('./assets/flagyl.jpeg')} style={[styles.imageFit]} resizeMode="contain" />    
+                        <Image source={require('./assets/flagyl.jpeg')} style={[styles.imageFit]} resizeMode="cover" />    
                         </TouchableOpacity>
                         </View>
 
@@ -228,7 +237,7 @@ export default class Search extends React.Component {
 
             <View style={styles.pharmacon}>
                     <Text style={[styles.pharmaText]}>Pharmacy Locator</Text>
-                    <Image source={require('./assets/pharma.png')} style={styles.mapImage} resizeMode="contain" />
+                    <Image source={require('./assets/pharma.png')} style={styles.mapImage} resizeMode="cover" />
             </View>
 
     		</ScrollView>
@@ -240,7 +249,10 @@ export default class Search extends React.Component {
 
 const styles = StyleSheet.create({
       pharmacon: {
-            marginTop: "190%",
+            marginTop: "70%",
+            height: '55%',
+            //backgroundColor:"blue",
+           // position: "absolute",
       },
       pharmaText :{
             fontWeight: "500",
@@ -250,25 +262,38 @@ const styles = StyleSheet.create({
             textAlign: "left",
             left: "53%",
             fontSize: 20,
+            top: "3%",
+       
       },
+
+      mapContainer:{
+            width: '90%',
+            height: "30%",
+            top: "10%",
+      }
+      ,
+
       mapImage: {
-            width: '80%',
-            height: 200, // Adjust height as needed
-            Top: 0,
-            marginLeft: 50,
-            borderRadius: 25 // Add this line
+            width: '90%',
+            height: "30%",
+            flex:1, 
+            top:"5%",
+            marginLeft: "5%",
+            borderRadius: 10, // Add this line
+            backgroundColor:"red",
       },
 	horizontalScrollContainer: {
 		flex: 1,
 		flexDirection: 'row',
 		overflowX: 'scroll',
 		height:100,
+            backgroundColor:"#f8fbfd"
 	  },
 
     container: {
       flex: 1, // Make the container take the full height of the screen
       padding: 10, // Adds padding to the container
-      backgroundColor: "#fafafa", // Set a background color if needed,
+      backgroundColor: "#f8fbfd", // Set a background color if needed,
       marginLeft: -9
 
     },
@@ -320,6 +345,7 @@ const styles = StyleSheet.create({
             width: 386,
             position: "absolute",
             overflow: "hidden",
+            backgroundColor:"#f8fbfd"
         
       },
       
@@ -361,8 +387,9 @@ const styles = StyleSheet.create({
 // backgroundColor: "#e0eff6", //this is a light blue colour
 
       midSection:{
-            top: "10%",
+            top: "11%",
             height: "18%",
+            backgroundColor:"#f8fbfd"
             //overflow: "hidden",
                   
 
@@ -493,13 +520,13 @@ const styles = StyleSheet.create({
 
 
       ServiceCard: {
-            top: "36%",
+            top: "38%",
             width: 418,
             height: 161,
-            left: 14,
+            //left: "1%",
             position: "absolute",
             marginTop: -75,
-          // backgroundColor:"black",
+          //backgroundColor:"black",
            flexDirection: "column"
       },
 
@@ -546,7 +573,7 @@ const styles = StyleSheet.create({
       },
 
       imageCard:{
-              top: "5%",
+              top: "10%",
               height: "60%",
               right: "0%",
               left: "10%",
@@ -555,7 +582,10 @@ const styles = StyleSheet.create({
               width: "22%",
               marginLeft: 0,
               backgroundColor: "#e0eff6",
-              borderRadius: 50,
+              borderColor:"#c9d7dd",
+              borderRadius: 20,
+              borderWidth: 1.5,
+              elevation:10,
 
 
         },
@@ -569,12 +599,13 @@ const styles = StyleSheet.create({
           },
           
           serviceicon: {
-            top:6,
+            top:"20%",
             left:2,
             width: '30%',
             height: '50%',
             backgroundColor: "#e0eff6",
-            borderRadius:10
+            borderRadius:10,
+            
            
           },
 
@@ -583,7 +614,7 @@ const styles = StyleSheet.create({
             height: '50%',
             backgroundColor: "#e0eff6",
             left:"6%",
-            top: "5%",
+            top: "20%",
           },
 
           serviceicon3: {
@@ -591,7 +622,7 @@ const styles = StyleSheet.create({
             height: '50%',
             backgroundColor: "#e0eff6",
             left:"3.2%",
-            top: "5%",
+            top: "19%",
             borderRadius:22
           },
 
@@ -615,7 +646,7 @@ const styles = StyleSheet.create({
       //text fir serveices
 
       wendyPosition: {     //DDI text
-            marginTop: 40,
+            marginTop: "3%",
             marginLeft: -20,
             color: "black",
             fontSize: 12,
@@ -628,8 +659,8 @@ const styles = StyleSheet.create({
             position: "absolute"
       },
     
-      wendyPosition1: {     //DDI text
-          marginTop: 40,
+      wendyPosition1: {     //Reminders text
+          marginTop: "3%",
           marginLeft: -20,
           color: "black",
           fontSize: 12,
@@ -642,8 +673,8 @@ const styles = StyleSheet.create({
           position: "absolute"
     },
 
-    wendyPosition3: {     
-      marginTop: 40,
+    wendyPosition3: {     //medibot text
+      marginTop: "3%",
       marginLeft: -20,
       color: "black",
       fontSize: 12,
@@ -663,27 +694,29 @@ const styles = StyleSheet.create({
 
       medicineRecCard:{ //contains recommended medications
 
-            top: "60%",
+            top: "27%",
             width: "95%",
-            height: "30%",
+            height: "16%",
             //left: "2%",
-            position: "absolute",
-            marginTop: -120,
-            marginLeft: 15
+            position: "relative",
+           marginLeft: 15,
+          //backgroundColor: "black"
+           
 
       },
 
 
       medslideshowCard:{
 
-            top: "5%",
+            top: "20%",
             width: "100%",
-            height: "90%",
+            height: "85%",
             //left: "0.5%",
             position: "absolute",
             flexDirection: "row",
             justifyContent: "space-between",
-         
+             //backgroundColor: "red"
+           
 
       },
       RecommendedText:{
@@ -694,24 +727,28 @@ const styles = StyleSheet.create({
             textAlign: "left",
             left: "53%",
             fontSize: 20,
-            tope:"10%",
+            top:"1%",
             },
 
 
       medicineCard:{
 
               top: "5%",
-              height: "62%",
+              height: "70%",
              // position: "absolute",
               width: "33%",
               marginLeft: 12,
               borderRadius: 15,
-              backgroundColor: "white",
+             // backgroundColor: "blue",
+              elevation:5
              
       },
       imageFit: {
-            width: '110%',
-            height: '100%',   
+            width: '100%',
+            height: '100%', 
+       
+           // backgroundColor: "blue"
+           // position: 'absolute',
           },
 
       //-----------------------------------------------------------------
