@@ -663,3 +663,373 @@ app.get('/api/medicine-by-name/:name', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
+
+
+// //USER SEARCH HISTORY 
+// const searchHistorySchema = new mongoose.Schema({
+//   UserID: [{
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: 'User'
+//   }],
+//   Medicine: String,
+//   timestamp: {
+//       type: Date,
+//       default: Date.now
+//   }
+// });
+// const SearchHistory = mongoose.model('SearchHistory', searchHistorySchema);
+
+// // Add search history
+// app.post('/api/searchHistory/add', async (req, res) => {
+//   try {
+//       const { UserID, Medicine: medicineName } = req.body;
+
+//       const newSearchHistory = new SearchHistory({
+//           UserID: [UserID], // Storing as array as per your schema
+//           Medicine: medicineName
+//       });
+
+//       await newSearchHistory.save();
+//       res.status(200).json({ message: 'Search history saved successfully' });
+//   } catch (error) {
+//       console.error('Error saving search history:', error);
+//       res.status(500).json({ error: 'Error saving search history' });
+//   }
+// });
+
+// // Get user's search history
+// app.get('/api/searchHistory/:userId', async (req, res) => {
+//   try {
+//       const userId = req.params.userId;
+//       const searchHistory = await SearchHistory.find({
+//           UserID: userId
+//       }).sort({ timestamp: -1 });
+
+//       res.status(200).json(searchHistory);
+//   } catch (error) {
+//       console.error('Error fetching search history:', error);
+//       res.status(500).json({ error: 'Error fetching search history' });
+//   }
+// });
+
+// // Search medicines
+// app.get('/api/medicines/:searchTerm', async (req, res) => {
+//   try {
+//       const searchTerm = req.params.searchTerm;
+//       const medicine = await Medicine.findOne({
+//           name: { $regex: new RegExp(searchTerm, 'i') }
+//       });
+
+//       if (!medicine) {
+//           return res.status(404).json({ message: 'Medicine not found' });
+//       }
+
+//       res.json(medicine);
+//   } catch (error) {
+//       console.error('Error searching medicine:', error);
+//       res.status(500).json({ error: 'Error searching medicine' });
+//   }
+// });
+
+// // Get user's recent searches
+// app.get('/api/searchHistory/recent/:userId', async (req, res) => {
+//   try {
+//       const userId = req.params.userId;
+//       const recentSearches = await SearchHistory.find({
+//           UserID: userId
+//       })
+//       .sort({ timestamp: -1 })
+//       .limit(5); // Get last 5 searches
+
+//       res.json(recentSearches);
+//   } catch (error) {
+//       console.error('Error fetching recent searches:', error);
+//       res.status(500).json({ error: 'Error fetching recent searches' });
+//   }
+// });
+
+// // Delete search history
+// app.delete('/api/searchHistory/:id', async (req, res) => {
+//   try {
+//       const historyId = req.params.id;
+//       await SearchHistory.findByIdAndDelete(historyId);
+//       res.json({ message: 'Search history deleted successfully' });
+//   } catch (error) {
+//       console.error('Error deleting search history:', error);
+//       res.status(500).json({ error: 'Error deleting search history' });
+//   }
+// });
+
+// // Clear all search history for a user
+// app.delete('/api/searchHistory/user/:userId', async (req, res) => {
+//   try {
+//       const userId = req.params.userId;
+//       await SearchHistory.deleteMany({
+//           UserID: userId
+//       });
+//       res.json({ message: 'All search history cleared successfully' });
+//   } catch (error) {
+//       console.error('Error clearing search history:', error);
+//       res.status(500).json({ error: 'Error clearing search history' });
+//   }
+// });
+
+// // Get medicine recommendations based on search history
+// app.get('/api/recommendations/:userId', async (req, res) => {
+//   try {
+//       const userId = req.params.userId;
+      
+//       // Get user's recent searches
+//       const recentSearches = await SearchHistory.find({
+//           UserID: userId
+//       })
+//       .sort({ timestamp: -1 })
+//       .limit(3);
+
+//       // Get medicine names from recent searches
+//       const medicineNames = recentSearches.map(search => search.Medicine);
+
+//       // Find similar medicines based on recent searches
+//       const recommendations = await Medicine.find({
+//           name: { 
+//               $in: medicineNames.map(name => new RegExp(name, 'i'))
+//           }
+//       }).limit(5);
+
+//       res.json(recommendations);
+//   } catch (error) {
+//       console.error('Error getting recommendations:', error);
+//       res.status(500).json({ error: 'Error getting recommendations' });
+//   }
+// });
+
+
+
+//WITH MVC
+// const express = require('express');
+// const cors = require('cors');
+// const mongoose = require('mongoose');
+// require('dotenv').config();
+
+// // Import routes
+// const medicineRoutes = require('./routes/medicineRoutes');
+// const alternativeRoutes = require('./routes/alternativeRoutes');
+// const priceRoutes = require('./routes/priceRoutes');
+// const userRoutes = require('./routes/UserRoutes');
+
+// const app = express();
+
+// // Middleware
+// app.use(cors());
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+
+// // Database connection
+// mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/medTrove', {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+// })
+// .then(() => console.log('Connected to MongoDB'))
+// .catch((error) => console.error('MongoDB connection error:', error));
+
+// // Routes
+// app.use('/api/medicines', medicineRoutes);
+// app.use('/api/alternatives', alternativeRoutes);
+// app.use('/api/prices', priceRoutes);
+// app.use('/api/users', userRoutes);
+
+// // Error handling middleware
+// app.use((err, req, res, next) => {
+//     console.error(err.stack);
+//     res.status(500).json({
+//         success: false,
+//         message: 'Something went wrong!',
+//         error: process.env.NODE_ENV === 'development' ? err.message : {}
+//     });
+// });
+
+// // Handle 404 routes
+// app.use((req, res) => {
+//     res.status(404).json({
+//         success: false,
+//         message: 'Route not found'
+//     });
+// });
+
+// // Server configuration
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+// });
+
+// module.exports = app;
+
+
+
+//CART FUNCTIONALITY 
+// Cart Schema
+const cartSchema = new mongoose.Schema({
+  userID: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  Medicine: [String],
+  Quantity: [String]
+}, { collection: 'Cart', versionKey: false });
+
+const Cart = mongoose.model('Cart', cartSchema);
+
+// Current User Schema
+const currentUserSchema = new mongoose.Schema({
+  currentuserid: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
+}, { collection: 'CurrentUserLoggedIn', versionKey: false });
+
+const CurrentUser = mongoose.model('CurrentUser', currentUserSchema);
+
+// Get current user's cart
+app.get('/api/cart/current', async (req, res) => {
+  try {
+    // Get current user
+    const currentUser = await CurrentUser.findOne({});
+    if (!currentUser || !currentUser.currentuserid[0]) {
+      return res.status(404).json({ message: 'No user currently logged in' });
+    }
+
+    // Get cart for current user
+    const cart = await Cart.findOne({ userID: currentUser.currentuserid[0] });
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    res.json(cart);
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Add item to cart
+app.post('/api/cart/add', async (req, res) => {
+  try {
+    const { medicine, quantity } = req.body;
+    
+    // Get current user
+    const currentUser = await CurrentUser.findOne({});
+    if (!currentUser || !currentUser.currentuserid[0]) {
+      return res.status(404).json({ message: 'No user currently logged in' });
+    }
+
+    // Find or create cart for user
+    let cart = await Cart.findOne({ userID: currentUser.currentuserid[0] });
+    
+    if (!cart) {
+      cart = new Cart({
+        userID: [currentUser.currentuserid[0]],
+        Medicine: [medicine],
+        Quantity: [quantity.toString()]
+      });
+    } else {
+      // Check if medicine already exists in cart
+      const medicineIndex = cart.Medicine.indexOf(medicine);
+      if (medicineIndex !== -1) {
+        // Update quantity if medicine exists
+        cart.Quantity[medicineIndex] = (parseInt(cart.Quantity[medicineIndex]) + parseInt(quantity)).toString();
+      } else {
+        // Add new medicine if it doesn't exist
+        cart.Medicine.push(medicine);
+        cart.Quantity.push(quantity.toString());
+      }
+    }
+
+    await cart.save();
+    res.status(200).json({ message: 'Item added to cart successfully', cart });
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Remove item from cart
+app.delete('/api/cart/remove/:medicine', async (req, res) => {
+  try {
+    const { medicine } = req.params;
+    
+    // Get current user
+    const currentUser = await CurrentUser.findOne({});
+    if (!currentUser || !currentUser.currentuserid[0]) {
+      return res.status(404).json({ message: 'No user currently logged in' });
+    }
+
+    // Find cart and remove item
+    const cart = await Cart.findOne({ userID: currentUser.currentuserid[0] });
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    const medicineIndex = cart.Medicine.indexOf(medicine);
+    if (medicineIndex !== -1) {
+      cart.Medicine.splice(medicineIndex, 1);
+      cart.Quantity.splice(medicineIndex, 1);
+      await cart.save();
+    }
+
+    res.json({ message: 'Item removed from cart successfully', cart });
+  } catch (error) {
+    console.error('Error removing from cart:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Update cart item quantity
+app.put('/api/cart/update', async (req, res) => {
+  try {
+    const { medicine, quantity } = req.body;
+
+    // Ensure quantity is handled as a number throughout the operation
+    const numericQuantity = parseInt(quantity, 10);
+    
+    if (!medicine || isNaN(numericQuantity) || numericQuantity < 0) {
+      return res.status(400).json({ 
+        message: 'Invalid input. Medicine name and non-negative quantity required.' 
+      });
+    }
+
+    const currentUser = await CurrentUser.findOne({});
+    if (!currentUser || !currentUser.currentuserid[0]) {
+      return res.status(404).json({ message: 'No user currently logged in' });
+    }
+
+    const cart = await Cart.findOne({ userID: currentUser.currentuserid[0] });
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    const medicineIndex = cart.Medicine.indexOf(medicine);
+    if (medicineIndex === -1) {
+      return res.status(404).json({ 
+        message: 'Medicine not found in cart' 
+      });
+    }
+
+    // Store the quantity as a string, but ensure it's converted from a number
+    cart.Quantity[medicineIndex] = numericQuantity.toString();
+
+    await cart.save();
+
+    res.status(200).json({ 
+      message: 'Cart updated successfully', 
+      cart 
+    });
+
+  } catch (error) {
+    console.error('Error updating cart:', error);
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message 
+    });
+  }
+});

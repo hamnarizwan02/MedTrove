@@ -36,8 +36,9 @@
 
 //     fetchMedicineData();
 //   }, [id]);
+
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import CONFIG from './config';
@@ -51,31 +52,78 @@ export default function MedInfo({ route, navigation }) {
   const [quantity, setQuantity] = useState(1);
   const [imageUrl, setImageUrl] = useState('https://via.placeholder.com/300');
 
+  const fetchMedicineData = async (name) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${CONFIG.backendUrl}/api/medicine-by-name/${name}`);
+      setMedicine(response.data);
+      
+      const priceResponse = await axios.get(`${CONFIG.backendUrl}/api/price/${response.data.drug_name}`);
+      setPrice(priceResponse.data.price || 'Price not available');
+  
+      await fetchDrugImage(response.data.drug_name);
+    } catch (error) {
+      console.error('Error fetching medicine data:', error);
+      setError('Failed to fetch medicine data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   useEffect(() => {
-    console.log("nameeee " + name);
-    const fetchMedicineData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${CONFIG.backendUrl}/api/medicine-by-name/${name}`);
-        setMedicine(response.data);
-
-        console.log(response.data);
-        
-        const priceResponse = await axios.get(`${CONFIG.backendUrl}/api/price/${response.data.drug_name}`);
-        setPrice(priceResponse.data.price || 'Price not available');
-
-        await fetchDrugImage(response.data.drug_name);
-
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching medicine data:', error);
-        setError('Failed to fetch medicine data. Please try again.');
-        setLoading(false);
+    let isMounted = true;
+  
+    const loadData = async () => {
+      if (isMounted) {
+        await fetchMedicineData(name);
       }
     };
+  
+    // Make sure this part is not being skipped
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('Cart')}
+          style={{ marginRight: 15 }}
+        >
+          <Ionicons name="cart-outline" size={24} color="#064D65" />
+        </TouchableOpacity>
+      ),
+    });
+  
+    loadData();
+  
+    return () => {
+      isMounted = false;
+    };
+  }, [name, navigation]);
 
-    fetchMedicineData();
-  }, [name]);
+  ////OG
+  // useEffect(() => {
+  //   console.log("nameeee " + name);
+  //   const fetchMedicineData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const response = await axios.get(`${CONFIG.backendUrl}/api/medicine-by-name/${name}`);
+  //       setMedicine(response.data);
+
+  //       console.log(response.data);
+        
+  //       const priceResponse = await axios.get(`${CONFIG.backendUrl}/api/price/${response.data.drug_name}`);
+  //       setPrice(priceResponse.data.price || 'Price not available');
+
+  //       await fetchDrugImage(response.data.drug_name);
+
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error('Error fetching medicine data:', error);
+  //       setError('Failed to fetch medicine data. Please try again.');
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchMedicineData();
+  // }, [name]);
 
   // const fetchDrugImage = async (drugName) => {
   //   const apiKey = 'AIzaSyDE6AOUqSxH5E6xUD4IlU2Sn2Cbdffazvo'; // Replace with your API key
@@ -85,7 +133,6 @@ export default function MedInfo({ route, navigation }) {
   //   try {
   //       const response = await fetch(url);
   //       const data = await response.json();
-
   //       // Check if there are items in the response
   //       if (data.items && data.items.length > 0) {
   //           const firstImageUrl = data.items[0].link; // Get the link of the first image
@@ -100,6 +147,28 @@ export default function MedInfo({ route, navigation }) {
   //       setImageUrl('https://via.placeholder.com/300'); // Fallback image
   //   }
   // };
+
+  const handleAddToCart = async () => {
+    try {
+      const response = await axios.post(`${CONFIG.backendUrl}/api/cart/add`, {
+        medicine: medicine.drug_name,
+        quantity: quantity
+      });
+      
+      Alert.alert(
+        "Success",
+        "Item added to cart successfully",
+        [{ text: "OK" }]
+      );
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      Alert.alert(
+        "Error",
+        "Failed to add item to cart",
+        [{ text: "OK" }]
+      );
+    }
+  };
 
   const fetchDrugImage = async (drugName) => {
     const apiKey = 'AIzaSyDRmhRhTvXFDMVwJBT1oCrm0a2wstqSxzE';
@@ -140,10 +209,11 @@ export default function MedInfo({ route, navigation }) {
     setQuantity(prevQuantity => Math.max(1, prevQuantity + increment));
   };
 
-  const handleAddToCart = () => {
-    console.log(`Added ${quantity} ${medicine.drug_name} to cart`);
-    // Implement actual add to cart functionality here
-  };
+  //OG
+  // const handleAddToCart = () => {
+  //   console.log(`Added ${quantity} ${medicine.drug_name} to cart`);
+  //   // Implement actual add to cart functionality here
+  // };
 
   if (loading) {
     return <View style={styles.container}><Text>Loading...</Text></View>;
