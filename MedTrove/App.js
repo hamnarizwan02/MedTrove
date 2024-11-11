@@ -8,12 +8,13 @@ import Search from './search';
 import MedInfo from './medinfo';
 import ProductList from './productList';
 import ProfileManagement from './profilemangement';
+import Pharmacy from './pharmacy';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Search">
+      <Stack.Navigator initialRouteName="Splash">
       <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
@@ -21,6 +22,7 @@ export default function App() {
         <Stack.Screen name="ProductList" component={ProductList} options={{ headerShown: false }} />
         <Stack.Screen name="MedInfo" component={MedInfo} options={{ headerShown: false }} /> 
         <Stack.Screen name="ProfileManagement" component={ProfileManagement} options={{ headerShown: false }} />
+        <Stack.Screen name="Pharmacy" component={Pharmacy} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
     );

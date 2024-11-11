@@ -12,13 +12,17 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.medtrove"
     },
     "android": {
       "package": "com.example.medtrove",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "googleMaps": {
+        "apiKey": "YOUR_ANDROID_API_KEY"
       }
     },
     "web": {
@@ -27,7 +31,10 @@
     "extra": {
       "eas": {
         "projectId": "72a2f3d2-98bd-418b-a123-2c7eaf2b6203"
-      }
+      },
+      "MAPBOX_ACCESS_TOKEN": "sk.eyJ1IjoibGl6aXNpLTAzIiwiYSI6ImNtMzdlZ3FwMTBoYmYybXNmN2NvaGFsZ3kifQ.rcwboVcenlSnhqZQmK-UUg"
+      
     }
   }
 }
+

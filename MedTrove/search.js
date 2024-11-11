@@ -11,6 +11,8 @@ import ProfileManagement from './profilemangement';
 import { Ionicons } from '@expo/vector-icons';
 import { Linking } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 
 export default class Search extends React.Component {
@@ -150,18 +152,31 @@ export default class Search extends React.Component {
           </View>
 
 {/* // This section represents the big midddle service */}
-      			<View style={[styles.card, styles.cardPosition]}>
-
+                        <View style={styles.midSection}>    
+                        <LinearGradient
+                          colors={['#1b3c74', '#4a6fa1']} // Define your gradient colors here
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 0 }} // Left to right gradient
+                          style={styles.cardPosition} // Apply the same style object
+                                          >
+      			
         				<View style={[styles.rectangle1, styles.rectangleShadowBox]} />
+                              
         				<Text style={[styles.weWillDeliver, styles.topCompany1Typo]}>We will safely deliver your medications</Text>
         				<View style={[styles.button, styles.imagePosition1]}>
           					<View style={[styles.rectangle2, styles.rectanglePosition]} />
-          					<Text style={[styles.orderNow, styles.text6Position]}>Order Now</Text>
+
+                                      
+                                          
+                                    
+                                    <Text style={[styles.orderNow, styles.text6Position]}>Order Now</Text>
         				</View>
-        				<View style={[styles.image, styles.imagePosition1]}>
+        				{/* <View style={[styles.image, styles.imagePosition1]}>
                                 <Image source={require('./assets/home.jpeg')} style={[styles.imageCard1]} resizeMode="cover" />
-        				</View>
-      			</View>
+        				</View> */}
+      			
+                        </LinearGradient>
+                        </View>
       			
 {/*-------------Add a scroll view---------------------	 */}
 {/*-------------MAIN SERVICES--------------------	 */}
@@ -258,7 +273,7 @@ export default class Search extends React.Component {
 
 const styles = StyleSheet.create({
       pharmacon: {
-            marginTop: 780,
+            marginTop: "190%",
       },
       pharmaText :{
             fontWeight: "500",
@@ -342,7 +357,7 @@ const styles = StyleSheet.create({
       },
       
 //----------------------------------------------------------------
-// SEARCH STYLES
+// SEARCH STYLES 
 
       // searchCard: {
       //       backgroundColor: "#fff",
@@ -358,13 +373,13 @@ const styles = StyleSheet.create({
       search: {
             flexDirection: "row", // Align the icon and text horizontally
             alignItems: "center", // Center items vertically
-            backgroundColor: "#f1f1f1", // Background for the search bar
+            backgroundColor: "#ffffff", // Background for the search bar
             borderRadius: 10,
             top:100,
-            left:60,
+            left:"2%",
             paddingHorizontal: 10, // Horizontal padding for space inside
-            height: 40, // Height of the search bar
-            width: 300, // Width of the search bar
+            height: "4%", // Height of the search bar
+            width: "90%", // Width of the search bar
             borderWidth:0.5,
             borderColor:"#064D65",
       },
@@ -376,6 +391,16 @@ const styles = StyleSheet.create({
 //----------------------------------------------------------------
 // SERVICES
 
+// backgroundColor: "#e0eff6", //this is a light blue colour
+
+      midSection:{
+            top: "10%",
+            height: "18%",
+            //overflow: "hidden",
+                  
+
+      },
+
 
       cardPosition: { // the card which holds the order now info  
             width: 386,
@@ -383,9 +408,8 @@ const styles = StyleSheet.create({
             left: 14,
             height:200,
             position: "absolute",
-            borderRadius:25,
-            backgroundColor: "#e0eff6", //this is a light blue colour
-         
+            borderRadius:25,  
+            backgroundColor:  "#1b3c74",
          
       },
 
@@ -395,12 +419,12 @@ const styles = StyleSheet.create({
             overflow: "hidden",
             shadowOpacity: 1,
             elevation: 60,
-            shadowRadius: 48,
+            shadowRadius: 45,
             shadowOffset: {
                   width: 0,
                   height: 3
             },
-            shadowColor: "rgba(0, 0, 0, 0.8)",
+            shadowColor: "rgba(0, 0, 0, 0.9)",
             borderColor:"#064D65",
             borderWidth:0.5,
             
@@ -417,11 +441,13 @@ const styles = StyleSheet.create({
       },
 
       
+
+      
       orderNow: { // button
             marginLeft: -44,
             textTransform: "uppercase",
             fontWeight: "700",
-            color: "#fff",
+            color: "#064D65",
             marginTop: -10,
             fontSize: 12,
             textAlign: "center",
@@ -459,7 +485,7 @@ const styles = StyleSheet.create({
         
       topCompany1Typo: {
             fontWeight: "500",
-            color: "#252828",
+            color: "white",
             //fontFamily: "SF Pro Text",
             letterSpacing: 1,
             top: "50%",
@@ -497,9 +523,10 @@ const styles = StyleSheet.create({
       cardLayout1: {
             height: "100%",
             width: "100%",
-            top: "50%",
+            top: "60%",
             position: "absolute",
             shadowOpacity:1,
+            backgroundColor: "black"
 
            
 
@@ -518,7 +545,7 @@ const styles = StyleSheet.create({
       },
 
       imageCard:{
-              top: "10%",
+              top: "5%",
               height: "60%",
               right: "0%",
               left: "10%",
@@ -536,8 +563,8 @@ const styles = StyleSheet.create({
             width: '60%', // adjust this value to change the image size
             height: '70%',
             left:"11.5%",
-            top: "18%", // adjust this value to change the image size
-          
+            top: "8%", // adjust this value to change the image size
+            
           },
           
           serviceicon: {
@@ -583,7 +610,7 @@ const styles = StyleSheet.create({
 
 
           topCompany: {
-            top: "45%",
+            top: "38%",
             width: 418,
             height: 161,
             left: 14,
@@ -643,7 +670,7 @@ const styles = StyleSheet.create({
 
       medicineRecCard:{ //contains recommended medications
 
-            top: "70%",
+            top: "60%",
             width: "95%",
             height: "30%",
             //left: "2%",
@@ -856,7 +883,7 @@ const styles = StyleSheet.create({
         },
         rectangle2: {
               borderRadius: 21,
-              backgroundColor: "#1b3c74"
+              backgroundColor: "#e0eff6"
 
         },
 
