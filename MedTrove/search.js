@@ -27,58 +27,6 @@ export default class Search extends React.Component {
 		};
 	  }
 
-	  //This funxtion is to implement the search
-
-	//   MySearchBar = () => {
-	// 	const [status, setStatus] = useState(undefined);
-	// 	const getKeyboardStatus = () => {
-	// 	  const isVisible = Keyboard.isVisible();
-	// 	  const currentState = isVisible ? 'opened' : 'closed';
-	// 	  setStatus(currentState);
-	// 	};
-
-	// 	useEffect(() => {
-	// 	  getKeyboardStatus();
-	// 	}, []);
-
-	// 	// taking input of search
-	// 	return (
-	// 		<TextInput
-	// 		  placeholder="Search..."
-	// 		//  onFocus={() => Keyboard.show()}
-	// 		 // value={searchText}
-	// 		 onChangeText={(text) => {
-	// 			setSearchText(text);
-	// 		  }}
-	// 		  onSubmitEditing={this.handleSearchSubmit}
-	// 		/>
-	// 	  );
-	// };
-      // saveSearchHistory = async (medicineId, medicineName) => {
-      //       try {
-      //         if (!this.state.userId) {
-      //           console.error('User ID not found');
-      //           return;
-      //         }
-        
-      //         const searchData = {
-      //           UserID: this.state.userId,
-      //           Medicine: medicineName
-      //         };
-        
-      //         const response = await axios.post(
-      //           `${CONFIG.backendUrl}/api/searchHistory/add`,
-      //           searchData
-      //         );
-        
-      //         if (response.status === 200) {
-      //           console.log('Search history saved successfully');
-      //         }
-      //       } catch (error) {
-      //         console.error('Error saving search history:', error);
-      //       }
-      //     };
-
             //OG
 	handleSearchSubmit = async () => {
 		Keyboard.dismiss();
@@ -103,44 +51,7 @@ export default class Search extends React.Component {
 		}
 	};
 
-      // handleSearchSubmit = async () => {
-      //       Keyboard.dismiss();
-      //       const searchTerm = this.state.searchText;
-      //       console.log('Search term:', searchTerm);
-        
-      //       try {
-      //         const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
-      //         const medicine = response.data;
-        
-      //         if (typeof medicine === 'object' && medicine !== null && medicine._id) {
-      //           // Save search history before navigating
-      //           await this.saveSearchHistory(medicine._id, searchTerm);
-                
-      //           // Navigate to product list
-      //           this.props.navigation.navigate('ProductList', { id: medicine._id });
-      //         } else {
-      //           console.error('Medicine ID not found in response:', medicine);
-      //         }
-      //       } catch (error) {
-      //         console.error('Error fetching medicine:', error);
-      //       }
-      //     };
-      //     componentDidMount() {
-      //       // You'll need to implement this based on your authentication system
-      //       this.getUserId();
-      //     }
-        
-      //     // Method to get user ID from your auth system
-      //     getUserId = async () => {
-      //       try {
-      //         // This is a placeholder - implement based on your auth system
-      //         // For example, you might get it from AsyncStorage or your auth context
-      //         const userId = await AsyncStorage.getItem('userId');
-      //         this.setState({ userId });
-      //       } catch (error) {
-      //         console.error('Error fetching user ID:', error);
-      //       }
-      //     };
+
                 
 
      fetchMedicine = async(medicine)=> {
@@ -218,34 +129,25 @@ export default class Search extends React.Component {
 
 {/* // This section represents the big midddle service */}
                         <View style={styles.midSection}>    
-                        <LinearGradient
-                          colors={['#1b3c74', '#4a6fa1']} // Define your gradient colors here
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 0 }} // Left to right gradient
-                          style={styles.cardPosition} // Apply the same style object
-                                          >
+                        <View style={styles.cardPosition}> 
       			
         				<View style={[styles.rectangle1, styles.rectangleShadowBox]} />
                               
-        				<Text style={[styles.weWillDeliver, styles.topCompany1Typo]}>We will safely deliver your medications</Text>
+        				<Text style={[styles.weWillDeliver, styles.WeWilDeliverText]}>We will safely deliver your medications</Text>
         				<View style={[styles.button, styles.imagePosition1]}>
-          					<View style={[styles.rectangle2, styles.rectanglePosition]} />
-
-                                      
-                                          
-                                    
-                                    <Text style={[styles.orderNow, styles.text6Position]}>Order Now</Text>
+          					<View style={[styles.orderNowBtn]} />
+                                          <Text style={[styles.orderNow]}>Order Now</Text>
         				</View>
-        				{/* <View style={[styles.image, styles.imagePosition1]}>
+        				<View style={[styles.image, styles.imagePosition1]}>
                                 <Image source={require('./assets/home.jpeg')} style={[styles.imageCard1]} resizeMode="cover" />
-        				</View> */}
+        				</View>
       			
-                        </LinearGradient>
                         </View>
+                     </View>
       			
 {/*-------------Add a scroll view---------------------	 */}
 {/*-------------MAIN SERVICES--------------------	 */}
-                        <View style={styles.topCompany}>
+                        <View style={styles.ServiceCard}>
         				
           					<Text style={[styles.serviceText]}>Services</Text>
         			
@@ -468,35 +370,36 @@ const styles = StyleSheet.create({
 
 
       cardPosition: { // the card which holds the order now info  
-            width: 386,
-             position: "relative",
-            left: 14,
-            height:200,
-            position: "absolute",
-            borderRadius:25,  
-            backgroundColor:  "#1b3c74",
-         
-      },
-
-      card: { // the card which holds the order now stuff
-            top: 180,
-            height: 128,
-            overflow: "hidden",
-            shadowOpacity: 1,
-            elevation: 60,
-            shadowRadius: 45,
+            width: '95%',
+            position: "relative",
+            height:"80%",
+            margin:"3%",
+           // position: "absolute",
+            borderRadius:20,  
+            backgroundColor:"#e0eff6",
+            shadowOpacity: 2,
+            elevation: 20,
+            shadowRadius: 4,
             shadowOffset: {
                   width: 0,
                   height: 3
             },
-            shadowColor: "rgba(0, 0, 0, 0.9)",
+            shadowColor: "rgba(0, 0, 0, 0.5)",
             borderColor:"#064D65",
-            borderWidth:0.5,
+            borderWidth: 0.6,
+            flexDirection:"column",
             
-           
 
          
       },
+
+      // card: { // the card which holds the order now stuff
+      //       top: "100%",
+      //       height: "100%",
+      //       overflow: "hidden",
+      //       //backgroundColor:"black",
+
+      // },
       
       rectangleShadowBox: {
           
@@ -505,19 +408,51 @@ const styles = StyleSheet.create({
             borderRadius: 12
       },
 
+      weWillDeliver: {
+            marginTop: -50,
+            width: "60%",
+            lineHeight: 22,
+            textAlign: "left",
+            left: "3.63%",
+            fontSize: 15.5,
+      },
+  
+
+      WeWilDeliverText: {
+            fontWeight: "500",
+            color: "#064D65",
+            //fontFamily: "SF Pro Text",
+            letterSpacing: 1,
+            top: "50%",
+            position: "absolute"
+      },
       
 
       
-      orderNow: { // button
+      orderNow: { // button text
             marginLeft: -44,
             textTransform: "uppercase",
             fontWeight: "700",
-            color: "#064D65",
-            marginTop: -10,
+            color: "#e0eff6",
+            marginTop: "center",
+            marginLeft:"center",
             fontSize: 12,
             textAlign: "center",
 
       },
+      orderNowBtn: {
+            borderRadius: 15,
+            backgroundColor: "#064D65",
+            top: "0%",
+            height: "100%",
+            right: "0%",
+            left: "0%",
+            bottom: "0%",
+            position: "absolute",
+            width: "100%"
+
+      },
+   
 
       //the images for order now
       imagePosition1: {
@@ -545,28 +480,29 @@ const styles = StyleSheet.create({
         },
        
 
+
       //---------------------------------------------------------------
 
         
-      topCompany1Typo: {
-            fontWeight: "500",
-            color: "white",
-            //fontFamily: "SF Pro Text",
-            letterSpacing: 1,
-            top: "50%",
-            position: "absolute"
-      },
-      topCompany1: {
-            marginLeft: -193,
-            textAlign: "left",
-            fontSize: 20,
-            left: "50%",
-            marginTop: -15,
-      },
+   
+
 
 
       //---------------------------------------------------------------
       //MAIN SERVICES //
+
+
+      ServiceCard: {
+            top: "36%",
+            width: 418,
+            height: 161,
+            left: 14,
+            position: "absolute",
+            marginTop: -75,
+          // backgroundColor:"black",
+           flexDirection: "column"
+      },
+
 
       card1: { //back arrow
             left: 0,
@@ -674,15 +610,7 @@ const styles = StyleSheet.create({
             },
 
 
-          topCompany: {
-            top: "38%",
-            width: 418,
-            height: 161,
-            left: 14,
-            position: "absolute",
-            marginTop: -75
-           
-      },
+      
 
       //text fir serveices
 
@@ -804,15 +732,7 @@ const styles = StyleSheet.create({
         },
     
         
-        rectanglePosition: {
-              top: "0%",
-              height: "100%",
-              right: "0%",
-              left: "0%",
-              bottom: "0%",
-              position: "absolute",
-              width: "100%"
-        },
+    
         text6Position: {
               fontSize: 12,
               //fontFamily: "SF Pro Text",
@@ -938,20 +858,7 @@ const styles = StyleSheet.create({
               position: "absolute",
               width: "100%"
         },
-        weWillDeliver: {
-              marginTop: -50,
-              width: "60.82%",
-              lineHeight: 22,
-              textAlign: "left",
-              left: "3.63%",
-              fontSize: 15.5,
-        },
-        rectangle2: {
-              borderRadius: 21,
-              backgroundColor: "#e0eff6"
-
-        },
-
+     
 
 
       button: {

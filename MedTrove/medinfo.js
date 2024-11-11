@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '80%',
-    height: '80%',
+    height: '60%',
   },
   infoContainer: {
     padding: 20,
@@ -338,6 +338,7 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 20,
+    marginTop: "20%"
   },
   sectionTitle: {
     fontSize: 20,
