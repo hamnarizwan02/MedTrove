@@ -10,8 +10,9 @@ const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibGl6aXNpLTAzIiwiYSI6ImNtM2twancwajBldG4y
 const Pharmacy = () => {
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState({ coordinates: [73.0479, 33.6844], place_name: 'Default Location' }); // Default to Islamabad
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
+  const [routeGeoJson, setRouteGeoJson] = useState(null);
 
   // Get user's location on load
   useEffect(() => {
@@ -25,9 +26,22 @@ const Pharmacy = () => {
       let location = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = location.coords;
       setUserLocation({ latitude, longitude });
-      setSelectedLocation({ coordinates: [longitude, latitude], place_name: 'Your Location' });
     })();
   }, []);
+
+  const fetchRoute = async (destination) => {
+    if (!userLocation) return;
+
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${userLocation.longitude},${userLocation.latitude};${destination.coordinates[0]},${destination.coordinates[1]}?geometries=geojson&access_token=${MAPBOX_ACCESS_TOKEN}`;
+
+    try {
+      const response = await axios.get(url);
+      const route = response.data.routes[0].geometry;
+      setRouteGeoJson(route);
+    } catch (error) {
+      console.error('Error fetching route:', error);
+    }
+  };
 
   const mapHtml = `
     <!DOCTYPE html>
@@ -49,18 +63,50 @@ const Pharmacy = () => {
           const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [${selectedLocation.coordinates[0]}, ${selectedLocation.coordinates[1]}],
+            center: [${userLocation ? userLocation.longitude : 73.0479}, ${userLocation ? userLocation.latitude : 33.6844}],
             zoom: 12
           });
 
-          // Add a marker at the selected location
-          const marker = new mapboxgl.Marker({ color: 'red' })
+          // Add user's current location marker
+          new mapboxgl.Marker({ color: 'blue' })
+            .setLngLat([${userLocation ? userLocation.longitude : 73.0479}, ${userLocation ? userLocation.latitude : 33.6844}])
+            .setPopup(new mapboxgl.Popup().setText('Your Location'))
+            .addTo(map);
+
+          // Add selected location marker
+          ${selectedLocation ? `
+          new mapboxgl.Marker({ color: 'red' })
             .setLngLat([${selectedLocation.coordinates[0]}, ${selectedLocation.coordinates[1]}])
             .setPopup(new mapboxgl.Popup().setText('${selectedLocation.place_name}'))
             .addTo(map);
+          ` : ''}
 
-          // Adjust map view to fit the marker when location changes
-          map.flyTo({ center: [${selectedLocation.coordinates[0]}, ${selectedLocation.coordinates[1]}], zoom: 14 });
+          // Draw route if available
+          ${routeGeoJson ? `
+          map.on('load', () => {
+            map.addSource('route', {
+              type: 'geojson',
+              data: {
+                type: 'Feature',
+                geometry: ${JSON.stringify(routeGeoJson)}
+              }
+            });
+
+            map.addLayer({
+              id: 'route',
+              type: 'line',
+              source: 'route',
+              layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+              },
+              paint: {
+                'line-color': '#ff0000',
+                'line-width': 4
+              }
+            });
+          });
+          ` : ''}
         </script>
       </body>
     </html>
@@ -85,6 +131,7 @@ const Pharmacy = () => {
     setSelectedLocation({ coordinates: location.center, place_name: location.place_name });
     setSearchText(location.place_name);
     setSearchResults([]);
+    fetchRoute({ coordinates: location.center });
   };
 
   return (
