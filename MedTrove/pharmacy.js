@@ -1,15 +1,33 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, FlatList, Text, TouchableOpacity, Alert } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { WebView } from 'react-native-webview';
+import * as Location from 'expo-location';
 import axios from 'axios';
 
-const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibGl6aXNpLTAzIiwiYSI6ImNtMnVpcTZodzAxZmoycXFvcTlwcGtleWIifQ.YBib32k5l5ofdgVHvmbHqQ';
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibGl6aXNpLTAzIiwiYSI6ImNtM2twancwajBldG4ycnM5ZDZzOXNuNTYifQ.FbBkAJ1yYNVQ-n1UzGglHg';
 
 const Pharmacy = () => {
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState({ coordinates: [73.0479, 33.6844], place_name: '' }); // Default location (Islamabad) for now
+  const [selectedLocation, setSelectedLocation] = useState({ coordinates: [73.0479, 33.6844], place_name: 'Default Location' }); // Default to Islamabad
+  const [userLocation, setUserLocation] = useState(null);
+
+  // Get user's location on load
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission denied', 'We need location permissions to show nearby results.');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setUserLocation({ latitude, longitude });
+      setSelectedLocation({ coordinates: [longitude, latitude], place_name: 'Your Location' });
+    })();
+  }, []);
 
   const mapHtml = `
     <!DOCTYPE html>
@@ -38,7 +56,7 @@ const Pharmacy = () => {
           // Add a marker at the selected location
           const marker = new mapboxgl.Marker({ color: 'red' })
             .setLngLat([${selectedLocation.coordinates[0]}, ${selectedLocation.coordinates[1]}])
-            .setPopup(new mapboxgl.Popup().setText('${selectedLocation.place_name}')) // Add popup with location name
+            .setPopup(new mapboxgl.Popup().setText('${selectedLocation.place_name}'))
             .addTo(map);
 
           // Adjust map view to fit the marker when location changes
@@ -50,13 +68,13 @@ const Pharmacy = () => {
 
   const handleSearch = async (text) => {
     setSearchText(text);
-    if (text.length > 2) {
-      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(text)}.json?access_token=${MAPBOX_ACCESS_TOKEN}`;
+    if (text.length > 2 && userLocation) {
+      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(text)}.json?proximity=${userLocation.longitude},${userLocation.latitude}&access_token=${MAPBOX_ACCESS_TOKEN}`;
       try {
         const response = await axios.get(url);
         setSearchResults(response.data.features);
       } catch (error) {
-        console.error('Error fetching location data:', error);
+        console.error('Error fetching nearby search results:', error);
       }
     } else {
       setSearchResults([]);
@@ -72,7 +90,7 @@ const Pharmacy = () => {
   return (
     <View style={styles.container}>
       <SearchBar
-        placeholder="Search for a location..."
+        placeholder="Search for nearby places..."
         onChangeText={handleSearch}
         value={searchText}
         lightTheme
@@ -107,7 +125,7 @@ const styles = StyleSheet.create({
   },
   searchBarContainer: {
     backgroundColor: 'white',
-    paddingTop:"10%",
+    paddingTop: '10%',
     borderBottomColor: 'transparent',
     borderTopColor: 'transparent',
   },
