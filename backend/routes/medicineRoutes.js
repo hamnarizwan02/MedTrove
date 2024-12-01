@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const medicineController = require('../controllers/MedicineController');
+const { getMedicineById, searchMedicines, searchMedicinesByName } = require('../controllers/medicineController');
 
-//GET app.get('/api/medici/:id'
-router.get('/medici/:id', medicineController.getMedicineById);
+// Route to get medicine by ID
+router.get('/medici/:id', getMedicineById);
 
-// GET /api/medicines/by-name/:name
-router.get('/by-name/:name', medicineController.getMedicineByName);
+// Route to search medicines by name or condition
+router.get('/medicines/:searchTerm', searchMedicines);
 
-// GET /api/medicines/exists/:name
-router.get('/exists/:name', medicineController.checkMedicineExists);
+router.get('/medicine-by-name/:name', searchMedicinesByName);
 
 module.exports = router;

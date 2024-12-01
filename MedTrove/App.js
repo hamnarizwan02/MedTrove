@@ -11,12 +11,13 @@ import ProfileManagement from './profilemangement';
 import MedicationInfo from './APITest';
 import Cart from './Cart';
 import Pharmacy from './pharmacy';
+import DrugInteractionScreen from './DDI';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Pharmacy">
+      <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
@@ -33,6 +34,7 @@ export default function App() {
         {/* api test page */}
         <Stack.Screen name="MedicationInfo" component={MedicationInfo} options={{headerShown: false}} />  
         <Stack.Screen name="Pharmacy" component={Pharmacy} options={{ headerShown: false }} />
+        <Stack.Screen name="DrugInteractionScreen"  component={DrugInteractionScreen} options={{ title: 'Drug Interaction Checker' }} />
       </Stack.Navigator>
     </NavigationContainer>
     );

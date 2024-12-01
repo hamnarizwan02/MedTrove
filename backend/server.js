@@ -8,6 +8,11 @@ const PORT = 5000;
 // Middleware
 app.use(bodyParser.json());
 
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://i210603:hamna123@medtrove.r56y0tg.mongodb.net/medTrove', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected'))
@@ -90,26 +95,6 @@ const medicineSchema = new mongoose.Schema({
 }, { collection: 'Med_Info', versionKey: false });
 
 const Medicine = mongoose.model('Medicine', medicineSchema);
-
-// GET route for medicine information
-
-// app.get('/api/medici/:id', async (req, res) => {
-//   const { id } = req.params;
-
-//   try {
-//    // console.log(`Fetching medicine with id: ${id}`);
-//     const medicine = await Medicine.findById(id, 'drug_name medical_condition side_effects generic_name');
-//     if (!medicine) {
-//       console.log(`Medicine with id ${id} not found`);
-//       return res.status(404).json({ message: 'Medicine not found' });
-//     }
-//     //console.log(`Medicine found:`, medicine);
-//     res.status(200).json(medicine);
-//   } catch (err) {
-//     console.error('Error fetching medicine:', err);
-//     res.status(500).json({ message: 'Server error', error: err.message });
-//   }
-// });
 
 app.get('/api/medici/:id', async (req, res) => {
   const { id } = req.params;
@@ -231,209 +216,6 @@ app.get('/api/alternatives/:name', async (req, res) => {
   }
 });
 
-
-
-
-
-// OTHER ONE 
-// Update the medicine search endpoint
-// app.get('/api/medicines/:searchTerm', async (req, res) => {
-//   const { searchTerm } = req.params;
-//   console.log('Search term:', searchTerm);
-  
-//   try {
-//     // Split the search term into words
-//     const searchWords = searchTerm.toLowerCase().split(/\s+/);
-//     console.log('Search words:', searchWords);
-    
-//     // Create a regex pattern that matches any of the words
-//     const regexPattern = searchWords.map(word => `(?=.*${word})`).join('');
-//     const searchRegex = new RegExp(regexPattern, 'i');
-//     console.log('Search regex:', searchRegex);
-
-//     const medicines = await Medicine.find({
-//       $or: [
-//         { drug_name: { $regex: searchRegex } },
-//         { generic_name: { $regex: searchRegex } }
-//       ]
-//     }, 'drug_name medical_condition side_effects generic_name');
-
-//     console.log('Medicines found:', medicines.length);
-
-//     if (medicines.length === 0) {
-//       console.log('No medicines found');
-//       return res.status(404).json({ message: 'Medicine not found' });
-//     }
-
-//     const formattedMedicines = medicines.map(medicine => ({
-//       id: medicine._id.toString(),
-//       drug_name: medicine.drug_name,
-//       medical_condition: medicine.medical_condition,
-//       side_effects: medicine.side_effects,
-//       generic_name: medicine.generic_name
-//     }));
-
-//     console.log('Formatted medicines:', formattedMedicines);
-
-//     res.status(200).json(formattedMedicines);
-//   } catch (err) {
-//     console.error('Error fetching medicine:', err);
-//     res.status(500).json({ message: 'Server error', error: err });
-//   }
-// });
-
-// Update the alternatives search endpoint
-// app.get('/api/alternatives/:name', async (req, res) => {
-//   const { name } = req.params;
-//   console.log('Received search request for:', name);
-
-//   const searchWords = name.toLowerCase().split(/\s+/);
-//   console.log('Search words:', searchWords);
-
-//   try {
-//     console.log('Executing database query...');
-//     const alternatives = await Alternative.find({
-//       $or: [
-//         { name: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
-//         { substitute0: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
-//         { substitute1: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
-//         { substitute2: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
-//         { substitute3: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
-//       ]
-//     });
-
-//     console.log('Query completed. Number of results:', alternatives.length);
-
-//     const validAlternatives = new Set();
-
-//     for (const alt of alternatives) {
-//       const checkAndAddMedicine = async (medicineName) => {
-//         if (medicineName) {
-//           const exists = await Medicine.findOne({ 
-//             drug_name: { $in: medicineName.toLowerCase().split(/\s+/).map(word => new RegExp(word, 'i')) } 
-//           });
-//           if (exists) {
-//             validAlternatives.add(medicineName.trim());
-//           }
-//         }
-//       };
-
-//       await checkAndAddMedicine(alt.name);
-//       await checkAndAddMedicine(alt.substitute0);
-//       await checkAndAddMedicine(alt.substitute1);
-//       await checkAndAddMedicine(alt.substitute2);
-//       await checkAndAddMedicine(alt.substitute3);
-//     }
-
-//     const alternativeArray = Array.from(validAlternatives);
-//     console.log('Final processed alternatives:', alternativeArray);
-
-//     if (alternativeArray.length === 0) {
-//       console.log('No valid alternatives found after processing');
-//       return res.status(404).json({ message: 'No valid alternatives found for this medicine' });
-//     }
-
-//     console.log('Sending response with valid alternatives');
-//     res.status(200).json(alternativeArray);
-//   } catch (err) {
-//     console.error('Error in alternatives search:', err);
-//     res.status(500).json({ message: 'Server error', error: err.message });
-//   }
-// });
-
-
-// app.get('/api/alternatives/:name', async (req, res) => {
-//   const { name } = req.params;
-//   console.log('Received search request for:', name);
-
-//   const searchWords = name.toLowerCase().split(/\s+/);
-//   console.log('Search words:', searchWords);
-
-//   try {
-//     console.log('Executing database query...');
-//     const alternatives = await Alternative.find({
-//       $or: [
-//         { name: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
-//         { substitute0: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
-//         { substitute1: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
-//         { substitute2: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
-//         { substitute3: { $in: searchWords.map(word => new RegExp(word, 'i')) } },
-//       ]
-//     });
-
-//     console.log('Query completed. Number of results:', alternatives.length);
-
-//     const validAlternatives = [];
-
-//     for (const alt of alternatives) {
-//       const checkAndAddMedicine = async (medicineName) => {
-//         if (medicineName) {
-//           const medicine = await Medicine.findOne({ 
-//             drug_name: { $in: medicineName.toLowerCase().split(/\s+/).map(word => new RegExp(word, 'i')) } 
-//           });
-//           if (medicine) {
-//             const priceData = await fetchPrice(medicineName);
-//             validAlternatives.push({
-//               name: medicineName.trim(),
-//               side_effects: medicine.side_effects,
-//               price: priceData.price || 'Price not available'
-//             });
-//           }
-//         }
-//       };
-
-//       await checkAndAddMedicine(alt.name);
-//       await checkAndAddMedicine(alt.substitute0);
-//       await checkAndAddMedicine(alt.substitute1);
-//       await checkAndAddMedicine(alt.substitute2);
-//       await checkAndAddMedicine(alt.substitute3);
-//     }
-
-//     console.log('Final processed alternatives:', validAlternatives);
-
-//     if (validAlternatives.length === 0) {
-//       console.log('No valid alternatives found after processing');
-//       return res.status(404).json({ message: 'No valid alternatives found for this medicine' });
-//     }
-
-//     console.log('Sending response with valid alternatives');
-//     res.status(200).json(validAlternatives);
-//   } catch (err) {
-//     console.error('Error in alternatives search:', err);
-//     res.status(500).json({ message: 'Server error', error: err.message });
-//   }
-// });
-
-// Helper function to fetch price
-// async function fetchPrice(medicineName) {
-//   try {
-//     const priceData = await PakPrice.findOne({ 
-//       $or: [
-//         { Title: { $regex: new RegExp(medicineName, 'i') } },
-//         { Brand_Name: { $regex: new RegExp(medicineName, 'i') } }
-//       ]
-//     });
-
-//     if (priceData) {
-//       return {
-//         price: priceData.MRP || priceData.Original_Price || 'Price not available'
-//       };
-//     }
-
-//     const indiaPriceData = await IndiaPrice.findOne({ name: { $regex: new RegExp(medicineName, 'i') } });
-//     if (indiaPriceData) {
-//       const pkrPrice = indiaPriceData["price(₹)"] * 3.5; // Assuming conversion
-//       return { price: `PKR ${pkrPrice.toFixed(2)}` };
-//     }
-
-//     return { price: 'PKR 602.34' }; // Default price
-//   } catch (err) {
-//     console.error('Error fetching price:', err);
-//     return { price: 'Price not available' };
-//   }
-// }
-
-
 app.get('/api/check-alternatives', async (req, res) => {
   try {
     const allAlternatives = await Alternative.find({});
@@ -444,14 +226,6 @@ app.get('/api/check-alternatives', async (req, res) => {
     res.status(500).json({ message: 'Error checking alternatives', error: err.message });
   }
 });
-
-// Schema for PakPrices
-// const pakPriceSchema = new mongoose.Schema({
-//   "Brand Name": String,
-//   "MRP": String
-// }, { collection: 'PakPrices', versionKey: false });
-
-//const PakPrice = mongoose.model('PakPrice', pakPriceSchema);
 
 // Schema for PakPrices
 const pakPriceSchema = new mongoose.Schema({
@@ -478,33 +252,6 @@ const indiaPriceSchema = new mongoose.Schema({
 }, { collection: 'IndiaPrices', versionKey: false });
 
 const IndiaPrice = mongoose.model('IndiaPrice', indiaPriceSchema);
-
-// GET route to fetch price based on medicine name
-// app.get('/api/price/:name', async (req, res) => {
-//   const { name } = req.params;
-
-//   try {
-//     // Check PakPrices first
-//     let price = await PakPrice.findOne({ "Brand Name": { $regex: new RegExp(name, 'i') } });
-//     if (price) {
-//       return res.json({ price: price.MRP });
-//     }
-
-//     // If not found in PakPrices, check IndiaPrices
-//     price = await IndiaPrice.findOne({ name: { $regex: new RegExp(name, 'i') } });
-//     if (price) {
-//       // Convert to PKR (you might want to use a real conversion rate)
-//       const pkrPrice = price["price(₹)"] * 3.5; // Assuming 1 INR = 3.5 PKR
-//       return res.json({ price: `PKR ${pkrPrice.toFixed(2)}` });
-//     }
-
-//     // If not found in either, return default price
-//     return res.json({ price: 'PKR 12345' });
-//   } catch (err) {
-//     console.error('Error fetching price:', err);
-//     res.status(500).json({ message: 'Server error', error: err });
-//   }
-// });
 
 // GET route to fetch price based on medicine name
 app.get('/api/price/:name', async (req, res) => {
@@ -559,45 +306,6 @@ app.get('/api/medicine-exists/:name', async (req, res) => {
     console.error('Error checking medicine existence:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
-});
-
-//check substring
-// app.get('/api/medicine-exists/:name', async (req, res) => {
-//   const { name } = req.params;
-//   try {
-//     // Split the name into words
-//     const words = name.split(' ');
-    
-//     // Create a regex pattern that matches any of the words
-//     const regexPattern = words.map(word => `(?=.*${word})`).join('');
-//     const regex = new RegExp(regexPattern, 'i');
-
-//     // Search for medicines where the drug_name contains all the words in any order
-//     const medicine = await Medicine.findOne({ drug_name: { $regex: regex } });
-
-//     if (medicine) {
-//       res.json({ exists: true, id: medicine._id, name: medicine.drug_name });
-//     } else {
-//       // If no exact match, try to find a partial match
-//       const partialMatch = await Medicine.findOne({ 
-//         drug_name: { $regex: new RegExp(words[0], 'i') } 
-//       });
-
-//       if (partialMatch) {
-//         res.json({ exists: true, id: partialMatch._id, name: partialMatch.drug_name, partialMatch: true });
-//       } else {
-//         res.json({ exists: false, id: null, name: null });
-//       }
-//     }
-//   } catch (err) {
-//     console.error('Error checking medicine existence:', err);
-//     res.status(500).json({ message: 'Server error', error: err.message });
-//   }
-// });
-
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
 });
 
 
@@ -663,209 +371,6 @@ app.get('/api/medicine-by-name/:name', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
-
-
-
-// //USER SEARCH HISTORY 
-// const searchHistorySchema = new mongoose.Schema({
-//   UserID: [{
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: 'User'
-//   }],
-//   Medicine: String,
-//   timestamp: {
-//       type: Date,
-//       default: Date.now
-//   }
-// });
-// const SearchHistory = mongoose.model('SearchHistory', searchHistorySchema);
-
-// // Add search history
-// app.post('/api/searchHistory/add', async (req, res) => {
-//   try {
-//       const { UserID, Medicine: medicineName } = req.body;
-
-//       const newSearchHistory = new SearchHistory({
-//           UserID: [UserID], // Storing as array as per your schema
-//           Medicine: medicineName
-//       });
-
-//       await newSearchHistory.save();
-//       res.status(200).json({ message: 'Search history saved successfully' });
-//   } catch (error) {
-//       console.error('Error saving search history:', error);
-//       res.status(500).json({ error: 'Error saving search history' });
-//   }
-// });
-
-// // Get user's search history
-// app.get('/api/searchHistory/:userId', async (req, res) => {
-//   try {
-//       const userId = req.params.userId;
-//       const searchHistory = await SearchHistory.find({
-//           UserID: userId
-//       }).sort({ timestamp: -1 });
-
-//       res.status(200).json(searchHistory);
-//   } catch (error) {
-//       console.error('Error fetching search history:', error);
-//       res.status(500).json({ error: 'Error fetching search history' });
-//   }
-// });
-
-// // Search medicines
-// app.get('/api/medicines/:searchTerm', async (req, res) => {
-//   try {
-//       const searchTerm = req.params.searchTerm;
-//       const medicine = await Medicine.findOne({
-//           name: { $regex: new RegExp(searchTerm, 'i') }
-//       });
-
-//       if (!medicine) {
-//           return res.status(404).json({ message: 'Medicine not found' });
-//       }
-
-//       res.json(medicine);
-//   } catch (error) {
-//       console.error('Error searching medicine:', error);
-//       res.status(500).json({ error: 'Error searching medicine' });
-//   }
-// });
-
-// // Get user's recent searches
-// app.get('/api/searchHistory/recent/:userId', async (req, res) => {
-//   try {
-//       const userId = req.params.userId;
-//       const recentSearches = await SearchHistory.find({
-//           UserID: userId
-//       })
-//       .sort({ timestamp: -1 })
-//       .limit(5); // Get last 5 searches
-
-//       res.json(recentSearches);
-//   } catch (error) {
-//       console.error('Error fetching recent searches:', error);
-//       res.status(500).json({ error: 'Error fetching recent searches' });
-//   }
-// });
-
-// // Delete search history
-// app.delete('/api/searchHistory/:id', async (req, res) => {
-//   try {
-//       const historyId = req.params.id;
-//       await SearchHistory.findByIdAndDelete(historyId);
-//       res.json({ message: 'Search history deleted successfully' });
-//   } catch (error) {
-//       console.error('Error deleting search history:', error);
-//       res.status(500).json({ error: 'Error deleting search history' });
-//   }
-// });
-
-// // Clear all search history for a user
-// app.delete('/api/searchHistory/user/:userId', async (req, res) => {
-//   try {
-//       const userId = req.params.userId;
-//       await SearchHistory.deleteMany({
-//           UserID: userId
-//       });
-//       res.json({ message: 'All search history cleared successfully' });
-//   } catch (error) {
-//       console.error('Error clearing search history:', error);
-//       res.status(500).json({ error: 'Error clearing search history' });
-//   }
-// });
-
-// // Get medicine recommendations based on search history
-// app.get('/api/recommendations/:userId', async (req, res) => {
-//   try {
-//       const userId = req.params.userId;
-      
-//       // Get user's recent searches
-//       const recentSearches = await SearchHistory.find({
-//           UserID: userId
-//       })
-//       .sort({ timestamp: -1 })
-//       .limit(3);
-
-//       // Get medicine names from recent searches
-//       const medicineNames = recentSearches.map(search => search.Medicine);
-
-//       // Find similar medicines based on recent searches
-//       const recommendations = await Medicine.find({
-//           name: { 
-//               $in: medicineNames.map(name => new RegExp(name, 'i'))
-//           }
-//       }).limit(5);
-
-//       res.json(recommendations);
-//   } catch (error) {
-//       console.error('Error getting recommendations:', error);
-//       res.status(500).json({ error: 'Error getting recommendations' });
-//   }
-// });
-
-
-
-//WITH MVC
-// const express = require('express');
-// const cors = require('cors');
-// const mongoose = require('mongoose');
-// require('dotenv').config();
-
-// // Import routes
-// const medicineRoutes = require('./routes/medicineRoutes');
-// const alternativeRoutes = require('./routes/alternativeRoutes');
-// const priceRoutes = require('./routes/priceRoutes');
-// const userRoutes = require('./routes/UserRoutes');
-
-// const app = express();
-
-// // Middleware
-// app.use(cors());
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-
-// // Database connection
-// mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/medTrove', {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// })
-// .then(() => console.log('Connected to MongoDB'))
-// .catch((error) => console.error('MongoDB connection error:', error));
-
-// // Routes
-// app.use('/api/medicines', medicineRoutes);
-// app.use('/api/alternatives', alternativeRoutes);
-// app.use('/api/prices', priceRoutes);
-// app.use('/api/users', userRoutes);
-
-// // Error handling middleware
-// app.use((err, req, res, next) => {
-//     console.error(err.stack);
-//     res.status(500).json({
-//         success: false,
-//         message: 'Something went wrong!',
-//         error: process.env.NODE_ENV === 'development' ? err.message : {}
-//     });
-// });
-
-// // Handle 404 routes
-// app.use((req, res) => {
-//     res.status(404).json({
-//         success: false,
-//         message: 'Route not found'
-//     });
-// });
-
-// // Server configuration
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => {
-//     console.log(`Server is running on port ${PORT}`);
-// });
-
-// module.exports = app;
-
-
 
 //CART FUNCTIONALITY 
 // Cart Schema
@@ -1027,6 +532,120 @@ app.put('/api/cart/update', async (req, res) => {
 
   } catch (error) {
     console.error('Error updating cart:', error);
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message 
+    });
+  }
+});
+
+//DRUG INTERACTION FUNCTIONALITY 
+const drugInteractionSchema = new mongoose.Schema({
+  drug1_id: String,
+  drug2_id: String,
+  drug1_name: String,
+  drug2_name: String,
+  interaction_type: String
+}, { collection: 'DDI', versionKey: false });
+
+const DrugInteraction = mongoose.model('DrugInteraction', drugInteractionSchema);
+
+// Add this new endpoint to check drug interactions
+// app.post('/api/check-interaction', async (req, res) => {
+//   try {
+//     const { drug1, drug2 } = req.body;
+    
+//     // Search for interaction in both directions
+//     const interaction = await DrugInteraction.findOne({
+//       $or: [
+//         { 
+//           drug1_name: { $regex: new RegExp(drug1, 'i') },
+//           drug2_name: { $regex: new RegExp(drug2, 'i') }
+//         },
+//         {
+//           drug1_name: { $regex: new RegExp(drug2, 'i') },
+//           drug2_name: { $regex: new RegExp(drug1, 'i') }
+//         }
+//       ]
+//     });
+
+//     if (interaction) {
+//       res.json({
+//         found: true,
+//         interaction: {
+//           drug1: interaction.drug1_name,
+//           drug2: interaction.drug2_name,
+//           type: interaction.interaction_type
+//         }
+//       });
+//     } else {
+//       res.json({
+//         found: false,
+//         message: "No known interaction found between these medications."
+//       });
+//     }
+//   } catch (error) {
+//     console.error('Error checking drug interaction:', error);
+//     res.status(500).json({ 
+//       message: 'Server error', 
+//       error: error.message 
+//     });
+//   }
+// });
+
+app.post('/api/check-interaction', async (req, res) => {
+  console.log("ddiii");
+  try {
+    console.log('Received request to /api/check-interaction'); // Debugging: Endpoint hit
+    
+    const { drug1, drug2 } = req.body;
+    console.log('Request body:', req.body); // Debugging: Log input drugs
+
+    // Validate input
+    if (!drug1 || !drug2) {
+      console.warn('Missing drug names in the request body'); // Debugging: Missing input
+      return res.status(400).json({ 
+        message: 'Both drug1 and drug2 must be provided.' 
+      });
+    }
+
+    console.log(`Searching for interaction between "${drug1}" and "${drug2}"`); // Debugging: Input drug names
+
+    // Search for interaction in both directions
+    const interaction = await DrugInteraction.findOne({
+      $or: [
+        { 
+          drug1_name: { $regex: new RegExp(drug1, 'i') },
+          drug2_name: { $regex: new RegExp(drug2, 'i') }
+        },
+        {
+          drug1_name: { $regex: new RegExp(drug2, 'i') },
+          drug2_name: { $regex: new RegExp(drug1, 'i') }
+        }
+      ]
+    });
+
+    console.log('Database query result:', interaction); // Debugging: Log the query result
+
+    if (interaction) {
+      console.log(`Interaction found: ${interaction}`); // Debugging: Interaction details
+      res.json({
+        found: true,
+        interaction: {
+          drug1: interaction.drug1_name,
+          drug2: interaction.drug2_name,
+          type: interaction.interaction_type
+        }
+      });
+    } else {
+      console.log(`No interaction found between "${drug1}" and "${drug2}"`); // Debugging: No interaction
+      res.json({
+        found: false,
+        message: "No known interaction found between these medications."
+      });
+    }
+  } catch (error) {
+    console.error('Error checking drug interaction:', error); // Debugging: Log the error
     res.status(500).json({ 
       message: 'Server error', 
       error: error.message 

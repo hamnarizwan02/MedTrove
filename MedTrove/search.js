@@ -13,6 +13,8 @@ import { Linking } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
+import DrugInteractionScreen from './DDI';
+import Pharmacy from './pharmacy';
 
 
 
@@ -27,29 +29,68 @@ export default class Search extends React.Component {
 		};
 	  }
 
-            //OG
-	handleSearchSubmit = async () => {
-		Keyboard.dismiss();
-		console.log('Search text:', this.state.searchText); // Log the search text
-		const searchTerm = this.state.searchText;
-		console.log('Search term:', searchTerm);
+            //OG without mvc
+	// handleSearchSubmit = async () => {
+	// 	Keyboard.dismiss();
+	// 	console.log('Search text:', this.state.searchText); // Log the search text
+	// 	const searchTerm = this.state.searchText;
+	// 	console.log('Search term:', searchTerm);
 
-		try {
-			const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
-			const medicine = response.data; // Medicine object from API response
-			//console.log('Found medicine:', medicine);
+	// 	try {
+	// 		const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
+	// 		const medicine = response.data; // Medicine object from API response
+      //             if(response.data == null)
+      //             {
+      //                   console.log("not working yar");
+      //             }
+      //             else
+      //             {
+	// 		      console.log('Found medicine:', medicine);
+      //             }
 
-			// Check if the medicine is an object and contains the _id
-			if (typeof medicine === 'object' && medicine !== null && medicine._id) {
-				//console.log(medicine._id);
-				this.props.navigation.navigate('ProductList', { id: medicine._id });
-			} else {
-				console.error('Medicine ID not found in response:', medicine);
-			}
-		} catch (error) {
-			console.error('Error fetching medicine:', error);
-		}
-	};
+	// 		// Check if the medicine is an object and contains the _id
+	// 		if (typeof medicine === 'object' && medicine !== null && medicine._id) {
+	// 			console.log(medicine._id);
+	// 			this.props.navigation.navigate('ProductList', { id: medicine._id });
+	// 		} else {
+	// 			console.error('Medicine ID not found in response:', medicine);
+	// 		}
+	// 	} catch (error) {
+	// 		console.error('Error fetching medicine!!:', error);
+	// 	}
+	// };
+      handleSearchSubmit = async () => {
+            Keyboard.dismiss();
+            const searchTerm = this.state.searchText;
+            console.log('Search term:', searchTerm);
+          
+            try {
+              const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchTerm}`);
+              
+              if (response.status === 404) {
+                console.log('Medicine not found');
+                return;
+              }
+          
+              const medicines = response.data;
+          
+              if (Array.isArray(medicines) && medicines.length > 0) {
+                console.log('Found medicines:', medicines);
+                const firstMedicine = medicines[0]; // Get the first medicine from the array
+                if (firstMedicine._id) {
+                  console.log(`Navigating to product with ID: ${firstMedicine._id}`);
+                  this.props.navigation.navigate('ProductList', { id: firstMedicine._id });
+                } else {
+                  console.error('Medicine ID not found in first result:', firstMedicine);
+                }
+              } else {
+                console.error('No medicines found or unexpected response format:', medicines);
+              }
+            } catch (error) {
+              console.error('Error fetching medicine:', error);
+            }
+          };
+          
 
 
                 
@@ -169,10 +210,13 @@ export default class Search extends React.Component {
         				<View style={[styles.card2, styles.cardLayout1]}>
           					<View style={[styles.rectangle4, styles.imageCard]} />
                                     
+                                        <TouchableOpacity onPress={() => this.props.navigation.navigate(DrugInteractionScreen)}>
                                         <View style={styles.serviceContainer}>
                                            <Image source={require('./assets/DDI.jpeg')} style={[styles.serviceicon2]} resizeMode="contain" /> 
                                         </View>
                                         <Text style={[styles.wendy, styles.wendyPosition]}>DDI</Text>
+
+                                        </TouchableOpacity>
           				
                         
         				</View>
@@ -234,11 +278,17 @@ export default class Search extends React.Component {
                   </View>
    
             </View>
-
+           
             <View style={styles.pharmacon}>
+                 
                     <Text style={[styles.pharmaText]}>Pharmacy Locator</Text>
+
+
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate(Pharmacy)}>
                     <Image source={require('./assets/pharma.png')} style={styles.mapImage} resizeMode="cover" />
+                    </TouchableOpacity>
             </View>
+          
 
     		</ScrollView>
        </KeyboardAvoidingView>
@@ -272,16 +322,16 @@ const styles = StyleSheet.create({
             top: "10%",
       }
       ,
-
       mapImage: {
-            width: '90%',
-            height: "30%",
-            flex:1, 
-            top:"5%",
-            marginLeft: "5%",
-            borderRadius: 10, // Add this line
-            backgroundColor:"red",
-      },
+            width: '90%',  // Adjust the size as per requirement
+            height: 200,   // Explicit height in pixels
+            marginTop: 10, // Add some margin if needed
+            marginLeft: '5%',
+            borderRadius: 10,
+            top:"10%",
+            backgroundColor: 'red', // Temporary for debugging visibility
+          },
+          
 	horizontalScrollContainer: {
 		flex: 1,
 		flexDirection: 'row',
@@ -610,11 +660,11 @@ const styles = StyleSheet.create({
           },
 
           serviceicon2: {
-            width: '25%',
-            height: '50%',
+            width: '25%', // Increased width
+            height: '78%', 
             backgroundColor: "#e0eff6",
-            left:"6%",
-            top: "20%",
+            left:"4%",
+            top: "28%",
           },
 
           serviceicon3: {
@@ -655,7 +705,7 @@ const styles = StyleSheet.create({
             //fontFamily: "SF Pro Text",
             letterSpacing: 1,
             left: "23%",
-            top: "50%",
+            top: "70%",
             position: "absolute"
       },
     

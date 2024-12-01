@@ -1,35 +1,43 @@
-.env
+node_modules/
 
-MedTrove/node_modules/
-MedTrove/.expo/
-
-# Expo
-.expo/
+# Ignore build files in frontend
+android/
+ios/
+build/
 dist/
-web-build/
 
-# Native
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# Ignore sensitive and environment-specific files
+.env
+config.js
 
-# Metro
-.metro-health-check*
+# Expo-specific files and cache
+.expo/
+.expo-shared/
 
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
+# Ignore logs
+*.log
+npm-debug.log*
 
-# macOS
+# Ignore system files
 .DS_Store
-*.pem
+Thumbs.db
 
-# local env files
-.env*.local
+# Ignore temporary files and backups
+*.tmp
+*.swp
+*.bak
 
-# typescript
-*.tsbuildinfo
+# Ignore package lock files if you don't want them in version control (optional)
+package-lock.json
+yarn.lock
+
+# Ignore coverage and test reports
+coverage/
+
+# Ignore generated files for Metro Bundler
+.expo-cache/
+metro.config.js
+
+# Ignore compiled Python files (if applicable)
+*.pyc
+__pycache__/

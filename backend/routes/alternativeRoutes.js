@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const alternativeController = require('../controllers/AlternativeController');
+const { getAlternatives } = require('../controllers/alternativeController');
 
-// GET /api/alternatives/:name
-router.get('/:name', alternativeController.getAlternatives);
+router.get('/alternatives/:name', getAlternatives);
 
 module.exports = router;
