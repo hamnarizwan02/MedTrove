@@ -1222,3 +1222,266 @@ const styles = StyleSheet.create({
   });
 
   // export default Frame;
+
+
+
+
+
+        rectangleShadowBox: {
+          
+          
+            backgroundColor: "transparent",
+            borderRadius: 12
+      },
+
+      weWillDeliver: {
+            marginTop: -50,
+            width: "60%",
+            lineHeight: 22,
+            textAlign: "left",
+            left: "3.63%",
+            fontSize: 15.5,
+      },
+  
+
+      WeWilDeliverText: {
+            fontWeight: "500",
+            color: "#064D65",
+            //fontFamily: "SF Pro Text",
+            letterSpacing: 1,
+            top: "50%",
+            position: "absolute"
+      },
+      
+
+      
+      orderNow: { // button text
+            marginLeft: -44,
+            textTransform: "uppercase",
+            fontWeight: "700",
+            color: "#e0eff6",
+            marginTop: "center",
+            marginLeft:"center",
+            fontSize: 12,
+            textAlign: "center",
+
+      },
+      orderNowBtn: {
+            borderRadius: 15,
+            backgroundColor: "#064D65",
+            top: "0%",
+            height: "100%",
+            right: "0%",
+            left: "0%",
+            bottom: "0%",
+            position: "absolute",
+            width: "100%"
+
+      },
+   
+
+      //the images for order now
+      imagePosition1: {
+            bottom: "10.94%",
+            position: "absolute"
+      },
+
+      image: {
+            height: "100",
+            width: "90%",
+            top: "10.94%",
+            right: "5.63%",
+            left: "65.28%"
+      },
+
+      imageCard1:{          //image container
+                  top: "0%",
+              height: "100",
+              right: "0%",
+              left: "0%",
+              bottom: "0%",
+              position: "absolute",
+              width: 140,
+              marginLeft: -10
+        },
+       
+
+
+      //---------------------------------------------------------------
+
+        
+   
+
+
+
+      //---------------------------------------------------------------
+      //MAIN SERVICES //
+
+
+      ServiceCard: {
+            top: "38%",
+            width: 418,
+            height: 161,
+            //left: "1%",
+            position: "absolute",
+            marginTop: -75,
+          //backgroundColor:"black",
+           flexDirection: "column"
+      },
+
+
+      card1: { //back arrow
+            left: 0,
+            top: "40%",
+            shadowOpacity: 1,
+
+            
+      },
+
+      frontArrow:{
+
+            right: "8%",
+            top: "60%",
+            shadowOpacity: 1,
+            alignContent: "right",
+            position:"absolute",
+      },
+   
+      cardLayout1: {
+            height: "100%",
+            width: "100%",
+            top: "60%",
+            position: "absolute",
+            shadowOpacity:1,
+            backgroundColor: "black"
+
+           
+
+      },
+      rectangle3: { // no use i think of this
+            top: "30%",
+            height: "100%",
+            right: "0%",
+            left: "0%",
+            bottom: "0%",
+            position: "absolute",
+            width: "100%",
+            
+            
+           
+      },
+
+      imageCard:{
+              top: "10%",
+              height: "60%",
+              right: "0%",
+              left: "10%",
+              bottom: "0%",
+             // position: "absolute",
+              width: "22%",
+              marginLeft: 0,
+              backgroundColor: "#e0eff6",
+              borderColor:"#c9d7dd",
+              borderRadius: 20,
+              borderWidth: 1.5,
+              elevation:10,
+
+
+        },
+
+        serviceContainer: {
+            width: '60%', // adjust this value to change the image size
+            height: '70%',
+            left:"11.5%",
+            top: "8%", // adjust this value to change the image size
+            
+          },
+          
+          serviceicon: {
+            top:"20%",
+            left:2,
+            width: '30%',
+            height: '50%',
+            backgroundColor: "#e0eff6",
+            borderRadius:10,
+            
+           
+          },
+
+          serviceicon2: {
+            width: '25%',
+            height: '50%',
+            backgroundColor: "#e0eff6",
+            left:"6%",
+            top: "20%",
+          },
+
+          serviceicon3: {
+            width: '30%',
+            height: '50%',
+            backgroundColor: "#e0eff6",
+            left:"3.2%",
+            top: "19%",
+            borderRadius:22
+          },
+
+
+      serviceText:{
+            fontWeight: "500",
+            color: "#252828",
+            //fontFamily: "SF Pro Text",
+            letterSpacing: 1,
+            top: "12%",
+            marginLeft: -193,
+            textAlign: "left",
+            fontSize: 20,
+            left: "50%",
+        
+            },
+
+
+      
+
+      //text fir serveices
+
+      wendyPosition: {     //DDI text
+            marginTop: "3%",
+            marginLeft: -20,
+            color: "black",
+            fontSize: 12,
+            fontWeight: "500",
+            textAlign: "center",
+            //fontFamily: "SF Pro Text",
+            letterSpacing: 1,
+            left: "23%",
+            top: "50%",
+            position: "absolute"
+      },
+    
+      wendyPosition1: {     //Reminders text
+          marginTop: "3%",
+          marginLeft: -20,
+          color: "black",
+          fontSize: 12,
+          fontWeight: "500",
+          textAlign: "center",
+          //fontFamily: "SF Pro Text",
+          letterSpacing: 1,
+          left: "18%",
+          top: "50%",
+          position: "absolute"
+    },
+
+    wendyPosition3: {     //medibot text
+      marginTop: "3%",
+      marginLeft: -20,
+      color: "black",
+      fontSize: 12,
+      fontWeight: "500",
+      textAlign: "center",
+      //fontFamily: "SF Pro Text",
+      letterSpacing: 1,
+      left: "18%",
+      top: "50%",
+      position: "absolute"
+},
