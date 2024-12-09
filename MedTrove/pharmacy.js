@@ -131,22 +131,24 @@ const Pharmacy = () => {
   `;
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "android" ? "padding" : "height"}
-      style={styles.container}
-      >
     <View style={styles.container}>
-      <SearchBar
-        placeholder="Search for nearby places..."
-        onChangeText={handleSearch}
-        value={searchText}
-        lightTheme
-        round
-        containerStyle={styles.searchBarContainer}
-        inputContainerStyle={styles.searchBarInput}
-      />
-
-      {/* Dropdown for search results */}
+      {/* Wrap Search and Dropdown inside KeyboardAvoidingView */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "android" ? "padding" : "height"}
+        style={styles.keyboardView}
+      >
+        <SearchBar
+          placeholder="Search for nearby places..."
+          onChangeText={handleSearch}
+          value={searchText}
+          lightTheme
+          round
+          containerStyle={styles.searchBarContainer}
+          inputContainerStyle={styles.searchBarInput}
+        />
+      </KeyboardAvoidingView>
+  
+      {/* Dropdown Menu placed absolutely to appear on top */}
       {searchResults.length > 0 && (
         <View style={styles.dropdown}>
           {searchResults.map((item) => (
@@ -160,14 +162,15 @@ const Pharmacy = () => {
           ))}
         </View>
       )}
-
+      
+  
+      {/* Map Rendering in WebView */}
       <WebView
         originWhitelist={['*']}
         source={{ html: mapHtml }}
         style={styles.webView}
       />
     </View>
-    </KeyboardAvoidingView>
   );
 };
 
@@ -177,15 +180,15 @@ const styles = StyleSheet.create({
   },
   searchBarContainer: {
     backgroundColor: 'white',
-    top:"5%",
-    paddingBottom:"11%"
+    top:"10%",
+    paddingBottom:"5%"
   },
   searchBarInput: {
     backgroundColor: '#f1f1f1',
   },
   dropdown: {
     position: 'absolute',
-    top: "11%",
+    top: "14%",
     left: 10,
     right: 10,
     backgroundColor: 'white',
@@ -203,7 +206,7 @@ const styles = StyleSheet.create({
   },
   webView: {
     flex: 1,
-    paddingTop:"20%",
+    paddingTop:"10%",
   },
 });
 
