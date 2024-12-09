@@ -1,7 +1,9 @@
 const CONFIG = {
    // backendUrl: 'http://192.168.18.21:5000', 
     //backendUrl: 'http://172.15.8.219:5000',
-    backendUrl:' 192.168.56.1:5000', //Aliza IP
+    //backendUrl:' 192.168.56.1:5000', //Aliza IP
+    backendUrl: 'http://192.168.100.13:5000',                 // kissa zahraaaa
+
     //'http://192.168.18.88:5000',
     //'http://192.168.18.36:5000',
   
