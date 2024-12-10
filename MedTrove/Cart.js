@@ -70,7 +70,7 @@
 
 //   return (
 //     <ScrollView style={styles.container}>
-//       {/* <Text style={styles.title}>Your Cart</Text> */}
+//       <Text style={styles.title}>Your Cart</Text>
       
 //       {cartItems.Medicine?.map((medicine, index) => (
 //         <View key={index} style={styles.cartItem}>
@@ -177,6 +177,9 @@
 //     marginTop: 50,
 //   },
 // });
+
+
+// kinda worksssssssssssss
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
@@ -307,13 +310,13 @@ export default function Cart({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* <Text style={styles.title}>Cart</Text> */}
+        <Text style={styles.title}>Cart</Text>
 
         {cartItems.Medicine?.map((medicine, index) => (
           <View key={index} style={styles.cartItem}>
             <View style={styles.itemInfo}>
               <Text style={styles.medicineName}>{medicine}</Text>
-              <Text style={styles.medicinePrice}>{prices[medicine] || 100}</Text>
+              <Text style={styles.medicinePrice}>${prices[medicine] || 100}</Text>
 
               <View style={styles.quantityContainer}>
                 <TouchableOpacity 
@@ -350,7 +353,7 @@ export default function Cart({ navigation }) {
 
       {cartItems.Medicine?.length > 0 && (
         <View style={styles.checkoutBar}>
-          <Text style={styles.totalText}>Total: PKR {calculateTotal().toFixed(2)}</Text>
+          <Text style={styles.totalText}>Total: ${calculateTotal().toFixed(2)}</Text>
           <TouchableOpacity
             style={styles.checkoutButton}
             onPress={handleCheckout} // Only trigger checkout once
@@ -466,3 +469,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+
+
+

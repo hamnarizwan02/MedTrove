@@ -28,6 +28,28 @@ const Pharmacy = () => {
     })();
   }, []);
 
+  // const handleSearch = async (text) => {
+  //   setSearchText(text);
+  //   if (text.length > 2 && userLocation) {
+  //     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(text)}.json?proximity=${userLocation.longitude},${userLocation.latitude}&access_token=${MAPBOX_ACCESS_TOKEN}`;
+  //     try {
+  //       const response = await axios.get(url);
+  //       setSearchResults(response.data.features);
+  //     } catch (error) {
+  //       console.error('Error fetching nearby search results:', error);
+  //     }
+  //   } else {
+  //     setSearchResults([]);
+  //   }
+  // };
+
+  // const handleSelectLocation = (location) => {
+  //   setSelectedLocation({ coordinates: location.center, place_name: location.place_name });
+  //   setSearchText(location.place_name);
+  //   setSearchResults([]);
+  //   fetchRoute({ coordinates: location.center });
+  // };
+
   const handleSearch = async (text) => {
     setSearchText(text);
     if (text.length > 2 && userLocation) {
@@ -98,9 +120,21 @@ const Pharmacy = () => {
               .setLngLat([${selectedLocation.coordinates[0]}, ${selectedLocation.coordinates[1]}])
               .setPopup(new mapboxgl.Popup().setText('${selectedLocation.place_name}'))
               .addTo(map);
+            new mapboxgl.Marker({ color: 'red' })
+              .setLngLat([${selectedLocation.coordinates[0]}, ${selectedLocation.coordinates[1]}])
+              .setPopup(new mapboxgl.Popup().setText('${selectedLocation.place_name}'))
+              .addTo(map);
           ` : ''}
 
           ${routeGeoJson ? `
+            map.on('load', () => {
+              map.addSource('route', {
+                type: 'geojson',
+                data: {
+                  type: 'Feature',
+                  geometry: ${JSON.stringify(routeGeoJson)}
+                }
+              });
             map.on('load', () => {
               map.addSource('route', {
                 type: 'geojson',
@@ -124,6 +158,20 @@ const Pharmacy = () => {
                 }
               });
             });
+              map.addLayer({
+                id: 'route',
+                type: 'line',
+                source: 'route',
+                layout: {
+                  'line-join': 'round',
+                  'line-cap': 'round'
+                },
+                paint: {
+                  'line-color': '#ff0000',
+                  'line-width': 4
+                }
+              });
+            });
           ` : ''}
         </script>
       </body>
@@ -132,6 +180,39 @@ const Pharmacy = () => {
 
   return (
     <View style={styles.container}>
+      {/* Wrap Search and Dropdown inside KeyboardAvoidingView */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "android" ? "padding" : "height"}
+        style={styles.keyboardView}
+      >
+        <SearchBar
+          placeholder="Search for nearby places..."
+          onChangeText={handleSearch}
+          value={searchText}
+          lightTheme
+          round
+          containerStyle={styles.searchBarContainer}
+          inputContainerStyle={styles.searchBarInput}
+        />
+      </KeyboardAvoidingView>
+  
+      {/* Dropdown Menu placed absolutely to appear on top */}
+      {searchResults.length > 0 && (
+        <View style={styles.dropdown}>
+          {searchResults.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.resultItem}
+              onPress={() => handleSelectLocation(item)}
+            >
+              <Text>{item.place_name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+      
+  
+      {/* Map Rendering in WebView */}
       {/* Wrap Search and Dropdown inside KeyboardAvoidingView */}
       <KeyboardAvoidingView
         behavior={Platform.OS === "android" ? "padding" : "height"}
@@ -199,14 +280,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 5,
+    zIndex: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 5,
   },
   resultItem: {
     padding: 10,
+    borderBottomColor: '#ccc',
     borderBottomColor: '#ccc',
     borderBottomWidth: 1,
   },
   webView: {
     flex: 1,
+    paddingTop:"10%",
     paddingTop:"10%",
   },
 });
