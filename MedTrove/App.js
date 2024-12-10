@@ -30,7 +30,7 @@ export default function App() {
               headerTintColor: '#064D65',    // color the back button
             }}  /> 
         <Stack.Screen name="ProfileManagement" component={ProfileManagement} options={{ headerShown: false }} />
-        <Stack.Screen name="Cart" component={Cart} options={{ title: 'Shopping Cart' }} />    
+        <Stack.Screen name="Cart" component={Cart} options={{ title: 'Cart' }} />    
         {/* api test page */}
         <Stack.Screen name="MedicationInfo" component={MedicationInfo} options={{headerShown: false}} />  
         <Stack.Screen name="Pharmacy" component={Pharmacy} options={{ headerShown: false }} />

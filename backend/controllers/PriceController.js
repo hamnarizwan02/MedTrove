@@ -19,7 +19,7 @@ exports.getPrice = async (req, res) => {
     } else {
       const indiaPriceData = await IndiaPrice.findOne({ name: { $regex: new RegExp(name, 'i') } });
       const pkrPrice = indiaPriceData ? indiaPriceData["price(₹)"] * 3.5 : null;
-      res.json({ price: pkrPrice ? `PKR ${pkrPrice.toFixed(2)}` : 'PKR 602.34' });
+      res.json({ price: pkrPrice ? `PKR ${pkrPrice.toFixed(2)}` : 'PKR 87.34' });
     }
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err });

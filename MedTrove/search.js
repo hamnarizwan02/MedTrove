@@ -255,9 +255,8 @@ export default class Search extends React.Component {
                         </TouchableOpacity>
                         </View> */}
 
-
                         <View style={styles.medicineCard}>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('MedInfo', { name: "paracetamol" })}>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('MedInfo', { name: "panadol" })}>
                               <Image source={require('./assets/panadol.jpeg')} resizeMode="cover" style={{ width: '100%', height: '100%' }} />
                         </TouchableOpacity>
                         </View>
@@ -312,7 +311,8 @@ const styles = StyleSheet.create({
             textAlign: "left",
             left: "53%",
             fontSize: 20,
-            top: "3%",
+            top: "5%",
+            marginBottom: 17
        
       },
 
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
             marginLeft: '5%',
             borderRadius: 10,
             top:"10%",
-            backgroundColor: 'red', // Temporary for debugging visibility
+            //backgroundColor: 'red', // Temporary for debugging visibility
           },
           
 	horizontalScrollContainer: {
@@ -573,7 +573,7 @@ const styles = StyleSheet.create({
             top: "38%",
             width: 418,
             height: 161,
-            //left: "1%",
+            left: "3%",
             position: "absolute",
             marginTop: -75,
           //backgroundColor:"black",

@@ -8,6 +8,7 @@ const priceRoutes = require('./routes/priceRoutes');
 const DDIRoutes = require('./routes/DDIRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const currentUser = require('./routes/currentUserRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 const PORT = 5000;
@@ -23,6 +24,7 @@ app.use('/api', priceRoutes);
 app.use('/api', DDIRoutes);
 app.use('/api', cartRoutes);
 app.use('/api', currentUser);
+app.use('/user', userRoutes);
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://i210603:hamna123@medtrove.r56y0tg.mongodb.net/medTrove', { useNewUrlParser: true, useUnifiedTopology: true })

@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const CurrentUser = require('../models/currentUser');
 
 exports.signup = async (req, res) => {
   const { email, password, phone } = req.body;
@@ -16,6 +17,19 @@ exports.signup = async (req, res) => {
   }
 };
 
+// exports.login = async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     const user = await User.findOne({ emailaddress: email.trim() });
+//     if (!user || user.password !== password) {
+//       return res.status(401).json({ message: 'Invalid credentials' });
+//     }
+//     res.status(200).json({ message: 'Login successful!', user });
+//   } catch (err) {
+//     res.status(500).json({ message: 'Server error', error: err });
+//   }
+// };
+
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -23,7 +37,20 @@ exports.login = async (req, res) => {
     if (!user || user.password !== password) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
-    res.status(200).json({ message: 'Login successful!', user });
+
+    // Clear any existing current user entries
+    await CurrentUser.deleteMany({});
+
+    // Create a new current user entry with the logged-in user's ID
+    const newCurrentUser = new CurrentUser({
+      currentuserid: [user._id]
+    });
+    await newCurrentUser.save();
+
+    res.status(200).json({ 
+      message: 'Login successful!', 
+      userId: user._id 
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err });
   }

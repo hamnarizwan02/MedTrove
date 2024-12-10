@@ -762,6 +762,10 @@ const DropdownSection = ({ title, children, icon }) => {
   );
 };
 
+const BASE_URL = 'https://rxnav.nlm.nih.gov/REST';
+const FDA_URL = 'https://api.fda.gov/drug/event.json';
+const FDA_API_KEY = 'EW7PHR2gQ7uAALp2drvYmszbSScQRTZSzCVLlslo';
+
 export default function MedInfo({ route, navigation }) {
   const { name } = route.params;
   const [medicine, setMedicine] = useState(null);
@@ -772,7 +776,7 @@ export default function MedInfo({ route, navigation }) {
   const [imageUrl, setImageUrl] = useState('https://via.placeholder.com/300');
   const [medicationDetails, setMedicationDetails] = useState(null);
 
-    const fetchMedicineData = async (name) => {
+  const fetchMedicineData = async (name) => {
     try {
       setLoading(true);
       // Fetch local medicine data
@@ -781,7 +785,7 @@ export default function MedInfo({ route, navigation }) {
       
       // Fetch price
       const priceResponse = await axios.get(`${CONFIG.backendUrl}/api/price/${response.data.drug_name}`);
-      setPrice(priceResponse.data.price || 'Price not available');
+      setPrice(priceResponse.data.price || 'PKR 87.40');
   
       // Fetch drug image
       await fetchDrugImage(response.data.drug_name);
@@ -906,8 +910,8 @@ export default function MedInfo({ route, navigation }) {
   };
 
   const fetchDrugImage = async (drugName) => {
-    const apiKey = 'AIzaSyDRmhRhTvXFDMVwJBT1oCrm0a2wstqSxzE';
-   //const apiKey = `${CONFIG.APIKEY}`;
+    //const apiKey = 'AIzaSyDRmhRhTvXFDMVwJBT1oCrm0a2wstqSxzE';
+    const apiKey = `${CONFIG.APIKEY}`;
     const searchEngineId = 'b1f9d3f416bd4494f';
     //`${CONFIG.SE}`;
     const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(drugName)}&cx=${searchEngineId}&searchType=image&key=${apiKey}`;
@@ -1145,6 +1149,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    marginBottom: 20
   },
   image: {
     width: '80%',
