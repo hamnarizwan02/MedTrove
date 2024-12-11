@@ -17,11 +17,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-<<<<<<< HEAD
-      <Stack.Navigator initialRouteName="Cart">
-=======
-      <Stack.Navigator initialRouteName="DrugInteractionScreen">
->>>>>>> 13503e0de1409eae2bbe1b9b11de5a20683a72e5
+      <Stack.Navigator initialRouteName="Search">
       <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
