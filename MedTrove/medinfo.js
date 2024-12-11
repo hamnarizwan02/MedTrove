@@ -364,11 +364,12 @@ export default function MedInfo({ route, navigation }) {
             <Ionicons name="add" size={24} color="#007AFF" />
           </TouchableOpacity>
         </View>
-
+        
         <TouchableOpacity 
           style={styles.addToCartButton} 
           onPress={handleAddToCart}
         >
+          <Ionicons name="cart-outline" size={20} color="#FFFFFF" style={styles.addToCartIcon} />
           <Text style={styles.addToCartButtonText}>Add to Cart</Text>
         </TouchableOpacity>
 
@@ -440,7 +441,8 @@ export default function MedInfo({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#ffffff'
+    //'#f8f9fa',
   },
   imageContainer: {
     width: '100%',
@@ -453,7 +455,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    marginBottom: 20
+    marginBottom: 20,
+    borderWidth: 5,
+    borderBottomWidth: 10,
+    borderColor: '#f8f9fa'
   },
   image: {
     width: '80%',
@@ -461,9 +466,11 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     padding: 20,
-    backgroundColor: '#ffffff',
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    backgroundColor: 
+    //'#f1f3f5',
+    '#ffffff',
+    // borderTopLeftRadius: 25,
+    // borderTopRightRadius: 25,
     marginTop: -25,
   },
   title: {
@@ -489,7 +496,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
-    backgroundColor: '#f1f3f5',
+    backgroundColor: 
+    '#ffffff',
+    //'#f1f3f5',
     borderRadius: 10,
     padding: 10,
   },
@@ -504,22 +513,29 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     color: '#064D65',
   },
-  addToCartButton: {
-    backgroundColor: '#064D65',
-    padding: 15,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
   addToCartButtonText: {
     color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
+  },
+  addToCartButton: {
+    flexDirection: 'row',
+    backgroundColor: '#064D65',
+    paddingVertical: 15,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    shadowColor: '#4A90E2',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+    width: '95%', 
+    marginLeft: 10
+  },
+  addToCartIcon: {
+    marginRight: 10,
   },
   detailsContainer: {
     backgroundColor: '#f8f9fa',

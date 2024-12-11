@@ -55,3 +55,86 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err });
   }
 };
+
+
+// Get user details by ID
+exports.getUserById = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return user details, excluding sensitive information
+    res.json({
+      emailaddress: user.emailaddress,
+      phonenumber: user.phonenumber,
+      avatar: user.avatar
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Update user avatar
+exports.updateUserAvatar = async (req, res) => {
+  try {
+    const { userId, avatarId } = req.body;
+
+    // Validate avatarId (assuming 0 and 1 are valid avatar IDs)
+    if (avatarId !== 0 && avatarId !== 1) {
+      return res.status(400).json({ message: 'Invalid avatar ID' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId, 
+      { avatar: avatarId }, 
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ 
+      message: 'Avatar updated successfully', 
+      avatar: user.avatar 
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Update user profile
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const { userId, email, password, phoneNumber } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId, 
+      { 
+        emailaddress: email, 
+        password: password,
+        phonenumber: phoneNumber 
+      }, 
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ 
+      message: 'Profile updated successfully', 
+      user: {
+        emailaddress: user.emailaddress,
+        password: user.password,
+        phonenumber: user.phonenumber
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
