@@ -55,3 +55,27 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err });
   }
 };
+
+
+// Update avatar for current user
+exports.updateAvatar = async (req, res) => {
+  try {
+    console.log("Try hora hai")
+    const { userID } = req.body; // User ID from the client
+    const { avatar } = req.body; // Selected avatar number
+
+    const user = await User.findById(userID);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.avatar = avatar; // Update avatar field
+    await user.save();
+
+    res.status(200).json({ message: 'Avatar updated successfully', avatar });
+  } catch (error) {
+    console.error('Error updating profile picture:', error.response ? error.response.data : error.message);
+
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

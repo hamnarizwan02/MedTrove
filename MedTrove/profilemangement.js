@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Alert, TouchableOpacity, Image, Modal,FlatList,StyleSheet } from 'react-native';
+//WITH PERSISTENCE 
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Alert, TouchableOpacity, Image, Modal, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import CONFIG from './config';
@@ -10,21 +11,64 @@ export default function ProfileManagement({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [profilePicture, setProfilePicture] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   const images = [
-    require('./pfp/acc1.png'),
-    require('./pfp/acc2.png'),
-    require('./pfp/wmn.png'),
+    { id: 0, source: require('./pfp/acc1.png') },
+    { id: 1, source: require('./pfp/wmn.png') },
   ];
 
+  useEffect(() => {
+    // Fetch current user ID when component mounts
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await axios.get(`${CONFIG.backendUrl}/api/user/current`);
+        setCurrentUserId(response.data.userID);
 
-   const handleChoosePhoto = () => {
+        console.log("Current userID: " + response.data.userID);
+        
+        // Fetch user details to populate initial form
+        const userResponse = await axios.get(`${CONFIG.backendUrl}/api/${response.data.userID}`);
+        const userData = userResponse.data;
+        console.log(userResponse.data);
+
+        setEmail(userData.emailaddress);
+        setPassword(userData.password);
+        setPhoneNumber(userData.phonenumber);
+        
+        // Set initial profile picture if avatar is set
+        if (userData.avatar !== undefined) {
+          setProfilePicture(images[userData.avatar].source);
+        }
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  const handleChoosePhoto = () => {
     setModalVisible(true);
   };
 
-  const selectPhoto = (photo) => {
-    setProfilePicture(photo);
-    setModalVisible(false);
+  const selectPhoto = async (imageObj) => {
+    try {
+      // Update avatar in backend
+      await axios.put(`${CONFIG.backendUrl}/api/avatar`, {
+        userId: currentUserId,
+        avatarId: imageObj.id
+      });
+
+      // Update local state
+      setProfilePicture(imageObj.source);
+      setModalVisible(false);
+
+      Alert.alert('Success', 'Profile picture updated successfully');
+    } catch (error) {
+      console.error('Error updating avatar:', error);
+      Alert.alert('Error', 'Failed to update profile picture');
+    }
   };
 
   const handleLogout = async () => {
@@ -45,6 +89,23 @@ export default function ProfileManagement({ navigation }) {
     navigation.navigate('Cart');
   };
 
+  const handleUpdateProfile = async () => {
+    try {
+      await axios.put(`${CONFIG.backendUrl}/api/update`, {
+        userId: currentUserId,
+        email,
+        password,
+        phoneNumber
+      });
+
+      Alert.alert('Profile Updated', 'Your profile details have been updated successfully');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      Alert.alert('Update Failed', 'Unable to update profile. Please try again.');
+    }
+  };
+  
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -56,8 +117,7 @@ export default function ProfileManagement({ navigation }) {
       </View>
 
       {/* Profile Picture */}
-        {/* Profile Picture */}
-        <TouchableOpacity onPress={handleChoosePhoto} style={styles.profilePicContainer}>
+      <TouchableOpacity onPress={handleChoosePhoto} style={styles.profilePicContainer}>
         <Image
           source={profilePicture || require('./assets/default-profile.png')}
           style={styles.profilePic}
@@ -76,17 +136,16 @@ export default function ProfileManagement({ navigation }) {
           <Text style={styles.modalTitle}>Select a Photo</Text>
           <FlatList
             data={images}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => selectPhoto(item)}>
-                <Image source={item} style={styles.modalImage} />
+                <Image source={item.source} style={styles.modalImage} />
               </TouchableOpacity>
             )}
             numColumns={3}
           />
         </View>
       </Modal>
-    
 
       {/* Input Fields */}
       <TextInput
@@ -105,13 +164,13 @@ export default function ProfileManagement({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Phone Number"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
+        value={phoneNumber ? phoneNumber.toString() : ''}
+        onChangeText={(text) => setPhoneNumber(text)}
         keyboardType="phone-pad"
       />
 
       {/* Update and Logout Buttons */}
-      <TouchableOpacity style={styles.updateButton} onPress={() => Alert.alert('Profile Updated!', 'Your profile details have been updated.')}>
+      <TouchableOpacity style={styles.updateButton} onPress={handleUpdateProfile}>
         <Text style={styles.updateButtonText}>Update Profile</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
