@@ -320,6 +320,7 @@ const styles = StyleSheet.create({
             width: '90%',
             height: "30%",
             top: "10%",
+            bottom: "-2%"
       }
       ,
       mapImage: {
@@ -329,6 +330,7 @@ const styles = StyleSheet.create({
             marginLeft: '5%',
             borderRadius: 10,
             top:"10%",
+            bottom: "10%"
             //backgroundColor: 'red', // Temporary for debugging visibility
           },
           
@@ -343,9 +345,9 @@ const styles = StyleSheet.create({
     container: {
       flex: 1, // Make the container take the full height of the screen
       padding: 10, // Adds padding to the container
-      backgroundColor: "#f8fbfd", // Set a background color if needed,
-      marginLeft: -9
-
+      backgroundColor: 'white',
+      //"#f8fbfd", // Set a background color if needed,
+      marginLeft: -9,
     },
 
 

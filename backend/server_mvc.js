@@ -26,6 +26,7 @@ app.use('/api', cartRoutes);
 app.use('/api', currentUser);
 app.use('/user', userRoutes);
 
+
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://i210603:hamna123@medtrove.r56y0tg.mongodb.net/medTrove', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected'))
