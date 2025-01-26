@@ -13,12 +13,14 @@ import Cart from './Cart';
 import Pharmacy from './pharmacy';
 import DrugInteractionScreen from './DDI';
 import SearchPage from './searchPage';
+import Donation from './Donation';
+import MakeDonation from './MakeDonation'
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SearchPage">
+      <Stack.Navigator initialRouteName="Donation">
       <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
@@ -37,6 +39,8 @@ export default function App() {
         <Stack.Screen name="MedicationInfo" component={MedicationInfo} options={{headerShown: false}} />  
         <Stack.Screen name="Pharmacy" component={Pharmacy} options={{ headerShown: false }} />
         <Stack.Screen name="DrugInteractionScreen"  component={DrugInteractionScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Donation" component={Donation} options={{headerShown: false}} />
+        <Stack.Screen name="MakeDonation" component={MakeDonation} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
     );
