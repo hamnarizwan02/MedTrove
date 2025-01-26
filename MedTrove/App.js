@@ -18,16 +18,21 @@ import PaymentInformation from './PaymentInformation';
 import ReviewPaymentPage from './ReviewPaymentPage';
 
 
+import SearchPage from './searchPage';
+import Donation from './Donation';
+import MakeDonation from './MakeDonation'
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="AddInformation">
+
       <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
         <Stack.Screen name="Search" component={Search} options={{ headerShown: false }} />
+        <Stack.Screen name="SearchPage" component={SearchPage} options={{ headerShown: false }} />
         <Stack.Screen name="ProductList" component={ProductList} options={{ headerShown: false }} />
         <Stack.Screen name="MedInfo" component={MedInfo} options={{ 
               headerShown: true,  
@@ -51,6 +56,8 @@ export default function App() {
 
 
 
+        <Stack.Screen name="Donation" component={Donation} options={{headerShown: false}} />
+        <Stack.Screen name="MakeDonation" component={MakeDonation} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
     );
