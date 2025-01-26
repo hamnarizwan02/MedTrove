@@ -12,12 +12,18 @@ import MedicationInfo from './APITest';
 import Cart from './Cart';
 import Pharmacy from './pharmacy';
 import DrugInteractionScreen from './DDI';
+import ChoosePayment from './ChoosePayment';
+import AddInformation from './AddInformation';
+import PaymentInformation from './PaymentInformation';
+import ReviewPaymentPage from './ReviewPaymentPage';
+
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Search">
+      <Stack.Navigator initialRouteName="AddInformation">
       <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
@@ -35,6 +41,16 @@ export default function App() {
         <Stack.Screen name="MedicationInfo" component={MedicationInfo} options={{headerShown: false}} />  
         <Stack.Screen name="Pharmacy" component={Pharmacy} options={{ headerShown: false }} />
         <Stack.Screen name="DrugInteractionScreen"  component={DrugInteractionScreen} options={{ headerShown: false }} />
+
+
+        
+        <Stack.Screen name="ChoosePayment" component={ChoosePayment} options={{ headerShown: false }} />
+        <Stack.Screen name="AddInformation" component={AddInformation} options={{ headerShown: false }} />
+        <Stack.Screen name="PaymentInformation" component={PaymentInformation} options={{ headerShown: false }} />
+        <Stack.Screen name="ReviewPaymentPage" component={ReviewPaymentPage} options={{ headerShown: false }} />
+
+
+
       </Stack.Navigator>
     </NavigationContainer>
     );
