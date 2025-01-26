@@ -15,7 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import DrugInteractionScreen from './DDI';
 import Pharmacy from './pharmacy';
-
+import SearchPage from "./searchPage";
 
 
 export default class Search extends React.Component {
@@ -146,13 +146,16 @@ export default class Search extends React.Component {
 
 {/* //  The search code is below */}
 		<View style={styles.search}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate(SearchPage)}></TouchableOpacity>
 			  <TextInput
           		placeholder="Search..."
-          		onChangeText={(text) => {
-            	this.setState({ searchText: text });
-           	 	 console.log('Search text updated:', text); // Print the updated search text
-          }}
-          onSubmitEditing={this.handleSearchSubmit}
+                  onSubmitEditing={this.handleSearchSubmit}
+          		//onChangeText={(text) => {
+            	//this.setState({ searchText: text });
+           	 	 //console.log('Search text updated:', text); // Print the updated search text
+     //     }}
+          
+         
 
 
 		></TextInput>
