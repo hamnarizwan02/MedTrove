@@ -16,7 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import DrugInteractionScreen from './DDI';
 import Pharmacy from './pharmacy';
 
-
+import ServicesCircleMenu from "./component/ServicesCircleMenu ";
 
 export default class Search extends React.Component {
       
@@ -134,7 +134,7 @@ export default class Search extends React.Component {
                                <View style={styles.iconContainer}>
                                <TouchableOpacity onPress={() => this.props.navigation.navigate(ProfileManagement)}>
                                    
-                                          <Ionicons name="person" size={25} color="#064D65" />
+                                          <Ionicons name="person" size={25} color="#064D65" marginRight={10}/>
                                     </TouchableOpacity>
                               </View>
                               
@@ -188,26 +188,26 @@ export default class Search extends React.Component {
       			
 {/*-------------Add a scroll view---------------------	 */}
 {/*-------------MAIN SERVICES--------------------	 */}
-                        <View style={styles.ServiceCard}>
+                        {/* <View style={styles.ServiceCard}>
         				
-          					<Text style={[styles.serviceText]}>Services</Text>
+          					<Text style={[styles.serviceText]}>Services</Text> */}
         			
 
                                {/* Donation Button*/}
-                               <View style={[styles.card1]}>
-                               <Ionicons name="chevron-back" size={30} color="#064D65" />
-                               </View>
+                               {/* <View style={[styles.card1]}>
+                               <Ionicons name="chevron-back" size={30} color="#064D65" marginTop={-10}/>
+                               </View> */}
                                
-                               <View style={[ styles.cardLayout1]}>
+                               {/* <View style={[ styles.cardLayout1]}>
           					<View style={[styles.rectangle3,styles.imageCard]} />
 
                                         <View style={styles.serviceContainer}>
                                                 <Image source={require('./assets/medibot.jpeg')} style={styles.serviceicon} resizeMode="contain" />
                                            </View>
           					<Text style={[styles.wendy, styles.wendyPosition3]}>Medibot</Text>
-        				</View>
+        				</View> */}
                                {/* Chatbot Button */}
-        				<View style={[styles.card2, styles.cardLayout1]}>
+        				{/* <View style={[styles.card2, styles.cardLayout1]}>
           					<View style={[styles.rectangle4, styles.imageCard]} />
                                     
                                         <TouchableOpacity onPress={() => this.props.navigation.navigate(DrugInteractionScreen)}>
@@ -219,10 +219,10 @@ export default class Search extends React.Component {
                                         </TouchableOpacity>
           				
                         
-        				</View>
+        				</View> */}
 
                                   {/* ADD DDI IMAGE HERE HAMNA OK ALIZA */}
-        				<View style={[styles.card3, styles.cardLayout1]}>
+        				{/* <View style={[styles.card3, styles.cardLayout1]}>
           					<View style={[styles.rectangle5, styles.imageCard]} />
                               
                                         <View style={styles.serviceContainer}>
@@ -231,22 +231,28 @@ export default class Search extends React.Component {
                                        
 
           					<Text style={[styles.jordan, styles.wendyPosition1]}>Reminders</Text>
-        				</View> 
+        				</View>  */}
       
 
-                                <View style={[styles.frontArrow]}>
-                               <Ionicons name="chevron-forward" size={30} color="#064D65" />
+                                {/* <View style={[styles.frontArrow]}>
+                               <Ionicons name="chevron-forward" size={30} color="#064D65" marginTop={5}/>
                                </View> 
        
 
 
-      			</View>
+      			</View> */}
+
+                        {/* Services Section */}
+<View style={styles.ServiceCard}>
+      <Text style={styles.serviceText}>SERVICES</Text>
+      <ServicesCircleMenu navigation={this.props.navigation} />
+ </View>
 
 {/* // This section represents the medication slideshow 2/3 */}
 
-            <View style={[styles.medicineRecCard]}>
+            {/* <View style={[styles.medicineRecCard]}>
                   
-                  <Text style={[styles.RecommendedText]}>Recommended for You</Text>
+                  <Text style={[styles.RecommendedText]}>RECOMMENED FOR YOU</Text>
 
                   <View style={[styles.medslideshowCard]}>
                         {/* <View style={[styles.medicineCard]}>
@@ -255,7 +261,7 @@ export default class Search extends React.Component {
                         </TouchableOpacity>
                         </View> */}
 
-                        <View style={styles.medicineCard}>
+                        {/* <View style={styles.medicineCard}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('MedInfo', { name: "panadol" })}>
                               <Image source={require('./assets/panadol.jpeg')} resizeMode="cover" style={{ width: '100%', height: '100%' }} />
                         </TouchableOpacity>
@@ -274,11 +280,51 @@ export default class Search extends React.Component {
                         <Image source={require('./assets/benad.jpeg')} style={[styles.imageFit]} resizeMode="contain" />   
                         </TouchableOpacity>
                         </View>
-                  </View>
+                  </View> */}
    
-            </View>
+            {/* </View>  */}
+
+            <View style={styles.medicineRecCard}>
+  <Text style={styles.RecommendedText}>RECOMMENDED FOR YOU</Text>
+  
+  <ScrollView 
+    horizontal 
+    showsHorizontalScrollIndicator={false}
+    contentContainerStyle={styles.medslideshowHorizontal}
+  >
+    <View style={styles.medicineCard}>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('MedInfo', { name: "panadol" })}>
+        <Image 
+          source={require('./assets/panadol.jpeg')} 
+          resizeMode="cover" 
+          style={styles.horizontalMedicineImage} 
+        />
+      </TouchableOpacity>
+    </View>
+
+    <View style={styles.medicineCard}>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('MedInfo', { name: "flagyl" })}>
+        <Image 
+          source={require('./assets/flagyl.jpeg')} 
+          resizeMode="cover" 
+          style={styles.horizontalMedicineImage} 
+        />
+      </TouchableOpacity>
+    </View>
+
+    <View style={styles.medicineCard}>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('MedInfo', { name: "benadryl" })}>
+        <Image 
+          source={require('./assets/benad.jpeg')} 
+          resizeMode="contain" 
+          style={styles.horizontalMedicineImage} 
+        />
+      </TouchableOpacity>
+    </View>
+  </ScrollView>
+</View>
            
-            <View style={styles.pharmacon}>
+            {/* <View style={styles.pharmacon}>
                  
                     <Text style={[styles.pharmaText]}>Pharmacy Locator</Text>
 
@@ -287,7 +333,58 @@ export default class Search extends React.Component {
                     <Image source={require('./assets/pharma.png')} style={styles.mapImage} resizeMode="cover" />
                     </TouchableOpacity>
             </View>
-          
+           */}
+
+            <View style={styles.pharmacon}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 5}}>
+            {/* <Ionicons name="location" size={24} color="#064D65" style={{marginRight: 10}} /> */}
+            <Text style={styles.pharmaText}>Pharmacy Locator</Text>
+            </View>
+
+            {/* <TouchableOpacity 
+            onPress={() => this.props.navigation.navigate(Pharmacy)}
+            style={{
+                  borderRadius: 15,
+                  overflow: 'hidden',
+                  marginHorizontal: 10,
+            }}
+            >
+            <Image 
+                  source={require('./assets/pharma.png')} 
+                  style={styles.mapImage} 
+                  resizeMode="cover" 
+            />
+            </TouchableOpacity> */}
+            <TouchableOpacity 
+                  onPress={() => this.props.navigation.navigate(Pharmacy)}
+                  style={{
+                  borderRadius: 15,
+                  overflow: 'hidden',
+                  marginHorizontal: 10,
+                  position: 'relative',
+                  }}
+                  >
+                  <Image 
+                  source={require('./assets/pharma.png')} 
+                  style={styles.mapImage} 
+                  resizeMode="cover" 
+                  />
+                  <View 
+                  style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        //backgroundColor: 'rgba(0,0,0,0.2)', // Slight dark overlay
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                  }}
+                  >
+                  <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>Find Nearby Pharmacies</Text>
+                  </View>
+                  </TouchableOpacity>
+            </View>
 
     		</ScrollView>
        </KeyboardAvoidingView>
@@ -297,24 +394,48 @@ export default class Search extends React.Component {
 }
 
 const styles = StyleSheet.create({
+      // pharmacon: {
+      //       marginTop: "70%",
+      //       height: '55%',
+      //       //backgroundColor:"blue",
+      //      // position: "absolute",
+      // },
       pharmacon: {
             marginTop: "70%",
             height: '55%',
-            //backgroundColor:"blue",
-           // position: "absolute",
-      },
-      pharmaText :{
-            fontWeight: "500",
-            color: "#252828",
-            letterSpacing: 1,
-            marginLeft: -186,
-            textAlign: "left",
-            left: "53%",
-            fontSize: 20,
-            top: "5%",
-            marginBottom: 17
+            backgroundColor: '#f0f4f8', // Soft light blue background
+            borderRadius: 20, // Rounded corners for the entire section
+            padding: 15,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.1,
+            shadowRadius: 3.84,
+            elevation: 2,
+          },
+      // pharmaText :{
+      //       fontWeight: "500",
+      //       color: "#252828",
+      //       letterSpacing: 1,
+      //       marginLeft: -186,
+      //       textAlign: "left",
+      //       left: "53%",
+      //       fontSize: 20,
+      //       top: "5%",
+      //       marginBottom: 17
        
-      },
+      // },
+      pharmaText: {
+            fontWeight: "600", // Slightly bolder
+            color: "#064D65", // More vibrant color
+            letterSpacing: 1,
+            textAlign: "center", // Center the text
+            fontSize: 22, // Slightly larger
+            // marginBottom: 20,
+            paddingVertical: 10,
+          },
 
       mapContainer:{
             width: '90%',
@@ -323,15 +444,31 @@ const styles = StyleSheet.create({
             bottom: "-2%"
       }
       ,
+      // mapImage: {
+      //       width: '90%',  // Adjust the size as per requirement
+      //       height: 200,   // Explicit height in pixels
+      //       marginTop: 10, // Add some margin if needed
+      //       marginLeft: '5%',
+      //       borderRadius: 10,
+      //       top:"10%",
+      //       bottom: "10%"
+      //       //backgroundColor: 'red', // Temporary for debugging visibility
+      //     },
       mapImage: {
-            width: '90%',  // Adjust the size as per requirement
-            height: 200,   // Explicit height in pixels
-            marginTop: 10, // Add some margin if needed
+            width: '90%',  
+            height: 250,   // Increase height for more visual impact
+            marginTop: 20, 
             marginLeft: '5%',
-            borderRadius: 10,
-            top:"10%",
-            bottom: "10%"
-            //backgroundColor: 'red', // Temporary for debugging visibility
+            borderRadius: 15, // More rounded corners
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+            shadowOpacity: 0.22,
+            shadowRadius: 2.22,
+            elevation: 3, // Android shadow
+            alignSelf: 'center', // Center the image
           },
           
 	horizontalScrollContainer: {
@@ -347,7 +484,7 @@ const styles = StyleSheet.create({
       padding: 10, // Adds padding to the container
       backgroundColor: 'white',
       //"#f8fbfd", // Set a background color if needed,
-      marginLeft: -9,
+      marginLeft: -3,
     },
 
 
@@ -680,12 +817,19 @@ const styles = StyleSheet.create({
 
 
       serviceText:{
-            fontWeight: "500",
-            color: "#252828",
-            //fontFamily: "SF Pro Text",
+            fontWeight: "600", // Slightly bolder
+            color: "#064D65", // More vibrant color
             letterSpacing: 1,
-            top: "12%",
-            marginLeft: -193,
+            textAlign: "center", // Center the text
+            fontSize: 22, // Slightly larger
+            paddingVertical: 10,
+
+            // fontWeight: "500",
+            // color: "#252828",
+            // //fontFamily: "SF Pro Text",
+            // letterSpacing: 1,
+            top: "1%",
+            marginLeft: -72,
             textAlign: "left",
             fontSize: 20,
             left: "50%",
@@ -727,7 +871,7 @@ const styles = StyleSheet.create({
 
     wendyPosition3: {     //medibot text
       marginTop: "3%",
-      marginLeft: -20,
+      marginLeft: -15,
       color: "black",
       fontSize: 12,
       fontWeight: "500",
@@ -759,7 +903,6 @@ const styles = StyleSheet.create({
 
 
       medslideshowCard:{
-
             top: "20%",
             width: "100%",
             height: "85%",
@@ -767,34 +910,55 @@ const styles = StyleSheet.create({
             position: "absolute",
             flexDirection: "row",
             justifyContent: "space-between",
-             //backgroundColor: "red"
-           
+            marginLeft: -25
+                  //backgroundColor: "red"
 
       },
       RecommendedText:{
-            fontWeight: "500",
-            color: "#252828",
+            fontWeight: "600", // Slightly bolder
+            color: "#064D65", // More vibrant color
             letterSpacing: 1,
-            marginLeft: -193,
+            textAlign: "center", // Center the text
+            fontSize: 22, // Slightly larger
+            paddingVertical: 10,
+
+            // fontWeight: "500",
+            // color: "#252828",
+            marginLeft: -20,
             textAlign: "left",
             left: "53%",
-            fontSize: 20,
-            top:"1%",
+            // fontSize: 20,
+            top:"-5%",
+            flexDirection: 'row', 
+            alignItems: 'center', 
+            justifyContent: 'center',
             },
-
-
-      medicineCard:{
-
-              top: "5%",
-              height: "70%",
-             // position: "absolute",
-              width: "33%",
-              marginLeft: 12,
-              borderRadius: 15,
-             // backgroundColor: "blue",
-              elevation:5
-             
-      },
+      medicineRecCard: {
+            top: "27%",
+            width: "100%",
+            height: "16%",
+            position: "relative",
+          },
+          
+          medslideshowHorizontal: {
+            top: "-10%",
+            paddingHorizontal: 15,
+            alignItems: 'center',
+          },
+          
+          medicineCard: {
+            width: 150,
+            height: 100,
+            marginRight: 10,
+            borderRadius: 15,
+            elevation: 5,
+          },
+          
+          horizontalMedicineImage: {
+            width: '100%',
+            height: '100%',
+            borderRadius: 15,
+          },
       imageFit: {
             width: '100%',
             height: '100%', 

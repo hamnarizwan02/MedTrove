@@ -316,7 +316,7 @@ export default function Cart({ navigation }) {
           <View key={index} style={styles.cartItem}>
             <View style={styles.itemInfo}>
               <Text style={styles.medicineName}>{medicine}</Text>
-              <Text style={styles.medicinePrice}>${prices[medicine] || 100}</Text>
+              <Text style={styles.medicinePrice}>{prices[medicine] || 100}</Text>
 
               <View style={styles.quantityContainer}>
                 <TouchableOpacity 
@@ -353,7 +353,7 @@ export default function Cart({ navigation }) {
 
       {cartItems.Medicine?.length > 0 && (
         <View style={styles.checkoutBar}>
-          <Text style={styles.totalText}>Total: ${calculateTotal().toFixed(2)}</Text>
+          <Text style={styles.totalText}>Total: PKR {calculateTotal().toFixed(2)}</Text>
           <TouchableOpacity
             style={styles.checkoutButton}
             onPress={handleCheckout} // Only trigger checkout once

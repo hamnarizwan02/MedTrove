@@ -23,7 +23,7 @@
       },
       "googleMaps": {
         "apiKey": "YOUR_ANDROID_API_KEY"
-      }
+      },
     },
     "web": {
       "favicon": "./assets/favicon.png"

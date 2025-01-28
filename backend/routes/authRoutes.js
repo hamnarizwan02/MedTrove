@@ -22,6 +22,7 @@ router.post('/login', login);
 
 // New routes
 router.get('/:id', getUserById);
+
 router.put('/avatar', updateUserAvatar);
 router.put('/update', updateUserProfile);
 

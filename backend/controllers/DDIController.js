@@ -48,7 +48,8 @@ exports.getInteraction = async (req, res) => {
         console.log(`No interaction found between "${drug1}" and "${drug2}"`); // Debugging: No interaction
         res.json({
           found: false,
-          message: "No known interaction found between these medications."
+          //message: "No known interaction found between these medications."
+           message: "Sorry! Medication not found."
         });
       }
     } catch (error) {

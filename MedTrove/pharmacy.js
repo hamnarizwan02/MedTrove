@@ -181,7 +181,7 @@ const Pharmacy = () => {
   return (
     <View style={styles.container}>
       {/* Wrap Search and Dropdown inside KeyboardAvoidingView */}
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         behavior={Platform.OS === "android" ? "padding" : "height"}
         style={styles.keyboardView}
       >
@@ -194,10 +194,10 @@ const Pharmacy = () => {
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchBarInput}
         />
-      </KeyboardAvoidingView>
+      </KeyboardAvoidingView> */}
   
       {/* Dropdown Menu placed absolutely to appear on top */}
-      {searchResults.length > 0 && (
+      {/* {searchResults.length > 0 && (
         <View style={styles.dropdown}>
           {searchResults.map((item) => (
             <TouchableOpacity
@@ -210,7 +210,7 @@ const Pharmacy = () => {
           ))}
         </View>
       )}
-      
+       */}
   
       {/* Map Rendering in WebView */}
       {/* Wrap Search and Dropdown inside KeyboardAvoidingView */}
