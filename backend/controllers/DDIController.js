@@ -1,6 +1,8 @@
 const DrugInteraction = require('../models/ddi');
+const mongoose = require('mongoose');  
 
 exports.getInteraction = async (req, res) => {
+  console.log("MongoDB Connection State:", mongoose.connection.readyState);
     console.log("ddiii");
     try {
       console.log('Received request to /api/check-interaction'); // Debugging: Endpoint hit

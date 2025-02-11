@@ -109,7 +109,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.medtrove"
+    namespace 'com.example.medtrove'
     defaultConfig {
         applicationId 'com.example.medtrove'
         minSdkVersion rootProject.ext.minSdkVersion

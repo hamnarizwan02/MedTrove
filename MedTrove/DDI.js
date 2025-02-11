@@ -38,6 +38,11 @@ export default function DrugInteractionScreen() {
         }),
       });
 
+      if (!response.ok) {
+        console.log("HELP");
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       setResult(data);
     } catch (error) {

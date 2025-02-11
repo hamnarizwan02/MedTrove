@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,15 @@ import {
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import CONFIG from './config.js'; 
+import axios from 'axios';
 
 const AddInformation = () => {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [postcode, setPostcode] = useState("");
   const [phone, setPhone] = useState("");
+  const [currentUserId, setCurrentUserId] = useState(null);
   const [helpNeeded, setHelpNeeded] = useState(false);
   const navigation = useNavigation();
 
@@ -29,8 +32,113 @@ const AddInformation = () => {
     }
   };
 
-  const handleProceed = () => {
-    navigation.navigate("ChoosePayment");
+  // const handleProceed = () => {
+  //   navigation.navigate("ChoosePayment");
+  // };
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await axios.get(`${CONFIG.backendUrl}/api/user/current`);
+        if (response.data.success) {
+          setCurrentUserId(response.data.userID);
+        }
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  // const handleProceed = async () => {
+  //   // Detailed logging
+  //   console.log('Form Data:', {
+  //     currentUserId,
+  //     address,
+  //     city,
+  //     postcode,
+  //     phone,
+  //     helpNeeded
+  //   });
+  
+  //   // Comprehensive validation
+  //   const validationErrors = [];
+    
+  //   if (!currentUserId) validationErrors.push('User not authenticated');
+  //   if (!address) validationErrors.push('Street address is required');
+  //   if (!city) validationErrors.push('City is required');
+  //   if (!postcode) validationErrors.push('Postal code is required');
+  //   if (!phone) validationErrors.push('Phone number is required');
+  
+  //   if (validationErrors.length > 0) {
+  //     Alert.alert(
+  //       'Validation Error', 
+  //       validationErrors.join('\n')
+  //     );
+  //     return;
+  //   }
+  
+  //   try {
+  //     const response = await fetch(`${CONFIG.backendUrl}/api/save-address`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         userID: currentUserId,
+  //         address: {
+  //           street: address,
+  //           city: city,
+  //           postalCode: postcode,
+  //           phone: phone
+  //         },
+  //         helpNeeded
+  //       }),
+  //     });
+  
+  //     const data = await response.json();
+  
+  //     if (response.ok) {
+  //       navigation.navigate("ChoosePayment");
+  //     } else {
+  //       Alert.alert('Error', data.message || 'Failed to save address');
+  //     }
+  //   } catch (error) {
+  //     console.error('Address save error:', error);
+  //     Alert.alert('Error', 'Network error. Please try again.');
+  //   }
+  // };
+  const handleProceed = async () => {
+    try {
+      const response = await fetch(`${CONFIG.backendUrl}/api/save-address`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userID: currentUserId,
+          address: {
+            street: address,
+            city: city,
+            postalCode: postcode,
+            phone: phone
+          },
+          helpNeeded
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        navigation.navigate("ChoosePayment");
+      } else {
+        Alert.alert('Error', data.message || 'Failed to save address');
+      }
+    } catch (error) {
+      console.error('Address save error:', error);
+      Alert.alert('Error', 'Network error. Please try again.');
+    }
   };
 
   return (
@@ -54,7 +162,7 @@ const AddInformation = () => {
       />
 
       <Text style={styles.label}>
-        Town / City <Text style={styles.required}>*</Text>
+        Town/City <Text style={styles.required}>*</Text>
       </Text>
       <TextInput
         placeholder="Enter your city"
@@ -64,10 +172,10 @@ const AddInformation = () => {
       />
 
       <Text style={styles.label}>
-        Postcode <Text style={styles.required}>*</Text>
+        Postal code <Text style={styles.required}>*</Text>
       </Text>
       <TextInput
-        placeholder="Enter your postcode"
+        placeholder="Enter your postal code"
         style={styles.input}
         value={postcode}
         onChangeText={setPostcode}
@@ -151,7 +259,7 @@ const styles = StyleSheet.create({
     color: "#495057",
   },
   button: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#064D65",
     paddingVertical: 14,
     borderRadius: 8,
     marginTop: 20,

@@ -191,6 +191,7 @@ export default function Cart({ navigation }) {
   const [cartItems, setCartItems] = useState([]);
   const [prices, setPrices] = useState({});
   const [loading, setLoading] = useState(true);
+  const [pricesLoaded, setPricesLoaded] = useState(false); 
 
   useEffect(() => {
     fetchCart();
@@ -205,30 +206,63 @@ export default function Cart({ navigation }) {
       };
 
       setCartItems(formattedCart);
+      setPricesLoaded(false);  // Reset prices loaded state
 
       // Fetch prices for each medicine
-      const pricePromises = formattedCart.Medicine.map(medicine =>
-        axios
-          .get(`${CONFIG.backendUrl}/api/price/${medicine}`)
-          .then(priceResponse => priceResponse.data.price || 100) // Default to 100 if no price found
-          .catch(() => 100) // Handle error gracefully and default to 100
-      );
+  //     const pricePromises = formattedCart.Medicine.map(medicine =>
+  //       axios
+  //         .get(`${CONFIG.backendUrl}/api/price/${medicine}`)
+  //         .then(priceResponse => priceResponse.data.price || 100) // Default to 100 if no price found
+  //         .catch(() => 100) // Handle error gracefully and default to 100
+  //     );
 
-      const prices = await Promise.all(pricePromises);
-      const priceMap = formattedCart.Medicine.reduce((acc, medicine, index) => {
-        acc[medicine] = prices[index];
-        return acc;
-      }, {});
+  //     const prices = await Promise.all(pricePromises);
+  //     const priceMap = formattedCart.Medicine.reduce((acc, medicine, index) => {
+  //       acc[medicine] = prices[index];
+  //       return acc;
+  //     }, {});
 
-      setPrices(priceMap);
-      setLoading(false);
+  //     setPrices(priceMap);
+  //     setLoading(false);
 
-    } catch (error) {
-      console.error('Error fetching cart:', error);
-      setLoading(false);
-      Alert.alert("Error", "Failed to load cart items", [{ text: "OK" }]);
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error fetching cart:', error);
+  //     setLoading(false);
+  //     Alert.alert("Error", "Failed to load cart items", [{ text: "OK" }]);
+  //   }
+  // };
+
+  const pricePromises = formattedCart.Medicine.map(medicine =>
+    axios
+      .get(`${CONFIG.backendUrl}/api/price/${medicine}`)
+      .then(priceResponse => {
+        const price = priceResponse.data.price;
+        return price ? price.toString() : "100";
+      })
+      .catch(() => "100")
+  );
+
+  const prices = await Promise.all(pricePromises);
+  const priceMap = formattedCart.Medicine.reduce((acc, medicine, index) => {
+    acc[medicine] = prices[index];
+    return acc;
+  }, {});
+
+  setPrices(priceMap);
+  
+  // Set a small timeout before marking prices as loaded
+  setTimeout(() => {
+    setPricesLoaded(true);
+    setLoading(false);
+  }, 500);
+
+} catch (error) {
+  console.error('Error fetching cart:', error);
+  setLoading(false);
+  setPricesLoaded(false);
+  Alert.alert("Error", "Failed to load cart items", [{ text: "OK" }]);
+}
+};
 
   const handleRemoveItem = async (medicine) => {
     try {
@@ -240,17 +274,33 @@ export default function Cart({ navigation }) {
     }
   };
 
+  const calculateTotal = () => {
+    if (!pricesLoaded || !cartItems.Medicine || !prices) return 0;
+  
+    return cartItems.Medicine.reduce((total, medicine, index) => {
+      const price = parseFloat(prices[medicine].replace(/[^\d.]/g, ''));
+      const quantity = cartItems.Quantity[index] || 0;
+      return total + (price * quantity);
+    }, 0);
+  };
+  
   const handleUpdateQuantity = async (medicine, newQuantity) => {
     const quantity = parseInt(newQuantity, 10);
     if (quantity < 1) {
       handleRemoveItem(medicine);
       return;
     }
-
+  
     try {
+      // Calculate total immediately before sending the request
+      const total = calculateTotal().toFixed(2);
+  
+      console.log('Sending update:', { medicine, quantity, total });
+  
       await axios.put(`${CONFIG.backendUrl}/api/cart/update`, {
         medicine,
         quantity,
+        total
       });
       fetchCart();
     } catch (error) {
@@ -259,45 +309,18 @@ export default function Cart({ navigation }) {
     }
   };
 
-  // Calculate total price including shipping charges
-  // const calculateTotal = () => {
-  //   const itemTotal = cartItems.Medicine?.reduce((total, medicine, index) => {
-  //     const price = prices[medicine] || 100; // Default price if not available
-  //     const quantity = cartItems.Quantity[index];
-  //     console.log(quantity);
-  //     console.log(prices);
-  //     return total + price * quantity;
-  //   }, 0) || 0;
-
-  //   const shippingCharges = 250; // Fixed shipping charges
-  //   return itemTotal + shippingCharges;
-  // };
-
-  const calculateTotal = () => {
-    const itemTotal = cartItems.Medicine?.reduce((total, medicine, index) => {
-      // Extract the numeric value from the price string (e.g., "PKR 59.50" -> 59.50)
-      const priceString = prices[medicine] || "100"; // Default to "100" if price is not available
-      const price = parseFloat(priceString.replace(/[^0-9.-]+/g, "")); // Remove non-numeric characters and parse to float
-  
-      const quantity = cartItems.Quantity[index];
-      console.log(quantity);
-      console.log(prices);
-      console.log(price); // Log the parsed price value
-  
-      return total + price * quantity;
-    }, 0) || 0;
-  
-    const shippingCharges = 250; // Fixed shipping charges
-    return itemTotal + shippingCharges;
-  };
-  
-
   const handleCheckout = () => {
+    console.log("Navigation Object:", navigation); // Check if navigation exists
+  
     Alert.alert("Checkout", "Proceed to checkout", [
       { text: "Cancel" },
-      { text: "Proceed", onPress: () => navigation.navigate('Checkout') }, // Navigate to checkout page (example)
+      { text: "Proceed", onPress: () => {
+          console.log("Navigating to AddInformation");
+          navigation.navigate('AddInformation');
+        } 
+      }, 
     ]);
-  };
+  };  
 
   if (loading) {
     return (
@@ -316,7 +339,7 @@ export default function Cart({ navigation }) {
           <View key={index} style={styles.cartItem}>
             <View style={styles.itemInfo}>
               <Text style={styles.medicineName}>{medicine}</Text>
-              <Text style={styles.medicinePrice}>{prices[medicine] || 100}</Text>
+              <Text style={styles.medicinePrice}>{prices[medicine]}</Text>
 
               <View style={styles.quantityContainer}>
                 <TouchableOpacity 
@@ -356,7 +379,13 @@ export default function Cart({ navigation }) {
           <Text style={styles.totalText}>Total: PKR {calculateTotal().toFixed(2)}</Text>
           <TouchableOpacity
             style={styles.checkoutButton}
-            onPress={handleCheckout} // Only trigger checkout once
+            // onPress={handleCheckout} // Only trigger checkout once
+            onPress={() => {
+              cartItems.Medicine?.forEach((medicine, index) => {
+                handleUpdateQuantity(medicine, Number(cartItems.Quantity[index]));
+              });
+              handleCheckout(); // Call checkout after updating quantities
+            }}
           >
             <Text style={styles.checkoutText}>Checkout</Text>
           </TouchableOpacity>

@@ -28,6 +28,15 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+  [
+    "@stripe/stripe-react-native",
+    {
+      "merchantIdentifier": "merchant.com.example",
+      "enableGooglePay": false
+    }
+  ]
+],
     "extra": {
       "eas": {
         "projectId": "72a2f3d2-98bd-418b-a123-2c7eaf2b6203"

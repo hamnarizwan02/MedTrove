@@ -11,6 +11,7 @@ exports.signup = async (req, res) => {
 
     const newUser = new User({ emailaddress: email, password, phonenumber: phone });
     await newUser.save();
+
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err });
@@ -61,6 +62,12 @@ exports.login = async (req, res) => {
 exports.getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
+    
+    // Validate if userId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID format' });
+    }
+
     const user = await User.findById(userId);
     
     if (!user) {

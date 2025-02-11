@@ -6,7 +6,8 @@ const cartSchema = new mongoose.Schema({
       ref: 'User'
     }],
     Medicine: [String],
-    Quantity: [String]
+    Quantity: [String],
+    Total: String
 }, { collection: 'Cart', versionKey: false });
   
 module.exports = mongoose.model('Cart', cartSchema);

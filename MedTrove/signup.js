@@ -274,9 +274,10 @@ export default class SignUp extends React.Component {
       phone: this.state.phone,
     })
     .then(response => {
-      Alert.alert(response.data.message);
+      // Alert.alert(response.data.message);
+      Alert.alert("Please login to use MedTrove!");
       //this.setState({ email: '', password: '', phone: '' }); // Clear inputs
-      this.props.navigation.navigate('Search');
+      this.props.navigation.navigate('Login');
     })
     .catch(error => {
       Alert.alert('Error', error.response.data.message || 'Something went wrong');

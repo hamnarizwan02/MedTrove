@@ -654,16 +654,32 @@ export default class ProductList extends React.Component {
     </View>
   );
 
+  // renderSortDropdown() {
+  //   return (
+  //     <Picker
+  //       selectedValue={this.state.sortBy}
+  //       onValueChange={this.handleSortChange}
+  //       style={styles.picker}
+  //     >
+  //       <Picker.Item label="Sort by name" value="name" />
+  //       <Picker.Item label="Sort by price" value="price" />
+  //     </Picker>
+  //   );
+  // }
+
   renderSortDropdown() {
     return (
-      <Picker
-        selectedValue={this.state.sortBy}
-        onValueChange={this.handleSortChange}
-        style={styles.picker}
-      >
-        <Picker.Item label="Sort by name" value="name" />
-        <Picker.Item label="Sort by price" value="price" />
-      </Picker>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={this.state.sortBy}
+          onValueChange={this.handleSortChange}
+          style={styles.picker}
+          itemStyle={styles.pickerItem}
+        >
+          <Picker.Item label="Sort by name" value="name" />
+          <Picker.Item label="Sort by price" value="price" />
+        </Picker>
+      </View>
     );
   }
   
@@ -840,9 +856,40 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333333',
   },
+  // picker: {
+  //   height: 40,
+  //   width: 150,
+  // },
+  pickerContainer: {
+    minWidth: 150,
+    height: 50,
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    marginRight: 10,
+  },
   picker: {
-    height: 40,
-    width: 150,
+    width: '100%',
+    height: 50,
+    color: '#333333',
+    backgroundColor: '#ffffff',
+    padding: 0,
+    margin: 0,
+  },
+  pickerItem: {
+    fontSize: 16,
+    color: '#333333',
+    height: 90,
+  },
+  subHeaderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: 10,
+    marginBottom: 5,
+    paddingRight: 5, // Add padding to prevent picker from touching the edge
   },
   productList: {
     paddingBottom: 20,

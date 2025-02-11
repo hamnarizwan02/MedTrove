@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {View,Text,TextInput,TouchableOpacity,StyleSheet,Modal,Platform,
 ScrollView,
     Keyboard,
     TouchableWithoutFeedback,
+    Image,
   } from "react-native";
 import { KeyboardAvoidingView } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import Search from "./search";
 import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import CONFIG from './config';
 
 export default function MakeDonation() {
     const [donationAmount, setDonationAmount] = useState("");
@@ -16,14 +19,58 @@ export default function MakeDonation() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const navigation = useNavigation();
+    
+    const [totalAmount, setTotalAmount] = useState(0);
+    const { paymentMethod } = "Debit";
+    const [cartItems, setCartItems] = useState([]);
+
+    useEffect(() => {
+      Promise.all([fetchCart()]).finally(() => setLoading(false));
+    }, []);
+
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get(`${CONFIG.backendUrl}/api/cart/current`);
+        if (response.data && response.data.Medicine) {
+          // Map the items using the single Total value
+          const items = response.data.Medicine.map((medicine, index) => ({
+            name: medicine,
+            quantity: response.data.Quantity[index],
+            total: parseFloat(response.data.Total) / response.data.Medicine.length // Distribute total evenly if needed
+          }));
+          setCartItems(items);
+          
+          // Set total amount directly from the Total field
+          setTotalAmount(parseFloat(response.data.Total));
+        }
+      } catch (error) {
+        console.error('Error fetching cart:', error);
+        Alert.alert('Error', 'Failed to load cart details');
+      }
+    };
+
+    const handleProceedToPayment = async () => {
+      try {
+        const response = await axios.post(`${CONFIG.backendUrl}/api/create-payment-intent`, {
+          amount: totalAmount,
+        });
+        const { clientSecret } = response.data;
+        navigation.navigate('StripeWebView', { 
+          paymentmethod: paymentMethod, paymentUrl: `${CONFIG.backendUrl}/checkout?clientSecret=${clientSecret}`
+        });
+      } catch (error) {
+        console.error('Error creating payment:', error);
+        Alert.alert('Error', 'Unable to process payment. Please try again.');
+      }
+    };
 
     const handleDonate = () => {
       // Simulate a successful donation process
-      if (donationAmount && accountNumber) {
+      if (donationAmount ) {
         setIsModalVisible(true);
       }
       else{
-        setErrorMessage("Both fields are required.");
+        setErrorMessage("Please enter amount!");
       return;
       }
       setErrorMessage("");
@@ -34,14 +81,14 @@ export default function MakeDonation() {
       setDonationAmount("");
       setAccountNumber("");
       // Navigate to Home screen 
-     navigation.navigate(Search);
+      handleProceedToPayment();
     };
 
   return (
     <KeyboardAvoidingView style={styles.container}>
 
       <Text style={styles.header}>Donations</Text>
-      <Text style={styles.subHeader}>Edit donation details</Text>
+      <Text style={styles.subHeader}>Please enter amount</Text>
 
 
       <TextInput
@@ -52,14 +99,14 @@ export default function MakeDonation() {
         onChangeText={setDonationAmount}
         keyboardType="numeric"
       />
-      <TextInput
+      {/* <TextInput
         style={styles.input}
         placeholder="Account Number"
         placeholderTextColor="#999"
         value={accountNumber}
         onChangeText={setAccountNumber}
         keyboardType="numeric"
-      />
+      /> */}
 
       <TouchableOpacity style={styles.button} onPress={handleDonate}>
         <Text style={styles.buttonText}>Donate</Text>
@@ -79,13 +126,13 @@ export default function MakeDonation() {
             </View>
             <Text style={styles.modalHeader}>Thank You!</Text>
             <Text style={styles.modalSubHeader}>
-              Your donation has been received
+              Please enter card details.
             </Text>
             <TouchableOpacity
               style={styles.backButton}
               onPress={handleBackToHome}
             >
-              <Text style={styles.backButtonText}>Back To Home</Text>
+              <Text style={styles.backButtonText}>Proceed to Payment</Text>
             </TouchableOpacity>
           </View>
         </View>

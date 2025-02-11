@@ -1,9 +1,12 @@
 import React from "react";
-import  { useState } from "react";
+import  { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet, Modal } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import CONFIG from './config';
 import MakeDonation from "./MakeDonation";
+import StripeWebView from "./StripeWebView";
 
 const Donation = () => {
     //const [modalVisible, setModalVisible] = useState(false);
@@ -14,6 +17,7 @@ const Donation = () => {
         const toggleModal = () => {
           setModalVisible(!modalVisible);
         };
+
         const handleNavigation = () => {
             navigation.navigate("MakeDonation"); 
           };
@@ -29,8 +33,9 @@ const Donation = () => {
 
       {/* Subtitle */}
       <Text style={styles.subtitle}>
-        Info about how we run on donations and how good it is to donate
-        {"\n"}Bla bla bla bla bla bla
+      Your generosity can be a lifeline for someone in need. By donating towards medical purchases,
+       you help provide essential medicines, life-saving treatments,
+        and critical care for those who cannot afford it.
       </Text>
 
       {/* Button */}
@@ -57,19 +62,19 @@ const Donation = () => {
             <TouchableOpacity onPress={handleNavigation}>
             <View style={styles.paymentCard}>
             
-              <Image
+              {/* <Image
                 source={
                 require('./assets/jazzcash.png') // Replace with actual payment icon
                 }
                 style={styles.paymentIcon}
                 resizeMode="contain"
-              />
+              /> */}
              
               <View>
              
-                <Text style={styles.paymentText}>JazzCash</Text>
-                <Text style={styles.paymentDetails}>Amanda Morgan</Text>
-                <Text style={styles.paymentDetails}>0330 4527937</Text>
+                <Text style={styles.paymentText}>Debit Card</Text>
+                {/* <Text style={styles.paymentDetails}>Amanda Morgan</Text>
+                <Text style={styles.paymentDetails}>0330 4527937</Text> */}
               </View>
             </View>
             </TouchableOpacity>
@@ -83,7 +88,7 @@ const Donation = () => {
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",

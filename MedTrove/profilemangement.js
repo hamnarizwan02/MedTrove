@@ -382,30 +382,59 @@ export default function ProfileManagement({ navigation }) {
     { id: 1, source: require('./pfp/wmn.png') },
   ];
 
+  // useEffect(() => {
+  //   const fetchCurrentUser = async () => {
+  //     try {
+  //       const response = await axios.get(`${CONFIG.backendUrl}/api/user/current`);
+  //       setCurrentUserId(response.data.userID);
+
+  //       const userResponse = await axios.get(`${CONFIG.backendUrl}/api/${response.data.userID}`);
+  //       const userData = userResponse.data;
+
+  //       setEmail(userData.emailaddress);
+  //       setPassword(userData.password);
+  //       setPhoneNumber(userData.phonenumber);
+        
+  //       if (userData.avatar !== undefined) {
+  //         setProfilePicture(images[userData.avatar].source);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching current user:', error);
+  //     }
+  //   };
+
+  //   fetchCurrentUser();
+  // }, []);
+
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
         const response = await axios.get(`${CONFIG.backendUrl}/api/user/current`);
-        setCurrentUserId(response.data.userID);
+        const userData = response.data;
 
-        const userResponse = await axios.get(`${CONFIG.backendUrl}/api/${response.data.userID}`);
-        const userData = userResponse.data;
-
-        setEmail(userData.emailaddress);
-        setPassword(userData.password);
-        setPhoneNumber(userData.phonenumber);
-        
-        if (userData.avatar !== undefined) {
-          setProfilePicture(images[userData.avatar].source);
+        if (userData.success) {
+          setCurrentUserId(userData.userID);
+          setEmail(userData.emailaddress);
+          setPassword(userData.password);
+          setPhoneNumber(userData.phonenumber);
+          
+          if (userData.avatar !== undefined) {
+            setProfilePicture(images[userData.avatar].source);
+          }
+        } else {
+          console.error('Failed to fetch user data:', userData.message);
         }
       } catch (error) {
         console.error('Error fetching current user:', error);
+        if (error.response) {
+          console.error('Server response:', error.response.data);
+        }
       }
     };
 
     fetchCurrentUser();
   }, []);
-
+  
   const handleChoosePhoto = () => {
     setModalVisible(true);
   };

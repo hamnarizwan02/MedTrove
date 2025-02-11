@@ -229,7 +229,7 @@ export default class Login extends React.Component {
       });
 
       const data = await response.json();
-      //console.log('Response Data:', data);
+      console.log('Response Data:', data);
 
       if (response.ok) {
         Alert.alert('Login Successful', 'Welcome back!');

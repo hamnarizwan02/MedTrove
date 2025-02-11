@@ -101,43 +101,74 @@
 
 // export default ChoosePayment;
 
-
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";  // Import useNavigation
 
-const ChoosePayment = () => {
+const ChoosePayment = ({ route }) => {
   const navigation = useNavigation();  // Hook for navigation
 
   // Navigate to PaymentInformation page
+  // const handlePaymentSelect = (paymentMethod) => {
+  //   navigation.navigate('PaymentInformation', { paymentMethod });  // Pass the selected payment method to the next screen
+  // };
+
+  // return (
+  //   <View style={styles.container}>
+  //     <Text style={styles.title}>Payment</Text>
+  //     <Text style={styles.subtitle}>Methods</Text>
+
+  //     <TouchableOpacity style={styles.orderHistoryButton}>
+  //       <Text style={styles.buttonText}>Order History</Text>
+  //     </TouchableOpacity>
+
+  //     {/* EasyPaisa Option */}
+  //     <TouchableOpacity style={styles.card} onPress={() => handlePaymentSelect('EasyPaisa')}>
+  //       {/* <Image source={require("./assets/easypaisa.png")} style={styles.logo} /> */}
+  //       <Text style={styles.name}>Debit Card</Text>
+  //       {/* <Text style={styles.number}>0330 4527937</Text> */}
+  //     </TouchableOpacity>
+
+  //     {/* JazzCash Option */}
+  //     <TouchableOpacity style={styles.card} onPress={() => handlePaymentSelect('JazzCash')}>
+  //       {/* <Image source={require("./assets/jazzcash.png")} style={styles.logo} /> */}
+  //       <Text style={styles.name}>Credit Card</Text>
+  //       {/* <Text style={styles.number}>0330 4527937</Text> */}
+  //     </TouchableOpacity>
+  //   </View>
+  // );
+
   const handlePaymentSelect = (paymentMethod) => {
-    navigation.navigate('PaymentInformation', { paymentMethod });  // Pass the selected payment method to the next screen
+    const method = paymentMethod === 'JazzCash' ? 'Credit' : 
+                   paymentMethod === 'EasyPaisa' ? 'Debit' : 
+                   paymentMethod;
+    
+    navigation.navigate('ReviewPaymentPage', { paymentMethod: method });
   };
+
+  // const handlePaymentSelect = (paymentMethod) => {
+  //   const method = paymentMethod === 'JazzCash' ? 'Credit' : 
+  //                  paymentMethod === 'EasyPaisa' ? 'Debit' : 
+  //                  paymentMethod;
+    
+  //   navigation.navigate('PaymentInformation', { paymentMethod: method });
+  // };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Payment</Text>
       <Text style={styles.subtitle}>Methods</Text>
 
-      <TouchableOpacity style={styles.orderHistoryButton}>
-        <Text style={styles.buttonText}>Order History</Text>
-      </TouchableOpacity>
-
-      {/* EasyPaisa Option */}
-      <TouchableOpacity style={styles.card} onPress={() => handlePaymentSelect('EasyPaisa')}>
-        <Image source={require("./assets/easypaisa.png")} style={styles.logo} />
-        <Text style={styles.name}>AMANDA MORGAN</Text>
-        <Text style={styles.number}>0330 4527937</Text>
-      </TouchableOpacity>
-
-      {/* JazzCash Option */}
       <TouchableOpacity style={styles.card} onPress={() => handlePaymentSelect('JazzCash')}>
-        <Image source={require("./assets/jazzcash.png")} style={styles.logo} />
-        <Text style={styles.name}>AMANDA MORGAN</Text>
-        <Text style={styles.number}>0330 4527937</Text>
+        <Text style={styles.name}>Credit Card</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.card} onPress={() => handlePaymentSelect('EasyPaisa')}>
+        <Text style={styles.name}>Debit Card</Text>
       </TouchableOpacity>
     </View>
   );
+
 };
 
 const styles = StyleSheet.create({

@@ -229,7 +229,7 @@ export default function MedInfo({ route, navigation }) {
       }
       
       const data = await response.json();
-      console.log('API Response:', JSON.stringify(data, null, 2));
+      //console.log('API Response:', JSON.stringify(data, null, 2));
 
       if (data.items && data.items.length > 0) {
         const firstImageUrl = data.items[0].link;
@@ -248,6 +248,51 @@ export default function MedInfo({ route, navigation }) {
     }
   };
 
+  // const navigateToCart = () => {
+  //   try {
+  //     console.log('Attempting to navigate to Cart');
+  //     navigation.navigate('Cart');
+  //   } catch (error) {
+  //     console.error('Navigation error:', error);
+  //     Alert.alert(
+  //       "Navigation Error",
+  //       "Unable to access cart at this time. Please try again.",
+  //       [{ text: "OK" }]
+  //     );
+  //   }
+  // };
+
+  const navigateToCart = () => {
+  console.log('Navigation object existence:', !!navigation);
+  console.log('Navigation methods:', Object.keys(navigation));
+  
+  try {
+    // Explicitly log available routes
+    console.log('Available routes:', navigation.getState()?.routeNames);
+    
+    // Use navigation.push instead of navigate as a fallback
+    if (navigation.navigate) {
+      navigation.navigate('Cart');
+    } else if (navigation.push) {
+      navigation.push('Cart');
+    } else {
+      Alert.alert(
+        "Navigation Error",
+        "Unable to navigate to Cart",
+        [{ text: "OK" }]
+      );
+    }
+  } catch (error) {
+    console.error('Cart navigation error:', error);
+    Alert.alert(
+      "Navigation Error",
+      `Failed to navigate: ${error.message}`,
+      [{ text: "OK" }]
+    );
+  }
+};
+
+
   useEffect(() => {
     let isMounted = true;
   
@@ -257,17 +302,24 @@ export default function MedInfo({ route, navigation }) {
       }
     };
   
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity 
-          onPress={() => navigation.navigate('Cart')}
-          style={styles.cartIconContainer}
-        >
-          <Ionicons name="cart-outline" size={24} color="#064D65" />
-        </TouchableOpacity>
-      ),
-    });
+    // navigation.setOptions({
+    //   headerRight: () => (
+    //     <TouchableOpacity 
+    //       onPress={navigateToCart}
+    //       style={styles.cartIconContainer}
+    //       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} // Increases touch area
+    //     >
+    //       <Ionicons 
+    //         name="cart-outline" 
+    //         size={24} 
+    //         color="#064D65"
+    //         testID="cart-icon" 
+    //       />
+    //     </TouchableOpacity>
+    //   ),
+    // });
   
+    
     loadData();
   
     return () => {
@@ -329,6 +381,22 @@ export default function MedInfo({ route, navigation }) {
   }
 
   return (
+  <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+    <View style={styles.topIcons}>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('Search')}
+        style={styles.backIconContainer}
+      >
+        <Ionicons name="arrow-back" size={24} color="#064D65" />
+      </TouchableOpacity>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('Cart')}
+        style={styles.cartIconContainer}
+      >
+        <Ionicons name="cart-outline" size={24} color="#064D65" />
+      </TouchableOpacity>
+    </View>
+
     <ScrollView 
       style={styles.container}
       showsVerticalScrollIndicator={false}
@@ -435,10 +503,24 @@ export default function MedInfo({ route, navigation }) {
         )}
       </View>
     </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  topIcons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    paddingTop: 10,
+    backgroundColor: '#ffffff',
+  },
+  backIconContainer: {
+    padding: 5,
+  },
+  cartIconContainer: {
+    padding: 5,
+  },
   container: {
     flex: 1,
     backgroundColor: '#ffffff'
