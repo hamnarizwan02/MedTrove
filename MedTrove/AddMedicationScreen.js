@@ -6,6 +6,30 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 import CONFIG from './config';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { scheduleNotifications, requestNotificationPermissions } from './notificationScheduler';
+
+// Add this test function in your AddMedicationScreen
+const testQuickNotification = async () => {
+  const fifteenSecondsFromNow = new Date();
+  fifteenSecondsFromNow.setSeconds(fifteenSecondsFromNow.getSeconds() + 15);
+
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `Time to take ${name}`,
+        body: `Take ${dosage.amount} ${dosage.unit}`,
+      },
+      trigger: {
+        date: fifteenSecondsFromNow,
+      },
+    });
+    
+    Alert.alert('Test notification scheduled', 'You should receive a notification in 15 seconds');
+  } catch (error) {
+    console.error('Error scheduling test notification:', error);
+    Alert.alert('Error', 'Failed to schedule test notification');
+  }
+};
 
 const AddMedicationScreen = ({ navigation }) => {
   const [currentUserId, setCurrentUserId] = useState(null);  
@@ -69,35 +93,77 @@ const AddMedicationScreen = ({ navigation }) => {
     });
   };
 
+  // const handleSave = async () => {
+  //   if (!currentUserId) {
+  //       Alert.alert('Error', 'User not found. Please try again.');
+  //       return;
+  //   }
+
+  //   try {
+  //       const medicationData = {
+  //           userId: currentUserId, 
+  //           name,
+  //           dosage,
+  //           frequency: parseInt(frequency),
+  //           times_a_day: times.length,
+  //           selectedDays,
+  //           duration: parseInt(duration),
+  //           startDate,
+  //           endDate: new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000),
+  //           isActive: true
+  //         };
+  
+  //     const response = await axios.post(`${CONFIG.backendUrl}/api/medications`, medicationData);
+  
+  //     if (response.data.success) {
+  //       Alert.alert('Success', 'Medication added successfully');
+  //       navigation.goBack();
+  //     }
+  //   } catch (error) {
+  //     console.error('Error saving medication:', error);
+  //     Alert.alert('Error', 'Failed to save medication');
+  //   }
+  // };
+
   const handleSave = async () => {
     if (!currentUserId) {
-        Alert.alert('Error', 'User not found. Please try again.');
-        return;
+      Alert.alert('Error', 'User not found. Please try again.');
+      return;
     }
-
-    try {
-        const medicationData = {
-            userId: currentUserId, 
-            name,
-            dosage,
-            frequency: parseInt(frequency),
-            times_a_day: times.length,
-            selectedDays,
-            duration: parseInt(duration),
-            startDate,
-            endDate: new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000),
-            isActive: true
-          };
   
-      const response = await axios.post(`${CONFIG.backendUrl}/api/medications`, medicationData);
+    try {
+      // Request notification permissions first
+      await requestNotificationPermissions();
+  
+      const medicationData = {
+        userId: currentUserId,
+        name,
+        dosage,
+        frequency: parseInt(frequency),
+        times_a_day: times.length,
+        selectedDays,
+        duration: parseInt(duration),
+        startDate,
+        endDate: new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000),
+        isActive: true
+      };
+  
+      // Schedule notifications
+      const scheduledNotifications = await scheduleNotifications(medicationData);
+      
+      // Save medication data along with notification IDs
+      const response = await axios.post(`${CONFIG.backendUrl}/api/medications`, {
+        ...medicationData,
+        notificationIds: scheduledNotifications.map(n => n.id)
+      });
   
       if (response.data.success) {
-        Alert.alert('Success', 'Medication added successfully');
+        Alert.alert('Success', 'Medication and notifications added successfully');
         navigation.goBack();
       }
     } catch (error) {
       console.error('Error saving medication:', error);
-      Alert.alert('Error', 'Failed to save medication');
+      Alert.alert('Error', error.message || 'Failed to save medication');
     }
   };
 
@@ -224,7 +290,7 @@ const AddMedicationScreen = ({ navigation }) => {
           </View>
 
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>Save Medicine</Text>
+            <Text onPress={testQuickNotification} style={styles.saveButtonText}>Save Medicine</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

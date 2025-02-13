@@ -29,13 +29,20 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-  [
-    "@stripe/stripe-react-native",
-    {
-      "merchantIdentifier": "merchant.com.example",
-      "enableGooglePay": false
-    }
-  ]
+        [
+          "@stripe/stripe-react-native",
+          {
+            "merchantIdentifier": "merchant.com.example",
+            "enableGooglePay": false
+          }
+        ],
+        [
+            "expo-notifications",
+          {
+            "icon": "./assets/splash.png",
+            "color": "#ffffff"
+          }
+        ]
 ],
     "extra": {
       "eas": {

@@ -101,7 +101,6 @@ exports.getMedications = async (req, res) => {
   }
 };
 
-// Get medications for a specific date
 exports.getMedicationsForDate = async (req, res) => {
   try {
     const { date } = req.query;
@@ -116,35 +115,23 @@ exports.getMedicationsForDate = async (req, res) => {
     const queryDate = new Date(date);
     const dayOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][queryDate.getDay()];
     
-    // Convert dates to UTC to match stored dates
     const startOfDay = new Date(date);
     startOfDay.setUTCHours(0, 0, 0, 0);
     
     const endOfDay = new Date(date);
     endOfDay.setUTCHours(23, 59, 59, 999);
 
-    console.log('Searching with criteria:', {
-      userId,
-      startDate: { $lte: endOfDay },
-      endDate: { $gte: startOfDay },
-      [`selectedDays.${dayOfWeek}`]: true,
-      isActive: true
-    });
-
     const medications = await Medication.find({
       userId: userId,
       isActive: true,
       startDate: { $lte: endOfDay },
       endDate: { $gte: startOfDay },
-      [`selectedDays.${dayOfWeek}`]: true
+      $or: [
+        { [`selectedDays.${dayOfWeek}`]: true },
+        { duration: 1 },
+        { $expr: { $eq: [{ $size: { $objectToArray: "$selectedDays" } }, 0] } }
+      ]
     }).lean();
-
-    // If no medications found, let's do a broader search to debug
-    if (medications.length === 0) {
-      console.log('No medications found, checking all medications for this user:');
-      const allMeds = await Medication.find({ userId: userId }).lean();
-      console.log('All user medications:', allMeds);
-    }
 
     res.status(200).json({
       success: true,
@@ -161,10 +148,60 @@ exports.getMedicationsForDate = async (req, res) => {
   }
 };
 
+// exports.getWeeklyMedications = async (req, res) => {
+//   try {
+//     const { startDate, endDate } = req.query;
+
+//     const currentUser = await CurrentUser.findOne({});
+//     if (!currentUser || !currentUser.currentuserid[0]) {
+//       return res.status(404).json({ message: 'No user currently logged in' });
+//     }
+
+//     const userId = currentUser.currentuserid[0];
+
+//     // Fetch medications that are active and within the start and end date range
+//     const medications = await Medication.find({
+//       userId: userId,
+//       isActive: true,
+//       startDate: { $lte: new Date(endDate) },
+//       endDate: { $gte: new Date(startDate) }
+//     }).lean();
+
+//     // Group medications by day of the week
+//     const groupedMedications = {};
+//     medications.forEach(med => {
+//       const start = new Date(med.startDate);
+//       const end = new Date(med.endDate);
+      
+//       // Iterate through each day in the range
+//       for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+//         const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()];
+//         if (!groupedMedications[dayOfWeek]) {
+//           groupedMedications[dayOfWeek] = [];
+//         }
+//         groupedMedications[dayOfWeek].push(med);
+//       }
+//     });
+
+//     res.status(200).json({
+//       success: true,
+//       data: groupedMedications
+//     });
+
+//   } catch (error) {
+//     console.error('Error fetching weekly medications:', error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Error fetching weekly medications',
+//       error: error.message
+//     });
+//   }
+// };
+
 exports.getWeeklyMedications = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
-    
+
     const currentUser = await CurrentUser.findOne({});
     if (!currentUser || !currentUser.currentuserid[0]) {
       return res.status(404).json({ message: 'No user currently logged in' });
@@ -172,6 +209,7 @@ exports.getWeeklyMedications = async (req, res) => {
 
     const userId = currentUser.currentuserid[0];
 
+    // Fetch medications within the date range
     const medications = await Medication.find({
       userId: userId,
       isActive: true,
@@ -179,9 +217,30 @@ exports.getWeeklyMedications = async (req, res) => {
       endDate: { $gte: new Date(startDate) }
     }).lean();
 
+    // Group medications by day of the week
+    const groupedMedications = {};
+
+    medications.forEach(med => {
+      const start = new Date(med.startDate);
+      const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][start.getDay()];
+      
+      const duration = med.duration || 1;
+      const frequency = med.frequency || 1; // Number of times per day
+
+      // Ensure the medication is only shown on the start date's weekday
+      if (!groupedMedications[dayOfWeek]) {
+        groupedMedications[dayOfWeek] = [];
+      }
+
+      // Add the medication "frequency" number of times on the start date's weekday
+      for (let i = 0; i < frequency; i++) {
+        groupedMedications[dayOfWeek].push({ ...med, doseNumber: i + 1 });
+      }
+    });
+
     res.status(200).json({
       success: true,
-      data: medications
+      data: groupedMedications
     });
 
   } catch (error) {
@@ -194,35 +253,59 @@ exports.getWeeklyMedications = async (req, res) => {
   }
 };
 
-exports.getMedicationsByMonth = async (req, res) => {
-    try {
-      const { startDate, endDate } = req.query;
-      
-      const currentUser = await CurrentUser.findOne({});
-      if (!currentUser || !currentUser.currentuserid[0]) {
-        return res.status(404).json({ message: 'No user currently logged in' });
-      }
 
-      const userId = currentUser.currentuserid[0];
 
-      const medications = await Medication.find({
-        userId: userId,
-        isActive: true,
-        startDate: { $lte: new Date(endDate) },
-        endDate: { $gte: new Date(startDate) }
-      }).lean();
-
-      res.status(200).json({
-        success: true,
-        data: medications
-      });
-
-    } catch (error) {
-      console.error('Error fetching weekly medications:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Error fetching weekly medications',
-        error: error.message
-      });
+exports.getMonthlyMedications = async (req, res) => {
+  try {
+    const { year, month } = req.query;
+    
+    const currentUser = await CurrentUser.findOne({});
+    if (!currentUser || !currentUser.currentuserid[0]) {
+      return res.status(404).json({ message: 'No user currently logged in' });
     }
-  };
+
+    const userId = currentUser.currentuserid[0];
+
+    // Create date range for the specified month
+    const startOfMonth = new Date(year, month - 1, 1);
+    const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999);
+
+    const medications = await Medication.find({
+      userId: userId,
+      isActive: true,
+      startDate: { $lte: endOfMonth },
+      endDate: { $gte: startOfMonth }
+    }).lean();
+
+    // Group medications by date
+    const groupedMedications = {};
+    medications.forEach(med => {
+      const start = new Date(Math.max(med.startDate, startOfMonth));
+      const end = new Date(Math.min(med.endDate, endOfMonth));
+      
+      for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+        const dayOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
+        if (med.selectedDays[dayOfWeek]) {
+          const dateStr = date.toISOString().split('T')[0];
+          if (!groupedMedications[dateStr]) {
+            groupedMedications[dateStr] = [];
+          }
+          groupedMedications[dateStr].push(med);
+        }
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      data: groupedMedications
+    });
+
+  } catch (error) {
+    console.error('Error fetching monthly medications:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching monthly medications',
+      error: error.message
+    });
+  }
+};

@@ -25,6 +25,22 @@ import MedicationListScreen from './MedicationListScreen';
 
 import { StripeProvider } from '@stripe/stripe-react-native';
 
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+
+  // Set up response handler
+Notifications.addNotificationResponseReceivedListener((response) => {
+    // When notification is tapped, clear it
+    Notifications.dismissNotificationAsync(response.notification.request.identifier);
+  });
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
