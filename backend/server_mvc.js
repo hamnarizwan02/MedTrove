@@ -122,13 +122,15 @@
 // Add a route to handle the final redirect
 
 
-const CONFIG = require('./config');
-require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const dotenv = require('dotenv');
 const { errorHandler } = require('./controllers/CurrentUserController');
+
+const CONFIG = require('./config');
+dotenv.config(); 
 
 const stripe = require('stripe')(CONFIG.STRIPE_SECRET_KEY);
 
@@ -142,12 +144,14 @@ const currentUser = require('./routes/currentUserRoutes');
 const userRoutes = require('./routes/userRoutes');
 const addressInfoRoutes = require('./routes/addressInfoRoutes');
 const paymentMethodRoutes = require('./routes/paymentMethodRoutes');
+const remindermedsRoutes = require('./routes/remindermedsRoutes');
 
 const app = express();
 const PORT = 5000;
 
 // Middleware
 app.use(cors());
+app.use(express.json()); 
 app.use(bodyParser.json());
 
 // Routes
@@ -161,6 +165,16 @@ app.use('/user', userRoutes);
 app.use('/api', addressInfoRoutes);
 app.use('/api', paymentMethodRoutes);
 app.use('/api', DDIRoutes);
+
+console.log('Available routes:', remindermedsRoutes.stack
+  .filter(r => r.route)
+  .map(r => ({
+      path: r.route.path,
+      methods: Object.keys(r.route.methods)
+  }))
+);
+
+app.use('/api', remindermedsRoutes);
 
 app.post('/api/create-payment-intent', async (req, res) => {
   try {
@@ -413,11 +427,27 @@ app.get('/success', (req, res) => {
   `);
 });
 
-
 app.get('/payment-completed', (req, res) => {
   res.send('PAYMENT_COMPLETED'); 
 });
 
+app.use((err, req, res, next) => {
+  console.error('Error details:', {
+    message: err.message,
+    stack: err.stack,
+    details: err
+  });
+  
+  if (err.name === 'MongooseError') {
+    return res.status(500).json({
+      success: false,
+      message: 'Database error',
+      error: err.message
+    });
+  }
+  
+  next(err);
+});
 
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
