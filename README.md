@@ -61,3 +61,21 @@ Users can manage their medicine cart and update their profile.
 ```sh
 git clone https://github.com/your-username/medtrove.git
 cd medtrove
+```
+
+### 2️⃣ Install Dependencies
+```sh
+npm install
+```
+
+### 3️⃣ Start the Backend Server
+```sh
+cd backend
+node server.js
+```
+
+### 4️⃣ Start the Frontend (React Native)
+```sh
+cd frontend
+npx expo start
+```
