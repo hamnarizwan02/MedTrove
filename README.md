@@ -114,13 +114,24 @@ cd medtrove
 npm install
 ```
 
-### 3️⃣ Start the Backend Server
+### 3️⃣ Update the MedTrove Configuration  
+
+Inside the `MedTrove/MedTrove` folder, locate the `config.js` file and update it with your IPv4 address.  
+
+#### 🔹 **How to Find Your IPv4 Address:**  
+1. Open your terminal or command prompt.  
+2. Run the following command:  
+```sh
+   ipconfig
+```
+
+### 4️⃣ Start the Backend Server
 ```sh
 cd backend
 node server.js
 ```
 
-### 4️⃣ Start the Frontend (React Native)
+### 5️⃣ Start the Frontend (React Native)
 ```sh
 cd frontend
 npx expo start
