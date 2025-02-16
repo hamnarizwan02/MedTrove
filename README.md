@@ -17,18 +17,25 @@ MedTrove is a cross-platform app designed to help users find alternative medicin
 
 ### 1️⃣ **Splash Screen**  
 The first screen users see when they launch the app.  
-![Splash Screen](ReadMeFolder/splash.png)  
 
-
+<p align="center">
+  <img src="ReadMeFolder/splash.png" alt="Splash Screen" width="250">
+</p>
 
 ### 2️⃣ **Login & Signup**  
 Users can register or log in to access app features.  
-**Signup:** Creates a new user account.
-![Signup Screen](ReadMeFolder/signup.png)
 
+**Signup:** Creates a new user account.  
+<p align="center">
+  <img src="ReadMeFolder/signup.png" alt="Signup Screen" width="250">
+</p>
 
-**Login:** Authenticates existing users.
-![Login Screen](ReadMeFolder/login.png)  
+**Login:** Authenticates existing users.  
+<p align="center">
+  <img src="ReadMeFolder/login.png" alt="Login Screen" width="250">
+</p>
+
+ 
 
 ### 3️⃣ **Home Page**  
 The main dashboard displaying featured medicines, quick search, and navigation to other features.  
