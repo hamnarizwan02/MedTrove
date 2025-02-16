@@ -23,12 +23,12 @@ The first screen users see when they launch the app.
 
 ### 2️⃣ **Login & Signup**  
 Users can register or log in to access app features.  
-- **Signup:** Creates a new user account.
+**Signup:** Creates a new user account.
 ![Signup Screen](ReadMeFolder/signup.png)
 
 ---
 
-- **Login:** Authenticates existing users.
+**Login:** Authenticates existing users.
 ![Login Screen](ReadMeFolder/login.png)  
 
 ### 3️⃣ **Home Page**  
