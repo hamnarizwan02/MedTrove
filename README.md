@@ -26,7 +26,6 @@ Users can register or log in to access app features.
 **Signup:** Creates a new user account.
 ![Signup Screen](ReadMeFolder/signup.png)
 
----
 
 **Login:** Authenticates existing users.
 ![Login Screen](ReadMeFolder/login.png)  
