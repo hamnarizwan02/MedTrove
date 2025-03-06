@@ -41,3 +41,6 @@ metro.config.js
 # Ignore compiled Python files (if applicable)
 *.pyc
 __pycache__/
+
+#ignore venv
+venv/
