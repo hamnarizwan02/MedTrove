@@ -18,7 +18,9 @@ const CONFIG = {
     SE : 'b1f9d3f416bd4494f',
 
     STRIPE_PUBLISHABLE_KEY: "sk_test_51QmvIF07WWhTO31txQtIXqvhXvPzWgNqQ71NxY6mh3DTkg3Kh3bUFjaMHwvh1OcYXnxcprkkJR4gFSX58vjgCe2400ifIevHTL",
-    API_URL: "http://192.168.18.14:8000/chat"
+    // API_URL: "http://192.168.18.14:8000/chat"               Aliza ibrahim mullah
+    API_URL: "http://192.168.100.13:8000/chat"                 // Syeda kissa zahra 
+
   };
   
   export default CONFIG;
