@@ -16,21 +16,21 @@ app.add_middleware(
 
 
 # Hugging Face API Config
-HF_API_KEY = "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"  # Replace with your actual key
-API_URL = "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct"  # Light model for chat
+HF_API_KEY = "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"  
+API_URL = "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct" 
 HEADERS = {"Authorization": f"Bearer {HF_API_KEY}"}
 
 @app.post("/chat")
 async def chat(query: dict):
     try:
-        # Ensure correct input format
+        
         if "text" not in query:
             raise HTTPException(status_code=400, detail="Missing 'text' key in request payload")
 
         payload = {"inputs": query["text"]}
         response = requests.post(API_URL, headers=HEADERS, json=payload)
 
-        # Debugging: Check API response
+        # Debugging
         print("Response Status:", response.status_code)
         print("Response Body:", response.text)
 
