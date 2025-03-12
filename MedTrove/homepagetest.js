@@ -166,7 +166,7 @@ const MedTroveHomePage = (props) => {
             title="Reminder"
             icon={<AntDesign name="clockcircle" size={18} color="#fff" />}
             color="#9b59b6"
-            onPress={() => Alert.alert('Reminders')}
+            onPress={() => Alert.alert('AddMedicationScreen')}
           />
           <FeatureButton 
             title="Profile"
