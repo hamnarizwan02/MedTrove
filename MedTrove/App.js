@@ -21,6 +21,7 @@ import Donation from './Donation';
 import MakeDonation from './MakeDonation'
 import StripeWebView from './StripeWebView';
 import AddMedicationScreen from './AddMedicationScreen';
+import homepagetest from './homepagetest';
 import MedicationListScreen from './MedicationListScreen';
 import Medibot from './Medibot';
 import { StripeProvider } from '@stripe/stripe-react-native';
@@ -48,7 +49,7 @@ export default function App() {
     <StripeProvider publishableKey="sk_test_51QmvIF07WWhTO31txQtIXqvhXvPzWgNqQ71NxY6mh3DTkg3Kh3bUFjaMHwvh1OcYXnxcprkkJR4gFSX58vjgCe2400ifIevHTL" 
      merchantIdentifier="merchant.com.yourapp">
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Search">
+      <Stack.Navigator initialRouteName="Medibot">
 
       <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
@@ -84,6 +85,9 @@ export default function App() {
         <Stack.Screen name="AddMedicationScreen" component={AddMedicationScreen} options={{headerShown: false}} />
         <Stack.Screen name="MedicationListScreen" component={MedicationListScreen} options={{headerShown: false}} />
         <Stack.Screen name="Medibot" component={Medibot} options={{headerShown: false}} />
+        {/* <Stack.Screen name="homepagetest" component={homepagetest} options={{headerShown: false}} /> */}   
+
+        
 
       </Stack.Navigator>
     </NavigationContainer>
