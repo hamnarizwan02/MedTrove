@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
   ScrollView,
   StatusBar,
   Dimensions,
+  Alert,
+  Keyboard,
 } from 'react-native';
 import { 
   Ionicons, 
@@ -17,16 +19,65 @@ import {
   FontAwesome5,
   AntDesign
 } from '@expo/vector-icons';
+import axios from 'axios';
+import CONFIG from './config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 const featureButtonWidth = (width - 64) / 3; // 3 buttons per row with padding
 
-const MedTroveHomePage = () => {
+const MedTroveHomePage = (props) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [userId, setUserId] = useState(null);
+  const navigation = props.navigation || useNavigation();
 
-  // Mock function for handling search
-  const handleSearch = () => {
-    console.log('Searching for:', searchQuery);
+  // Handle search submission (migrated from search.js)
+  const handleSearchSubmit = async () => {
+    Keyboard.dismiss();
+    console.log('Search term:', searchQuery);
+    
+    try {
+      const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${searchQuery}`);
+      
+      if (response.status === 404) {
+        console.log('Medicine not found');
+        return;
+      }
+      
+      const medicines = response.data;
+      
+      if (Array.isArray(medicines) && medicines.length > 0) {
+        console.log('Found medicines:', medicines);
+        const firstMedicine = medicines[0]; // Get the first medicine from the array
+        if (firstMedicine._id) {
+          console.log(`Navigating to product with ID: ${firstMedicine._id}`);
+          navigation.navigate('ProductList', { id: firstMedicine._id });
+        } else {
+          console.error('Medicine ID not found in first result:', firstMedicine);
+        }
+      } else {
+        console.error('No medicines found or unexpected response format:', medicines);
+      }
+    } catch (error) {
+      console.error('Error fetching medicine:', error);
+    }
+  };
+
+  // Function to fetch medicine by name (migrated from search.js)
+  const fetchMedicine = async (medicine) => {
+    try {
+      const response = await axios.get(`${CONFIG.backendUrl}/api/medicines/${medicine}`);
+      const medicineData = response.data;
+      
+      if (typeof medicineData === 'object' && medicineData !== null && medicineData._id) {
+        navigation.navigate('MedInfo', { id: medicineData._id });
+      } else {
+        console.error('Medicine ID not found in response:', medicineData);
+      }
+    } catch (error) {
+      console.error('Error fetching medicine:', error);
+    }
   };
 
   // Feature button component for reusability
@@ -49,13 +100,19 @@ const MedTroveHomePage = () => {
       
       {/* Header with profile and cart icons */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.headerIcon}>
+        <TouchableOpacity 
+          style={styles.headerIcon} 
+          onPress={() => navigation.navigate('ProfileManagement')}
+        >
           <FontAwesome name="user-circle" size={28} color="#2c3e50" />
         </TouchableOpacity>
         
         <Text style={styles.logo}>MedTrove</Text>
         
-        <TouchableOpacity style={styles.headerIcon}>
+        <TouchableOpacity 
+          style={styles.headerIcon}
+          onPress={() => navigation.navigate('Cart')}
+        >
           <FontAwesome name="shopping-cart" size={24} color="#2c3e50" />
         </TouchableOpacity>
       </View>
@@ -70,7 +127,7 @@ const MedTroveHomePage = () => {
             value={searchQuery}
             onChangeText={setSearchQuery}
             returnKeyType="search"
-            onSubmitEditing={handleSearch}
+            onSubmitEditing={handleSearchSubmit}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
@@ -97,56 +154,38 @@ const MedTroveHomePage = () => {
             title="MediBot"
             icon={<FontAwesome5 name="robot" size={18} color="#fff" />}
             color="#3498db"
-            onPress={() => console.log('MediBot pressed')}
+            onPress={() => navigation.navigate('Medibot')}
           />
           <FeatureButton 
             title="Pharmacy"
             icon={<FontAwesome5 name="map-marker-alt" size={18} color="#fff" />}
             color="#2ecc71"
-            onPress={() => console.log('Pharmacy Locator pressed')}
+            onPress={() => navigation.navigate('Pharmacy')}
           />
           <FeatureButton 
             title="Reminder"
             icon={<AntDesign name="clockcircle" size={18} color="#fff" />}
             color="#9b59b6"
-            onPress={() => console.log('Reminders pressed')}
+            onPress={() => Alert.alert('Reminders')}
           />
           <FeatureButton 
             title="Profile"
             icon={<FontAwesome name="user" size={18} color="#fff" />}
             color="#34495e"
-            onPress={() => console.log('Profile pressed')}
+            onPress={() => navigation.navigate('ProfileManagement')}
           />
           <FeatureButton 
             title="Interact"
             icon={<MaterialCommunityIcons name="pill" size={18} color="#fff" />}
             color="#e74c3c"
-            onPress={() => console.log('Interaction Checker pressed')}
+            onPress={() => navigation.navigate('DrugInteractionScreen')}
           />
           <FeatureButton 
             title="Donate"
             icon={<FontAwesome name="heart" size={18} color="#fff" />}
             color="#f39c12"
-            onPress={() => console.log('Donations pressed')}
+            onPress={() => navigation.navigate('Donation')}
           />
-          {/* <FeatureButton 
-            title="Cart"
-            icon={<FontAwesome name="shopping-cart" size={18} color="#fff" />}
-            color="#1abc9c"
-            onPress={() => console.log('Cart pressed')}
-          />
-          <FeatureButton 
-            title="Settings"
-            icon={<Ionicons name="settings-sharp" size={18} color="#fff" />}
-            color="#7f8c8d"
-            onPress={() => console.log('Settings pressed')}
-          />
-          <FeatureButton 
-            title="Support"
-            icon={<MaterialCommunityIcons name="headset" size={18} color="#fff" />}
-            color="#8e44ad"
-            onPress={() => console.log('Support pressed')}
-          /> */}
         </View>
 
         {/* Popular or Recommended Section */}
@@ -156,26 +195,80 @@ const MedTroveHomePage = () => {
           showsHorizontalScrollIndicator={false}
           style={styles.recommendedSection}
         >
-          {[1, 2, 3, 4].map(item => (
-            <TouchableOpacity key={item} style={styles.recommendedItem}>
-              <View style={styles.recommendedImagePlaceholder}>
-                <MaterialCommunityIcons name="medication" size={30} color="#fff" />
-              </View>
-              <Text style={styles.recommendedTitle}>Herbal Product {item}</Text>
-              <Text style={styles.recommendedPrice}>$19.99</Text>
-            </TouchableOpacity>
-          ))}
+          <TouchableOpacity 
+            key="panadol" 
+            style={styles.recommendedItem}
+            onPress={() => navigation.navigate('MedInfo', { name: "panadol" })}
+          >
+            <View style={styles.recommendedImagePlaceholder}>
+              <MaterialCommunityIcons name="medication" size={30} color="#fff" />
+            </View>
+            <Text style={styles.recommendedTitle}>Panadol</Text>
+            <Text style={styles.recommendedPrice}>$9.99</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            key="flagyl" 
+            style={styles.recommendedItem}
+            onPress={() => navigation.navigate('MedInfo', { name: "flagyl" })}
+          >
+            <View style={styles.recommendedImagePlaceholder}>
+              <MaterialCommunityIcons name="medication" size={30} color="#fff" />
+            </View>
+            <Text style={styles.recommendedTitle}>Flagyl</Text>
+            <Text style={styles.recommendedPrice}>$14.99</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            key="benadryl" 
+            style={styles.recommendedItem}
+            onPress={() => navigation.navigate('MedInfo', { name: "benadryl" })}
+          >
+            <View style={styles.recommendedImagePlaceholder}>
+              <MaterialCommunityIcons name="medication" size={30} color="#fff" />
+            </View>
+            <Text style={styles.recommendedTitle}>Benadryl</Text>
+            <Text style={styles.recommendedPrice}>$12.99</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            key="other" 
+            style={styles.recommendedItem}
+            onPress={() => navigation.navigate('SearchPage')}
+          >
+            <View style={styles.recommendedImagePlaceholder}>
+              <MaterialCommunityIcons name="medication" size={30} color="#fff" />
+            </View>
+            <Text style={styles.recommendedTitle}>Other Medicine</Text>
+            <Text style={styles.recommendedPrice}>$19.99</Text>
+          </TouchableOpacity>
         </ScrollView>
 
         {/* Trending Categories */}
         <Text style={styles.sectionTitle}>Trending Categories</Text>
         <View style={styles.categoriesContainer}>
           {['Ayurvedic', 'Homeopathy', 'Herbal', 'Aromatherapy'].map((category, index) => (
-            <TouchableOpacity key={index} style={styles.categoryItem}>
+            <TouchableOpacity 
+              key={index} 
+              style={styles.categoryItem}
+              onPress={() => console.log(`Category ${category} pressed`)}
+            >
               <Text style={styles.categoryText}>{category}</Text>
             </TouchableOpacity>
           ))}
         </View>
+        
+        {/* Pharmacy Locator */}
+        <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Pharmacy Locator</Text>
+        <TouchableOpacity 
+          style={styles.mapContainer}
+          onPress={() => navigation.navigate('Pharmacy')}
+        >
+          <View style={styles.mapPlaceholder}>
+            <FontAwesome5 name="map-marker-alt" size={30} color="#fff" />
+            <Text style={styles.mapText}>Find Nearby Pharmacies</Text>
+          </View>
+        </TouchableOpacity>
 
         {/* Spacer at bottom for better scrolling experience */}
         <View style={{ height: 20 }} />
@@ -342,6 +435,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#2c3e50',
+  },
+  mapContainer: {
+    marginBottom: 20,
+  },
+  mapPlaceholder: {
+    height: 150,
+    backgroundColor: '#3498db',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  mapText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '500',
+    marginTop: 8,
   },
 });
 
