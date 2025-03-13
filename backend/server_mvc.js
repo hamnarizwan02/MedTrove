@@ -384,7 +384,7 @@ app.get('/success', (req, res) => {
           .success-icon {
             width: 60px;
             height: 60px;
-            background: #28a745;
+            background:rgb(18, 66, 30);
             border-radius: 50%;
             display: flex;
             align-items: center;

@@ -104,6 +104,10 @@ const ReviewPaymentPage = ({ route, navigation }) => {
       
       const { clientSecret } = response.data;
       navigation.navigate('StripeWebView', { 
+        paymentUrl: stripeCheckoutUrl,
+        source: 'ReviewPayment' // Add this line
+      });
+      navigation.navigate('StripeWebView', { 
         paymentmethod: paymentMethod, 
         paymentUrl: `${CONFIG.backendUrl}/checkout?clientSecret=${clientSecret}`
       });

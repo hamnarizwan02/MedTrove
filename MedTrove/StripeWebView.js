@@ -49,7 +49,7 @@ const StripeWebView = ({ route, navigation }) => {
             </Text>
             <TouchableOpacity 
               style={styles.backButton} 
-              onPress={() => navigation.navigate("Search")}
+              onPress={() => navigation.navigate("homepagetest")}
             >
               <Text style={styles.backButtonText}>Back to Home</Text>
             </TouchableOpacity>
