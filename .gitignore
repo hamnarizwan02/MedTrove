@@ -8,7 +8,25 @@ dist/
 
 # Ignore sensitive and environment-specific files
 .env
-config.js
+
+
+
+
+# For venv
+**/venv/
+
+# For virtualenv
+**/env/
+**/ENV/
+
+# For Python's virtualenv
+**/.env/
+**/.venv/
+**/env/
+**/virtualenv/
+
+
+
 
 # Expo-specific files and cache
 .expo/
@@ -41,3 +59,6 @@ metro.config.js
 # Ignore compiled Python files (if applicable)
 *.pyc
 __pycache__/
+
+#ignore venv
+venv/

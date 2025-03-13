@@ -1462,7 +1462,7 @@ import DrugInteractionScreen from './DDI';
 import Pharmacy from './pharmacy';
 import SearchPage from "./searchPage";
 import Donation from './Donation';
-
+import MediBotScreen from './Medibot.js';
 
 export default class Search extends React.Component {
       
@@ -1649,11 +1649,12 @@ export default class Search extends React.Component {
                                
                                <View style={[ styles.cardLayout1]}>
           					<View style={[styles.rectangle3,styles.imageCard]} />
-
+                                        <TouchableOpacity onPress={() => this.props.navigation.navigate(MediBotScreen)}>
                                         <View style={styles.serviceContainer}>
-                                                <Image source={require('./assets/medibot.jpeg')} style={styles.serviceicon} resizeMode="contain" />
+                                                <Image source={require('./assets/medibot.jpeg')} style={styles.serviceicon2} resizeMode="contain" />
                                            </View>
-          					<Text style={[styles.wendy, styles.wendyPosition3]}>Medibot</Text>
+          					<Text style={[styles.wendy, styles.wendyPosition1]}>Medibot</Text>
+                                    </TouchableOpacity>
         				</View>
                                {/* Chatbot Button */}
         				<View style={[styles.card2, styles.cardLayout1]}>
