@@ -682,7 +682,7 @@ const MedTroveHomePage = (props) => {
             title="Pharmacy"
             icon={<FontAwesome5 name="map-marker-alt" size={18} color="#fff" />}
             color="#2ecc71"
-            onPress={() => navigation.navigate('Pharmacy')}
+            //onPress={() => navigation.navigate('Pharmacy')}
           />
           <FeatureButton 
             title="Reminder"
@@ -805,7 +805,7 @@ const MedTroveHomePage = (props) => {
         <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Pharmacy Locator</Text>
         <TouchableOpacity 
           style={styles.mapContainer}
-          onPress={() => navigation.navigate('Pharmacy')}
+          //onPress={() => navigation.navigate('Pharmacy')}
         >
           <ImageBackground 
             source={require('./assets/map_background.jpg')}

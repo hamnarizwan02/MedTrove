@@ -183,17 +183,44 @@
 //   }
 // });
 
-
 import React from 'react';
-import { StyleSheet, Text, TextInput, Alert, TouchableOpacity, View, ImageBackground } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import CONFIG from './config.js'; 
+import CustomPopup from './CustomPopup'; // Import the custom popup
 
 export default class Login extends React.Component {
   state = {
     email: "",
     password: "",
-    isPasswordVisible: false
+    isPasswordVisible: false,
+    popupVisible: false,
+    popupTitle: '',
+    popupMessage: '',
+    navigateAfterClose: null
+  };
+
+  // Show custom popup
+  showPopup = (title, message, navigateAfterClose = null) => {
+    this.setState({
+      popupVisible: true,
+      popupTitle: title,
+      popupMessage: message,
+      navigateAfterClose
+    });
+  };
+
+  // Hide custom popup
+  hidePopup = () => {
+    const { navigateAfterClose } = this.state;
+    this.setState({ popupVisible: false });
+    
+    if (navigateAfterClose) {
+      setTimeout(() => {
+        navigateAfterClose();
+        this.setState({ navigateAfterClose: null });
+      }, 300);
+    }
   };
 
   checkTextInput = async () => {
@@ -206,13 +233,13 @@ export default class Login extends React.Component {
           // Make a fetch request to the server for login
           this.loginUser();
         } else {
-          Alert.alert('Please enter password');
+          this.showPopup('', 'Please enter password');
         }
       } else {
-        Alert.alert('Please enter a valid email address');
+        this.showPopup('', 'Please enter a valid email address');
       }
     } else {
-      Alert.alert('Please enter email address');
+      this.showPopup('', 'Please enter email address');
     }
   };
 
@@ -232,17 +259,17 @@ export default class Login extends React.Component {
       console.log('Response Data:', data);
 
       if (response.ok) {
-        Alert.alert('Login Successful', 'Welcome back!');
-        // Navigate to the search page on successful login
-        // this.props.navigation.navigate('Search');
-        this.props.navigation.navigate('homepagetest');
+        this.showPopup('Login Successful', 'Welcome back!', 
+          () => this.props.navigation.navigate('homepagetest')
+        );
       } else {
-        Alert.alert('Login Failed', data.message || 'Invalid credentials');
+        this.showPopup('Login Failed', data.message || 'Invalid credentials');
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Login Successful', 'Welcome back!');
-      this.props.navigation.navigate('Search');
+      this.showPopup('Login Successful', 'Welcome back!', 
+        () => this.props.navigation.navigate('homepagetest')
+      );
       //Alert.alert('Error', 'Something went wrong. Please try again.');
     }
   };
@@ -302,6 +329,14 @@ export default class Login extends React.Component {
           <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
             <Text style={styles.registrationLabel}>Sign Up</Text>
           </TouchableOpacity>
+
+          {/* Custom Popup */}
+          <CustomPopup
+            visible={this.state.popupVisible}
+            title={this.state.popupTitle}
+            message={this.state.popupMessage}
+            onClose={this.hidePopup}
+          />
         </View>
       </ImageBackground>
     );
