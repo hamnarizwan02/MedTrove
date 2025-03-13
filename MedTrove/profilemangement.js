@@ -471,6 +471,17 @@ export default function ProfileManagement({ navigation }) {
     navigation.navigate('Cart');
   };
 
+
+  const handleNavigateToReminder = () => {
+ 
+    navigation.navigate('MedicationListScreen');
+  };
+
+
+  
+
+
+
   const handleUpdateProfile = async () => {
     try {
       await axios.put(`${CONFIG.backendUrl}/api/update`, {
@@ -495,14 +506,14 @@ export default function ProfileManagement({ navigation }) {
          {/* Icons Container */}
         <View style={styles.iconGroup}>
           {/* Reminders Icon */}
-          <TouchableOpacity onPress={() => Alert.alert('Reminders')} style={styles.iconButton}>
+          <TouchableOpacity onPress={handleNavigateToReminder} style={styles.iconButton}>
             <Ionicons name="notifications-outline" size={24} color="#064D65" />
           </TouchableOpacity>
 
           {/* Order History Icon */}
-          <TouchableOpacity onPress={() => Alert.alert('Order History')} style={styles.iconButton}>
+          {/* <TouchableOpacity onPress={() => Alert.alert('Order History')} style={styles.iconButton}>
             <Ionicons name="document-text-outline" size={24} color="#064D65" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* Cart Icon */}
           <TouchableOpacity onPress={handleNavigateToCart} style={styles.iconButton}>
