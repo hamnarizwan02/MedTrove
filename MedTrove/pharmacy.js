@@ -25,7 +25,9 @@ import { StatusBar } from 'expo-status-bar';
 // - Places API
 // - Directions API
 // - Geocoding API
-const GOOGLE_API_KEY = "";
+//const GOOGLE_API_KEY = "AIzaSyDVdN0SC0OL3NyrHEMeyh9CcodJZtLZdmg";
+const GOOGLE_API_KEY = "AIzaSyDsTD2yPXDB5czErLyHsR0LI3TMYOCNLok";
+//const GOOGLE_API_KEY = "YOUR_API_KEY_HERE";
 
 const { width, height } = Dimensions.get('window');
 
@@ -352,26 +354,43 @@ const Pharmacy = ({ navigation }) => {
 
   // Function to open Google Maps for navigation
   const navigateToPharmacy = () => {
-    if (!selectedPharmacy) return;
+    if (!selectedPharmacy || !searchLocation) {
+      Alert.alert('Please select a location and pharmacy first',
+                  'Search for a location and select a pharmacy before navigating.');
+      return;
+    }
     
     const { lat, lng } = selectedPharmacy.geometry.location;
-    const url = Platform.select({
-      ios: `maps://app?saddr=Current+Location&daddr=${lat},${lng}`,
-      android: `google.navigation:q=${lat},${lng}`
-    });
+    const startLat = searchLocation.latitude;
+    const startLng = searchLocation.longitude;
     
-    Linking.canOpenURL(url)
+    // Create a web URL that works across all platforms
+    // This is the most reliable way to open Google Maps with directions
+    const webUrl = `https://www.google.com/maps/dir/?api=1&origin=${startLat},${startLng}&destination=${lat},${lng}&travelmode=driving`;
+    
+    // Attempt to open the URL
+    Linking.canOpenURL(webUrl)
       .then(supported => {
         if (supported) {
-          return Linking.openURL(url);
-        } else {
-          const webUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
           return Linking.openURL(webUrl);
+        } else {
+          // If that fails, try the app-specific URLs as fallback
+          const appUrl = Platform.select({
+            ios: `maps://app?saddr=${startLat},${startLng}&daddr=${lat},${lng}`,
+            android: `google.navigation:q=${lat},${lng}&saddr=${startLat},${startLng}`
+          });
+          
+          return Linking.openURL(appUrl).catch(err => {
+            console.error('Failed to open maps app:', err);
+            Alert.alert('Could not open maps application', 
+                       'Please make sure you have Google Maps installed.');
+          });
         }
       })
       .catch(error => {
         console.error('Error opening maps app:', error);
-        Alert.alert('Error', 'Could not open maps application');
+        Alert.alert('Navigation error', 
+                   'Could not open the maps application. Please try again later.');
       });
   };
 

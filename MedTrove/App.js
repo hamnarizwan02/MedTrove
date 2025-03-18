@@ -49,7 +49,7 @@ export default function App() {
     <StripeProvider publishableKey="sk_test_51QmvIF07WWhTO31txQtIXqvhXvPzWgNqQ71NxY6mh3DTkg3Kh3bUFjaMHwvh1OcYXnxcprkkJR4gFSX58vjgCe2400ifIevHTL" 
      merchantIdentifier="merchant.com.yourapp">
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Pharmacy">
+      <Stack.Navigator initialRouteName="Splash">
 
       <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
