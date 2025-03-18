@@ -20,6 +20,7 @@ import SearchPage from './searchPage';
 import Donation from './Donation';
 import MakeDonation from './MakeDonation'
 import StripeWebView from './StripeWebView';
+import StripeWebViewDonation from './StripeWebViewDonation';
 import AddMedicationScreen from './AddMedicationScreen';
 import homepagetest from './homepagetest';
 import MedicationListScreen from './MedicationListScreen';
@@ -78,6 +79,7 @@ export default function App() {
         <Stack.Screen name="PaymentInformation" component={PaymentInformation} options={{ headerShown: false }} />
         <Stack.Screen name="ReviewPaymentPage" component={ReviewPaymentPage} options={{ headerShown: false }} />
         <Stack.Screen name="StripeWebView" component={StripeWebView} options={{ headerShown: false }}/>
+        <Stack.Screen name="StripeWebViewDonation" component={StripeWebViewDonation} options={{ headerShown: false }}/>
 
         <Stack.Screen name="Donation" component={Donation} options={{headerShown: false}} />
         <Stack.Screen name="MakeDonation" component={MakeDonation} options={{headerShown: false}} />

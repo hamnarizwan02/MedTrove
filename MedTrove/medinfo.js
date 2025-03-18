@@ -384,7 +384,7 @@ export default function MedInfo({ route, navigation }) {
   <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
     <View style={styles.topIcons}>
       <TouchableOpacity 
-        onPress={() => navigation.navigate('Search')}
+        onPress={() => navigation.navigate('homepagetest')}
         style={styles.backIconContainer}
       >
         <Ionicons name="arrow-back" size={24} color="#064D65" />

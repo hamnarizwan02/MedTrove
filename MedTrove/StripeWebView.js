@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { View, ActivityIndicator, Modal, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { CommonActions } from '@react-navigation/native';
+import axios from 'axios'; // Add this import
+import CONFIG from './config'; // Make sure path is correct for your config file
 
 const StripeWebView = ({ route, navigation }) => {
-  const { paymentUrl } = route.params;
+  const { paymentUrl, userId } = route.params;
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -12,11 +15,31 @@ const StripeWebView = ({ route, navigation }) => {
     if (navState.url.includes('/payment-completed') ||
         (navState.url.includes('/success') && navState.url.includes('redirect_status=succeeded'))) {
       setIsPaymentSuccess(true);
+      clearCart(userId);
     }
     
     // Check for failure/cancellation
     if (navState.url.includes('/cancel') || navState.url.includes('failure')) {
       navigation.goBack();
+    }
+  };
+
+  const clearCart = async (userId) => {
+    try {
+      console.log('Clearing cart for user:', userId);
+      await axios.post(`${CONFIG.backendUrl}/api/cart/clear`, { userId });
+      console.log('Cart cleared successfully');
+      
+      // Dispatch an event that the cart has been cleared
+      // You can use React Navigation's event system for this
+      navigation.dispatch(
+        CommonActions.setParams({
+          cartCleared: true,
+          timestamp: new Date().getTime() // Add timestamp to ensure it's seen as a new event
+        })
+      );
+    } catch (error) {
+      console.error('Error clearing cart:', error);
     }
   };
 
