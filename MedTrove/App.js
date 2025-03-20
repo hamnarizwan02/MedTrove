@@ -25,6 +25,7 @@ import AddMedicationScreen from './AddMedicationScreen';
 import homepagetest from './homepagetest';
 import MedicationListScreen from './MedicationListScreen';
 import Medibot from './Medibot';
+import OrderHistory from './OrderHistory';
 import { StripeProvider } from '@stripe/stripe-react-native';
 
 import * as Notifications from 'expo-notifications';
@@ -88,6 +89,8 @@ export default function App() {
         <Stack.Screen name="MedicationListScreen" component={MedicationListScreen} options={{headerShown: false}} />
         <Stack.Screen name="Medibot" component={Medibot} options={{headerShown: false}} />
         <Stack.Screen name="homepagetest" component={homepagetest} options={{headerShown: false}} />   
+
+        <Stack.Screen name="OrderHistory" component={OrderHistory} options={{headerShown: false}} />   
 
         
 

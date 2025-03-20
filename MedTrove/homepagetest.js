@@ -523,6 +523,7 @@ const MedTroveHomePage = (props) => {
   // useEffect(() => {
   //   fetchCartCount();
   // }, []);
+
   useEffect(() => {
     // Fetch initial cart count when component mounts
     fetchCartCount();
@@ -638,7 +639,7 @@ const MedTroveHomePage = (props) => {
         <TouchableOpacity 
           style={styles.headerIcon}
           onPress={() => {
-            // fetchCartCount(); // Refresh cart count before navigating
+            //fetchCartCount(); // Refresh cart count before navigating
             navigation.navigate('Cart');
           }}
         >
