@@ -471,6 +471,10 @@ export default function ProfileManagement({ navigation }) {
     navigation.navigate('Cart');
   };
 
+  const handleNavigateToOrderHistory = () => {
+    navigation.navigate('OrderHistory');
+  };
+
 
   const handleNavigateToReminder = () => {
  
@@ -511,14 +515,15 @@ export default function ProfileManagement({ navigation }) {
           </TouchableOpacity>
 
           {/* Order History Icon */}
-          {/* <TouchableOpacity onPress={() => Alert.alert('Order History')} style={styles.iconButton}>
+          <TouchableOpacity onPress={handleNavigateToOrderHistory} style={styles.iconButton}>
             <Ionicons name="document-text-outline" size={24} color="#064D65" />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
 
           {/* Cart Icon */}
-          <TouchableOpacity onPress={handleNavigateToCart} style={styles.iconButton}>
+          {/* <TouchableOpacity onPress={handleNavigateToCart} style={styles.iconButton}>
             <Ionicons name="cart-outline" size={24} color="#064D65" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
         </View>
       </View>
 
