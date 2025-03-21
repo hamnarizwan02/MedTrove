@@ -146,6 +146,9 @@ const addressInfoRoutes = require('./routes/addressInfoRoutes');
 const paymentMethodRoutes = require('./routes/paymentMethodRoutes');
 const remindermedsRoutes = require('./routes/remindermedsRoutes');
 
+const Cart = require('./models/cart');
+const User = require('./models/user'); // Make sure your models are correctly imported
+
 const app = express();
 const PORT = 5000;
 
@@ -195,6 +198,7 @@ app.post('/api/create-payment-intent', async (req, res) => {
     res.status(500).json({ error: 'Payment processing failed' });
   }
 });
+
 
 app.get('/checkout', (req, res) => {
   const { clientSecret } = req.query;
@@ -429,6 +433,31 @@ app.get('/success', (req, res) => {
 
 app.get('/payment-completed', (req, res) => {
   res.send('PAYMENT_COMPLETED'); 
+});
+
+app.post('/api/cart/clear', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    
+    const result = await Cart.findOneAndUpdate(
+      { userID: userId },
+      { $set: { Medicine: [], Quantity: [], Total: "0" } },
+      { new: true }
+    );
+    
+    if (!result) {
+      return res.status(404).json({ error: 'Cart not found' });
+    }
+    
+    res.json({ success: true, message: 'Cart cleared successfully' });
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    res.status(500).json({ error: 'Failed to clear cart', details: error.message });
+  }
 });
 
 app.use((err, req, res, next) => {

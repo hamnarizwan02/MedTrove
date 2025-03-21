@@ -11,8 +11,14 @@ import {
   ActivityIndicator,
   Dimensions
 } from 'react-native';
+import { 
+  Ionicons, 
+  FontAwesome, 
+  MaterialCommunityIcons,
+  FontAwesome5,
+  AntDesign
+} from '@expo/vector-icons';
 import axios from 'axios';
-import { Ionicons } from '@expo/vector-icons';
 import CONFIG from './config';
 import Animated, { 
   useSharedValue, 
@@ -79,6 +85,42 @@ export default function MedInfo({ route, navigation }) {
   const [quantity, setQuantity] = useState(1);
   const [imageUrl, setImageUrl] = useState('https://via.placeholder.com/300');
   const [medicationDetails, setMedicationDetails] = useState(null);
+   const [cartCount, setCartCount] = useState(0); // Add state for cart count
+
+  useEffect(() => {
+    // Fetch initial cart count when component mounts
+    fetchCartCount();
+    
+    // Set up a listener for when the screen comes into focus
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log('HomePage focused - refreshing cart count');
+      fetchCartCount();
+    });
+    
+    // Clean up the listener on unmount
+    return unsubscribe;
+  }, [navigation]);
+
+  // Function to fetch cart count
+  const fetchCartCount = async () => {
+    try {
+      const response = await axios.get(`${CONFIG.backendUrl}/api/cart/current`);
+      const formattedCart = {
+        ...response.data,
+        Quantity: response.data.Quantity.map(qty => parseInt(qty, 10)),
+      };
+
+      // Calculate total items in cart by summing quantities
+      const totalItems = formattedCart.Quantity 
+        ? formattedCart.Quantity.reduce((sum, qty) => sum + qty, 0)
+        : 0;
+      
+      setCartCount(totalItems);
+    } catch (error) {
+      console.error('Error fetching cart count:', error);
+      setCartCount(0); // Set to 0 if there's an error
+    }
+  };
 
   const fetchMedicineData = async (name) => {
     try {
@@ -333,6 +375,8 @@ export default function MedInfo({ route, navigation }) {
         medicine: medicine.drug_name,
         quantity: quantity
       });
+
+      fetchCartCount();
       
       Alert.alert(
         "Added to Cart",
@@ -384,18 +428,35 @@ export default function MedInfo({ route, navigation }) {
   <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
     <View style={styles.topIcons}>
       <TouchableOpacity 
-        onPress={() => navigation.navigate('Search')}
+        onPress={() => navigation.navigate('homepagetest')}
         style={styles.backIconContainer}
       >
         <Ionicons name="arrow-back" size={24} color="#064D65" />
       </TouchableOpacity>
+
       <TouchableOpacity 
+          style={styles.headerIcon}
+          onPress={() => {
+            fetchCartCount(); // Refresh cart count before navigating
+            navigation.navigate('Cart');
+          }}
+        >
+          <FontAwesome name="shopping-cart" size={24} color="#2c3e50" />
+          {cartCount > 0 && (
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{cartCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
+
+      {/* <TouchableOpacity 
         onPress={() => navigation.navigate('Cart')}
         style={styles.cartIconContainer}
       >
         <Ionicons name="cart-outline" size={24} color="#064D65" />
       </TouchableOpacity>
-    </View>
+    </View> */}
 
     <ScrollView 
       style={styles.container}
@@ -508,15 +569,36 @@ export default function MedInfo({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
+  headerIcon: {
+    padding: 8,
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    right: 0,
+    top: -3,
+    backgroundColor: '#e74c3c',
+    borderRadius: 10,
+    width: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
   topIcons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 15,
-    paddingTop: 10,
+    paddingTop: 15,
     backgroundColor: '#ffffff',
   },
   backIconContainer: {
-    padding: 5,
+    padding: 8,
+    position: 'relative',
   },
   cartIconContainer: {
     padding: 5,

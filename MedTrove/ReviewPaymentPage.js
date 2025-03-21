@@ -10,6 +10,7 @@ const ReviewPaymentPage = ({ route, navigation }) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [originalAmount, setOriginalAmount] = useState(0);
   const [isHelpNeeded, setIsHelpNeeded] = useState(false);
+  const [userId, setUserId] = useState(null);
   const { paymentMethod } = route.params;
 
   useEffect(() => {
@@ -29,6 +30,8 @@ const ReviewPaymentPage = ({ route, navigation }) => {
 
       if (userResponse.data?.userID) {
         console.log(`Fetching address for userID: ${userResponse.data.userID}`);
+        setUserId(userResponse.data.userID);
+      
         const addressResponse = await axios.get(`${CONFIG.backendUrl}/api/address/${userResponse.data.userID}`);
         console.log('Address response:', addressResponse.data);
 
@@ -91,25 +94,58 @@ const ReviewPaymentPage = ({ route, navigation }) => {
     }
   };
 
+  // const handleProceedToPayment = async () => {
+  //   try {
+  //     console.log('Proceeding to payment with amount:', totalAmount);
+  //     console.log('Discount status:', isHelpNeeded);
+      
+  //     const response = await axios.post(`${CONFIG.backendUrl}/api/create-payment-intent`, {
+  //       amount: totalAmount,
+  //       isDiscounted: isHelpNeeded
+  //     });
+  //     console.log('Payment intent response:', response.data);
+      
+  //     const { clientSecret } = response.data;
+  //     navigation.navigate('StripeWebView', { 
+  //       paymentmethod: paymentMethod, 
+  //       paymentUrl: `${CONFIG.backendUrl}/checkout?clientSecret=${clientSecret}`
+  //     });
+  //   } catch (error) {
+  //     console.error('Error in handleProceedToPayment:', error);
+  //     console.error('Error details:', {
+  //       message: error.message,
+  //       response: error.response?.data,
+  //       status: error.response?.status
+  //     });
+  //     Alert.alert('Error', 'Unable to process payment. Please try again.');
+  //   }
+  // };
+
   const handleProceedToPayment = async () => {
     try {
       console.log('Proceeding to payment with amount:', totalAmount);
       console.log('Discount status:', isHelpNeeded);
+      console.log('User ID:', userId);
+      
+      // Check if we have a user ID
+      if (!userId) {
+        console.error('No user ID available');
+        Alert.alert('Error', 'User information not available. Please try again.');
+        return;
+      }
       
       const response = await axios.post(`${CONFIG.backendUrl}/api/create-payment-intent`, {
         amount: totalAmount,
-        isDiscounted: isHelpNeeded
+        isDiscounted: isHelpNeeded,
+        userId: userId  // Use the state variable here
       });
       console.log('Payment intent response:', response.data);
       
       const { clientSecret } = response.data;
       navigation.navigate('StripeWebView', { 
-        paymentUrl: stripeCheckoutUrl,
-        source: 'ReviewPayment' // Add this line
-      });
-      navigation.navigate('StripeWebView', { 
         paymentmethod: paymentMethod, 
-        paymentUrl: `${CONFIG.backendUrl}/checkout?clientSecret=${clientSecret}`
+        paymentUrl: `${CONFIG.backendUrl}/checkout?clientSecret=${clientSecret}`,
+        userId: userId  // Pass the state variable here
       });
     } catch (error) {
       console.error('Error in handleProceedToPayment:', error);

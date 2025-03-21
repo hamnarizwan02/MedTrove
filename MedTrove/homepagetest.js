@@ -520,9 +520,23 @@ const MedTroveHomePage = (props) => {
   const navigation = props.navigation || useNavigation();
 
   // Add useEffect to fetch cart count when component mounts
+  // useEffect(() => {
+  //   fetchCartCount();
+  // }, []);
+
   useEffect(() => {
+    // Fetch initial cart count when component mounts
     fetchCartCount();
-  }, []);
+    
+    // Set up a listener for when the screen comes into focus
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log('HomePage focused - refreshing cart count');
+      fetchCartCount();
+    });
+    
+    // Clean up the listener on unmount
+    return unsubscribe;
+  }, [navigation]);
 
   // Function to fetch cart count
   const fetchCartCount = async () => {
@@ -625,7 +639,7 @@ const MedTroveHomePage = (props) => {
         <TouchableOpacity 
           style={styles.headerIcon}
           onPress={() => {
-            // fetchCartCount(); // Refresh cart count before navigating
+            //fetchCartCount(); // Refresh cart count before navigating
             navigation.navigate('Cart');
           }}
         >
