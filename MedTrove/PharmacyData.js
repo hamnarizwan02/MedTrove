@@ -1,4 +1,7 @@
+// pharmacyData.js
+// This file contains predefined pharmacy data for Islamabad
 
+// Define predefined pharmacy data
 const PREDEFINED_PHARMACIES = [
   {
     place_id: 'barq_pharmacy',
