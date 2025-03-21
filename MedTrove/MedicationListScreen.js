@@ -139,7 +139,7 @@ const MedicationListScreen = ({ navigation }) => {
   const MedicationCard = ({ medication }) => (
     <TouchableOpacity 
       style={styles.medicationCard}
-      onPress={() => navigation.navigate('MedicationDetails', { medication })}
+      // onPress={() => navigation.navigate('MedicationDetails', { medication })}
     >
       <View style={styles.medIconContainer}>
         <View style={[styles.medIcon, { backgroundColor: '#FFE4E1' }]}>

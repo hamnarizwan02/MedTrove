@@ -16,8 +16,8 @@ app.add_middleware(
 
 
 # Hugging Face API Config
-HF_API_KEY = "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"  
-API_URL = "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct" 
+HF_API_KEY = "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"  
+API_URL = "https://router.huggingface.co/hf-inference/models/tiiuae/falcon-7b-instruct" 
 HEADERS = {"Authorization": f"Bearer {HF_API_KEY}"}
 
 @app.post("/chat")

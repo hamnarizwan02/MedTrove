@@ -86,6 +86,7 @@ export default function MedInfo({ route, navigation }) {
   const [imageUrl, setImageUrl] = useState('https://via.placeholder.com/300');
   const [medicationDetails, setMedicationDetails] = useState(null);
    const [cartCount, setCartCount] = useState(0); // Add state for cart count
+   
 
   useEffect(() => {
     // Fetch initial cart count when component mounts
@@ -270,6 +271,12 @@ export default function MedInfo({ route, navigation }) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
+      if (response.status === 429) {
+        console.log("Rate limited! Waiting before retrying...");
+        setTimeout(fetchImages, 5000); // Wait 5 seconds and retry
+        return;
+      }
+
       const data = await response.json();
       //console.log('API Response:', JSON.stringify(data, null, 2));
 
@@ -283,6 +290,10 @@ export default function MedInfo({ route, navigation }) {
       }
     } catch (error) {
       console.error('Error fetching images:', error.message);
+      // if (!error.message.includes("429")) {
+      //   console.error("Error fetching images:", error.message);
+      // }
+      
       if (error.response) {
         console.error('Error response:', error.response.data);
       }

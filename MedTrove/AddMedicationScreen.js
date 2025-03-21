@@ -994,9 +994,9 @@ const AddMedicationScreen = ({ navigation }) => {
             />
           </View>
           
-          <TouchableOpacity style={styles.testButton} onPress={testQuickNotification}>
+          {/* <TouchableOpacity style={styles.testButton} onPress={testQuickNotification}>
             <Text style={styles.testButtonText}>Test Notification (0s)</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.saveButtonText}>Save Medicine</Text>
