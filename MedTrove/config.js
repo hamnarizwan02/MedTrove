@@ -24,8 +24,8 @@ const CONFIG = {
 
     STRIPE_PUBLISHABLE_KEY: "sk_test_51QmvIF07WWhTO31txQtIXqvhXvPzWgNqQ71NxY6mh3DTkg3Kh3bUFjaMHwvh1OcYXnxcprkkJR4gFSX58vjgCe2400ifIevHTL",
     // API_URL: "http://192.168.18.14:8000/chat"               Aliza ibrahim mullah
-    // API_URL: "http://192.168.100.13:8000/chat"                 // Syeda kissa zahra 
-    API_URL: "http://192.168.18.88:8000/chat"           //hamna 
+     API_URL: "http://192.168.100.13:8000/chat"                 // Syeda kissa zahra 
+    //API_URL: "http://192.168.18.88:8000/chat"           //hamna 
 
   };
   
