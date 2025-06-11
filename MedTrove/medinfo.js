@@ -25,8 +25,560 @@ import Animated, {
   useAnimatedStyle, 
   withTiming 
 } from 'react-native-reanimated';
+import * as FileSystem from 'expo-file-system';
 
 const { width } = Dimensions.get('window');
+
+// const DropdownSection = ({ title, children, icon }) => {
+//   const [isExpanded, setIsExpanded] = useState(false);
+//   const rotation = useSharedValue(0);
+
+//   const toggleExpand = () => {
+//     setIsExpanded(!isExpanded);
+//     rotation.value = withTiming(isExpanded ? 0 : 180, { duration: 300 });
+//   };
+
+//   const animatedStyle = useAnimatedStyle(() => {
+//     return {
+//       transform: [{ rotate: `${rotation.value}deg` }]
+//     };
+//   });
+
+//   return (
+//     <View style={styles.dropdownContainer}>
+//       <TouchableOpacity 
+//         style={styles.dropdownHeader} 
+//         onPress={toggleExpand}
+//       >
+//         <View style={styles.dropdownHeaderContent}>
+//           <View style={styles.dropdownTitleContainer}>
+//             {icon}
+//             <Text style={styles.dropdownTitle}>{title}</Text>
+//           </View>
+//           <Animated.View style={animatedStyle}>
+//             <Ionicons 
+//               name={isExpanded ? "chevron-up" : "chevron-down"} 
+//               size={24} 
+//               color="#064D65" 
+//             />
+//           </Animated.View>
+//         </View>
+//       </TouchableOpacity>
+//       {isExpanded && (
+//         <View style={styles.dropdownContent}>
+//           {children}
+//         </View>
+//       )}
+//     </View>
+//   );
+// };
+
+// const BASE_URL = 'https://rxnav.nlm.nih.gov/REST';
+// const FDA_URL = 'https://api.fda.gov/drug/event.json';
+// const FDA_API_KEY = 'EW7PHR2gQ7uAALp2drvYmszbSScQRTZSzCVLlslo';
+
+// export default function MedInfo({ route, navigation }) {
+//   const { name } = route.params;
+//   const [medicine, setMedicine] = useState(null);
+//   const [price, setPrice] = useState('Loading...');
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const [quantity, setQuantity] = useState(1);
+//   const [imageUrl, setImageUrl] = useState('https://via.placeholder.com/300');
+//   const [medicationDetails, setMedicationDetails] = useState(null);
+//    const [cartCount, setCartCount] = useState(0); // Add state for cart count
+   
+
+//   useEffect(() => {
+//     // Fetch initial cart count when component mounts
+//     fetchCartCount();
+    
+//     // Set up a listener for when the screen comes into focus
+//     const unsubscribe = navigation.addListener('focus', () => {
+//       console.log('HomePage focused - refreshing cart count');
+//       fetchCartCount();
+//     });
+    
+//     // Clean up the listener on unmount
+//     return unsubscribe;
+//   }, [navigation]);
+
+//   // Function to fetch cart count
+//   const fetchCartCount = async () => {
+//     try {
+//       const response = await axios.get(`${CONFIG.backendUrl}/api/cart/current`);
+//       const formattedCart = {
+//         ...response.data,
+//         Quantity: response.data.Quantity.map(qty => parseInt(qty, 10)),
+//       };
+
+//       // Calculate total items in cart by summing quantities
+//       const totalItems = formattedCart.Quantity 
+//         ? formattedCart.Quantity.reduce((sum, qty) => sum + qty, 0)
+//         : 0;
+      
+//       setCartCount(totalItems);
+//     } catch (error) {
+//       console.error('Error fetching cart count:', error);
+//       setCartCount(0); // Set to 0 if there's an error
+//     }
+//   };
+
+//   const fetchMedicineData = async (name) => {
+//     try {
+//       setLoading(true);
+//       // Fetch local medicine data
+//       const response = await axios.get(`${CONFIG.backendUrl}/api/medicine-by-name/${name}`);
+//       setMedicine(response.data);
+      
+//       // Fetch price
+//       const priceResponse = await axios.get(`${CONFIG.backendUrl}/api/price/${response.data.drug_name}`);
+//       setPrice(priceResponse.data.price || 'PKR 87.40');
+  
+//       // Fetch drug image
+//       await fetchDrugImage(response.data.drug_name);
+
+//       // Fetch additional medication details from APIs
+//       await fetchMedicationInfo(response.data.drug_name);
+//     } catch (error) {
+//       console.error('Error fetching medicine data:', error);
+//       setError('Failed to fetch medicine data. Please try again.');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const fetchMedicationInfo = async (query) => {
+//     if (!query.trim()) {
+//       return;
+//     }
+
+//     try {
+//       // First, get the RxCUI (unique identifier) for the medication
+//       const searchResponse = await fetch(
+//         `${BASE_URL}/drugs.json?name=${encodeURIComponent(query)}`
+//       );
+
+//       if (!searchResponse.ok) {
+//         throw new Error('Failed to fetch medication information');
+//       }
+
+//       const searchData = await searchResponse.json();
+      
+//       if (searchData.drugGroup?.conceptGroup) {
+//         const medicationInfo = {
+//           name: query,
+//           ingredients: [],
+//           brands: [],
+//           sideEffects: [],
+//           reactionStats: {}
+//         };
+
+//         // Get basic medication information using RxNAV
+//         for (const group of searchData.drugGroup.conceptGroup) {
+//           if (group.conceptProperties) {
+//             for (const prop of group.conceptProperties) {
+//               const rxcui = prop.rxcui;
+              
+//               // Fetch detailed information
+//               const detailResponse = await fetch(
+//                 `${BASE_URL}/rxcui/${rxcui}/allrelated.json`
+//               );
+              
+//               if (detailResponse.ok) {
+//                 const detailData = await detailResponse.json();
+                
+//                 if (detailData.allRelatedGroup?.conceptGroup) {
+//                   detailData.allRelatedGroup.conceptGroup.forEach(group => {
+//                     if (group.tty === 'IN') { // Ingredients
+//                       group.conceptProperties?.forEach(prop => {
+//                         if (!medicationInfo.ingredients.includes(prop.name)) {
+//                           medicationInfo.ingredients.push(prop.name);
+//                         }
+//                       });
+//                     }
+//                     else if (group.tty === 'BN') { // Brand names
+//                       group.conceptProperties?.forEach(prop => {
+//                         if (!medicationInfo.brands.includes(prop.name)) {
+//                           medicationInfo.brands.push(prop.name);
+//                         }
+//                       });
+//                     }
+//                   });
+//                 }
+//               }
+//             }
+//           }
+//         }
+
+//         // Fetch adverse events from FDA API with API key
+//         try {
+//           const fdaUrl = new URL(FDA_URL);
+//           fdaUrl.searchParams.append('api_key', FDA_API_KEY);
+//           fdaUrl.searchParams.append('search', `patient.drug.medicinalproduct:${encodeURIComponent(query)}`);
+//           fdaUrl.searchParams.append('limit', '100');
+
+//           const fdaResponse = await fetch(fdaUrl.toString());
+
+//           if (fdaResponse.ok) {
+//             const fdaData = await fdaResponse.json();
+            
+//             // Process adverse events
+//             const reactionCounts = {};
+            
+//             fdaData.results.forEach(result => {
+//               result.patient?.reaction?.forEach(reaction => {
+//                 const reactionTerm = reaction.reactionmeddrapt;
+//                 if (reactionTerm) {
+//                   reactionCounts[reactionTerm] = (reactionCounts[reactionTerm] || 0) + 1;
+//                 }
+//               });
+//             });
+
+//             // Sort reactions by frequency and convert to array
+//             const sortedReactions = Object.entries(reactionCounts)
+//               .sort(([, a], [, b]) => b - a)
+//               .slice(0, 15); // Get top 15 most common reactions
+
+//             medicationInfo.sideEffects = sortedReactions.map(([reaction, count]) => ({
+//               reaction,
+//               count,
+//               percentage: ((count / fdaData.results.length) * 100).toFixed(1)
+//             }));
+//           }
+//         } catch (fdaError) {
+//           console.error('FDA API Error:', fdaError);
+//         }
+        
+//         setMedicationDetails(medicationInfo);
+//       }
+//     } catch (error) {
+//       console.error('Medication Info Error:', error);
+//     }
+//   };
+
+//   const fetchDrugImage = async (drugName) => {
+//     //const apiKey = 'AIzaSyDRmhRhTvXFDMVwJBT1oCrm0a2wstqSxzE';
+//     const apiKey = `${CONFIG.APIKEY}`;
+//     const searchEngineId = 'b1f9d3f416bd4494f';
+//     //`${CONFIG.SE}`;
+//     const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(drugName)}&cx=${searchEngineId}&searchType=image&key=${apiKey}`;
+//     console.log(url);
+//     try {
+//       console.log('Fetching image for:', drugName);
+//       const response = await fetch(url);
+      
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//       }
+      
+//       if (response.status === 429) {
+//         console.log("Rate limited! Waiting before retrying...");
+//         setTimeout(fetchImages, 5000); // Wait 5 seconds and retry
+//         return;
+//       }
+
+//       const data = await response.json();
+//       //console.log('API Response:', JSON.stringify(data, null, 2));
+
+//       if (data.items && data.items.length > 0) {
+//         const firstImageUrl = data.items[0].link;
+//         console.log('Image URL found:', firstImageUrl);
+//         setImageUrl(firstImageUrl);
+//       } else {
+//         console.log('No images found in the API response.');
+//         setImageUrl('https://via.placeholder.com/300');
+//       }
+//     } catch (error) {
+//       console.error('Error fetching images:', error.message);
+//       // if (!error.message.includes("429")) {
+//       //   console.error("Error fetching images:", error.message);
+//       // }
+      
+//       if (error.response) {
+//         console.error('Error response:', error.response.data);
+//       }
+//       setImageUrl('https://via.placeholder.com/300');
+//     }
+//   };
+
+//   // const navigateToCart = () => {
+//   //   try {
+//   //     console.log('Attempting to navigate to Cart');
+//   //     navigation.navigate('Cart');
+//   //   } catch (error) {
+//   //     console.error('Navigation error:', error);
+//   //     Alert.alert(
+//   //       "Navigation Error",
+//   //       "Unable to access cart at this time. Please try again.",
+//   //       [{ text: "OK" }]
+//   //     );
+//   //   }
+//   // };
+
+//   const navigateToCart = () => {
+//   console.log('Navigation object existence:', !!navigation);
+//   console.log('Navigation methods:', Object.keys(navigation));
+  
+//   try {
+//     // Explicitly log available routes
+//     console.log('Available routes:', navigation.getState()?.routeNames);
+    
+//     // Use navigation.push instead of navigate as a fallback
+//     if (navigation.navigate) {
+//       navigation.navigate('Cart');
+//     } else if (navigation.push) {
+//       navigation.push('Cart');
+//     } else {
+//       Alert.alert(
+//         "Navigation Error",
+//         "Unable to navigate to Cart",
+//         [{ text: "OK" }]
+//       );
+//     }
+//   } catch (error) {
+//     console.error('Cart navigation error:', error);
+//     Alert.alert(
+//       "Navigation Error",
+//       `Failed to navigate: ${error.message}`,
+//       [{ text: "OK" }]
+//     );
+//   }
+// };
+
+
+//   useEffect(() => {
+//     let isMounted = true;
+  
+//     const loadData = async () => {
+//       if (isMounted) {
+//         await fetchMedicineData(name);
+//       }
+//     };
+  
+//     // navigation.setOptions({
+//     //   headerRight: () => (
+//     //     <TouchableOpacity 
+//     //       onPress={navigateToCart}
+//     //       style={styles.cartIconContainer}
+//     //       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} // Increases touch area
+//     //     >
+//     //       <Ionicons 
+//     //         name="cart-outline" 
+//     //         size={24} 
+//     //         color="#064D65"
+//     //         testID="cart-icon" 
+//     //       />
+//     //     </TouchableOpacity>
+//     //   ),
+//     // });
+  
+    
+//     loadData();
+  
+//     return () => {
+//       isMounted = false;
+//     };
+//   }, [name, navigation]);
+
+//   const handleAddToCart = async () => {
+//     try {
+//       await axios.post(`${CONFIG.backendUrl}/api/cart/add`, {
+//         medicine: medicine.drug_name,
+//         quantity: quantity
+//       });
+
+//       fetchCartCount();
+      
+//       Alert.alert(
+//         "Added to Cart",
+//         `${quantity} ${medicine.drug_name} added to your cart`,
+//         [{ text: "OK" }]
+//       );
+//     } catch (error) {
+//       console.error('Error adding to cart:', error);
+//       Alert.alert(
+//         "Error",
+//         "Failed to add item to cart",
+//         [{ text: "OK" }]
+//       );
+//     }
+//   };
+
+//   const handleQuantityChange = (increment) => {
+//     setQuantity(prevQuantity => Math.max(1, prevQuantity + increment));
+//   };
+
+//   if (loading) {
+//     return (
+//       <View style={styles.loadingContainer}>
+//         <ActivityIndicator size="large" color="#064D65" />
+//         <Text style={styles.loadingText}>Loading medication information...</Text>
+//       </View>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <View style={styles.errorContainer}>
+//         <Ionicons name="alert-circle" size={64} color="#FF6B6B" />
+//         <Text style={styles.errorText}>{error}</Text>
+//       </View>
+//     );
+//   }
+
+//   if (!medicine) {
+//     return (
+//       <View style={styles.errorContainer}>
+//         <Ionicons name="information-circle" size={64} color="#FFD700" />
+//         <Text style={styles.errorText}>No medicine data available.</Text>
+//       </View>
+//     );
+//   }
+
+//   return (
+//   <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+//     <View style={styles.topIcons}>
+//       <TouchableOpacity 
+//         onPress={() => navigation.navigate('homepagetest')}
+//         style={styles.backIconContainer}
+//       >
+//         <Ionicons name="arrow-back" size={24} color="#064D65" />
+//       </TouchableOpacity>
+
+//       <TouchableOpacity 
+//           style={styles.headerIcon}
+//           onPress={() => {
+//             fetchCartCount(); // Refresh cart count before navigating
+//             navigation.navigate('Cart');
+//           }}
+//         >
+//           <FontAwesome name="shopping-cart" size={24} color="#2c3e50" />
+//           {cartCount > 0 && (
+//             <View style={styles.cartBadge}>
+//               <Text style={styles.cartBadgeText}>{cartCount}</Text>
+//             </View>
+//           )}
+//         </TouchableOpacity>
+//       </View>
+
+//       {/* <TouchableOpacity 
+//         onPress={() => navigation.navigate('Cart')}
+//         style={styles.cartIconContainer}
+//       >
+//         <Ionicons name="cart-outline" size={24} color="#064D65" />
+//       </TouchableOpacity>
+//     </View> */}
+
+//     <ScrollView 
+//       style={styles.container}
+//       showsVerticalScrollIndicator={false}
+//     >
+//       <View style={styles.imageContainer}>
+//         <Image
+//           source={{ uri: imageUrl }}
+//           style={styles.image}
+//           resizeMode="contain"
+//           onError={() => setImageUrl('https://via.placeholder.com/300')}
+//         />
+//       </View>
+
+//       <View style={styles.infoContainer}>
+//         <Text style={styles.title}>{medicine.drug_name}</Text>
+//         {medicine.generic_name && (
+//           <Text style={styles.genericName}>{medicine.generic_name}</Text>
+//         )}
+//         <Text style={styles.price}>{price}</Text>
+
+//         <View style={styles.quantityContainer}>
+//           <TouchableOpacity 
+//             onPress={() => handleQuantityChange(-1)} 
+//             style={styles.quantityButton}
+//           >
+//             <Ionicons name="remove" size={24} color="#007AFF" />
+//           </TouchableOpacity>
+//           <Text style={styles.quantityText}>{quantity}</Text>
+//           <TouchableOpacity 
+//             onPress={() => handleQuantityChange(1)} 
+//             style={styles.quantityButton}
+//           >
+//             <Ionicons name="add" size={24} color="#007AFF" />
+//           </TouchableOpacity>
+//         </View>
+        
+//         <TouchableOpacity 
+//           style={styles.addToCartButton} 
+//           onPress={handleAddToCart}
+//         >
+//           <Ionicons name="cart-outline" size={20} color="#FFFFFF" style={styles.addToCartIcon} />
+//           <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+//         </TouchableOpacity>
+
+//         {medicationDetails && (
+//           <View style={styles.detailsContainer}>
+//             {/* Active Ingredients Dropdown */}
+//             {medicationDetails.ingredients.length > 0 && (
+//               <DropdownSection 
+//                 title="Active Ingredients" 
+//                 icon={<Ionicons name="medical" size={20} color="#064D65" />}
+//               >
+//                 {medicationDetails.ingredients.map((ingredient, index) => (
+//                   <Text key={index} style={styles.dropdownItemText}>
+//                     • {ingredient}
+//                   </Text>
+//                 ))}
+//               </DropdownSection>
+//             )}
+
+//             {/* Available Brands Dropdown */}
+//             {medicationDetails.brands.length > 0 && (
+//               <DropdownSection 
+//                 title="Available Brands" 
+//                 icon={<Ionicons name="logo-bitcoin" size={20} color="#064D65" />}
+//               >
+//                 {medicationDetails.brands.map((brand, index) => (
+//                   <Text key={index} style={styles.dropdownItemText}>
+//                     • {brand}
+//                   </Text>
+//                 ))}
+//               </DropdownSection>
+//             )}
+
+//             {/* Medical Condition Dropdown */}
+//             {medicine.medical_condition && (
+//               <DropdownSection 
+//                 title="Medical Condition" 
+//                 icon={<Ionicons name="body" size={20} color="#064D65" />}
+//               >
+//                 <Text style={styles.dropdownItemText}>
+//                   {medicine.medical_condition}
+//                 </Text>
+//               </DropdownSection>
+//             )}
+
+//             {/* Reported Adverse Effects Dropdown */}
+//             {medicationDetails.sideEffects.length > 0 && (
+//               <DropdownSection 
+//                 title="Reported Adverse Effects" 
+//                 icon={<Ionicons name="warning" size={20} color="#FF6B6B" />}
+//               >
+//                 <Text style={styles.disclaimerText}>
+//                   Based on FDA adverse event reports. These events may not be directly caused by the medication.
+//                 </Text>
+//                 {medicationDetails.sideEffects.map((effect, index) => (
+//                   <Text key={index} style={styles.dropdownItemText}>
+//                     • {effect.reaction} ({effect.count} reports, {effect.percentage}% of cases)
+//                   </Text>
+//                 ))}
+//               </DropdownSection>
+//             )}
+//           </View>
+//         )}
+//       </View>
+//     </ScrollView>
+//     </View>
+//   );
+// }
 
 const DropdownSection = ({ title, children, icon }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -76,6 +628,12 @@ const BASE_URL = 'https://rxnav.nlm.nih.gov/REST';
 const FDA_URL = 'https://api.fda.gov/drug/event.json';
 const FDA_API_KEY = 'EW7PHR2gQ7uAALp2drvYmszbSScQRTZSzCVLlslo';
 
+// Define cacheable medicines
+const CACHEABLE_MEDICINES = ['panadol', 'flagyl', 'benadryl', 'buscopan', 'ibuprofen'];
+
+// Cache file path
+const CACHE_FILE_PATH = FileSystem.documentDirectory + 'cache.txt';
+
 export default function MedInfo({ route, navigation }) {
   const { name } = route.params;
   const [medicine, setMedicine] = useState(null);
@@ -85,24 +643,79 @@ export default function MedInfo({ route, navigation }) {
   const [quantity, setQuantity] = useState(1);
   const [imageUrl, setImageUrl] = useState('https://via.placeholder.com/300');
   const [medicationDetails, setMedicationDetails] = useState(null);
-   const [cartCount, setCartCount] = useState(0); // Add state for cart count
-   
+  const [cartCount, setCartCount] = useState(0);
+
+  // Cache management functions
+  const readCacheFile = async () => {
+    try {
+      const fileInfo = await FileSystem.getInfoAsync(CACHE_FILE_PATH);
+      if (fileInfo.exists) {
+        const content = await FileSystem.readAsStringAsync(CACHE_FILE_PATH);
+        return content ? JSON.parse(content) : {};
+      }
+      return {};
+    } catch (error) {
+      console.error('Error reading cache file:', error);
+      return {};
+    }
+  };
+
+  const writeCacheFile = async (cacheData) => {
+    try {
+      await FileSystem.writeAsStringAsync(CACHE_FILE_PATH, JSON.stringify(cacheData, null, 2));
+      console.log('Cache file updated successfully');
+    } catch (error) {
+      console.error('Error writing cache file:', error);
+    }
+  };
+
+  const getCachedMedicine = async (medicineName) => {
+    const normalizedName = medicineName.toLowerCase();
+    if (!CACHEABLE_MEDICINES.includes(normalizedName)) {
+      return null;
+    }
+
+    const cache = await readCacheFile();
+    return cache[normalizedName] || null;
+  };
+
+  const setCachedMedicine = async (medicineName, medicineData) => {
+    const normalizedName = medicineName.toLowerCase();
+    if (!CACHEABLE_MEDICINES.includes(normalizedName)) {
+      return;
+    }
+
+    const cache = await readCacheFile();
+    cache[normalizedName] = {
+      ...medicineData,
+      cachedAt: new Date().toISOString(),
+      timestamp: Date.now()
+    };
+    await writeCacheFile(cache);
+  };
+
+  const isCacheValid = (cachedData) => {
+    if (!cachedData || !cachedData.timestamp) {
+      return false;
+    }
+    
+    // Cache validity: 24 hours (86400000 ms)
+    const CACHE_VALIDITY_DURATION = 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    return (now - cachedData.timestamp) < CACHE_VALIDITY_DURATION;
+  };
 
   useEffect(() => {
-    // Fetch initial cart count when component mounts
     fetchCartCount();
     
-    // Set up a listener for when the screen comes into focus
     const unsubscribe = navigation.addListener('focus', () => {
       console.log('HomePage focused - refreshing cart count');
       fetchCartCount();
     });
     
-    // Clean up the listener on unmount
     return unsubscribe;
   }, [navigation]);
 
-  // Function to fetch cart count
   const fetchCartCount = async () => {
     try {
       const response = await axios.get(`${CONFIG.backendUrl}/api/cart/current`);
@@ -111,7 +724,6 @@ export default function MedInfo({ route, navigation }) {
         Quantity: response.data.Quantity.map(qty => parseInt(qty, 10)),
       };
 
-      // Calculate total items in cart by summing quantities
       const totalItems = formattedCart.Quantity 
         ? formattedCart.Quantity.reduce((sum, qty) => sum + qty, 0)
         : 0;
@@ -119,26 +731,68 @@ export default function MedInfo({ route, navigation }) {
       setCartCount(totalItems);
     } catch (error) {
       console.error('Error fetching cart count:', error);
-      setCartCount(0); // Set to 0 if there's an error
+      setCartCount(0);
     }
   };
 
   const fetchMedicineData = async (name) => {
     try {
       setLoading(true);
-      // Fetch local medicine data
+      
+      // Check cache first for cacheable medicines
+      const cachedData = await getCachedMedicine(name);
+      if (cachedData && isCacheValid(cachedData)) {
+        console.log(`Loading ${name} from cache`);
+        setMedicine(cachedData.medicine);
+        setPrice(cachedData.price || 'PKR 87.40');
+        setImageUrl(cachedData.imageUrl || 'https://via.placeholder.com/300');
+        setMedicationDetails(cachedData.medicationDetails);
+        setLoading(false);
+        return;
+      }
+
+      console.log(`Fetching ${name} from database (cache miss or invalid)`);
+      
+      // Fetch from database
       const response = await axios.get(`${CONFIG.backendUrl}/api/medicine-by-name/${name}`);
-      setMedicine(response.data);
+      const medicineData = response.data;
+      setMedicine(medicineData);
       
       // Fetch price
-      const priceResponse = await axios.get(`${CONFIG.backendUrl}/api/price/${response.data.drug_name}`);
-      setPrice(priceResponse.data.price || 'PKR 87.40');
-  
+      const priceResponse = await axios.get(`${CONFIG.backendUrl}/api/price/${medicineData.drug_name}`);
+      const priceData = priceResponse.data.price || 'PKR 87.40';
+      setPrice(priceData);
+
       // Fetch drug image
-      await fetchDrugImage(response.data.drug_name);
+      let imageUrlData = 'https://via.placeholder.com/300';
+      try {
+        imageUrlData = await fetchDrugImage(medicineData.drug_name);
+      } catch (imageError) {
+        console.error('Error fetching image:', imageError);
+      }
+      setImageUrl(imageUrlData);
 
       // Fetch additional medication details from APIs
-      await fetchMedicationInfo(response.data.drug_name);
+      let medicationDetailsData = null;
+      try {
+        medicationDetailsData = await fetchMedicationInfo(medicineData.drug_name);
+      } catch (detailsError) {
+        console.error('Error fetching medication details:', detailsError);
+      }
+      setMedicationDetails(medicationDetailsData);
+
+      // Cache the complete data for cacheable medicines
+      if (CACHEABLE_MEDICINES.includes(name.toLowerCase())) {
+        const cacheData = {
+          medicine: medicineData,
+          price: priceData,
+          imageUrl: imageUrlData,
+          medicationDetails: medicationDetailsData
+        };
+        await setCachedMedicine(name, cacheData);
+        console.log(`${name} data cached successfully`);
+      }
+
     } catch (error) {
       console.error('Error fetching medicine data:', error);
       setError('Failed to fetch medicine data. Please try again.');
@@ -149,11 +803,10 @@ export default function MedInfo({ route, navigation }) {
 
   const fetchMedicationInfo = async (query) => {
     if (!query.trim()) {
-      return;
+      return null;
     }
 
     try {
-      // First, get the RxCUI (unique identifier) for the medication
       const searchResponse = await fetch(
         `${BASE_URL}/drugs.json?name=${encodeURIComponent(query)}`
       );
@@ -249,20 +902,19 @@ export default function MedInfo({ route, navigation }) {
           console.error('FDA API Error:', fdaError);
         }
         
-        setMedicationDetails(medicationInfo);
+        return medicationInfo;
       }
     } catch (error) {
       console.error('Medication Info Error:', error);
+      return null;
     }
   };
 
   const fetchDrugImage = async (drugName) => {
-    //const apiKey = 'AIzaSyDRmhRhTvXFDMVwJBT1oCrm0a2wstqSxzE';
     const apiKey = `${CONFIG.APIKEY}`;
     const searchEngineId = 'b1f9d3f416bd4494f';
-    //`${CONFIG.SE}`;
     const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(drugName)}&cx=${searchEngineId}&searchType=image&key=${apiKey}`;
-    console.log(url);
+    
     try {
       console.log('Fetching image for:', drugName);
       const response = await fetch(url);
@@ -273,78 +925,52 @@ export default function MedInfo({ route, navigation }) {
       
       if (response.status === 429) {
         console.log("Rate limited! Waiting before retrying...");
-        setTimeout(fetchImages, 5000); // Wait 5 seconds and retry
-        return;
+        return 'https://via.placeholder.com/300';
       }
 
       const data = await response.json();
-      //console.log('API Response:', JSON.stringify(data, null, 2));
 
       if (data.items && data.items.length > 0) {
         const firstImageUrl = data.items[0].link;
         console.log('Image URL found:', firstImageUrl);
-        setImageUrl(firstImageUrl);
+        return firstImageUrl;
       } else {
         console.log('No images found in the API response.');
-        setImageUrl('https://via.placeholder.com/300');
+        return 'https://via.placeholder.com/300';
       }
     } catch (error) {
       console.error('Error fetching images:', error.message);
-      // if (!error.message.includes("429")) {
-      //   console.error("Error fetching images:", error.message);
-      // }
-      
-      if (error.response) {
-        console.error('Error response:', error.response.data);
-      }
-      setImageUrl('https://via.placeholder.com/300');
+      return 'https://via.placeholder.com/300';
     }
   };
 
-  // const navigateToCart = () => {
-  //   try {
-  //     console.log('Attempting to navigate to Cart');
-  //     navigation.navigate('Cart');
-  //   } catch (error) {
-  //     console.error('Navigation error:', error);
-  //     Alert.alert(
-  //       "Navigation Error",
-  //       "Unable to access cart at this time. Please try again.",
-  //       [{ text: "OK" }]
-  //     );
-  //   }
-  // };
-
   const navigateToCart = () => {
-  console.log('Navigation object existence:', !!navigation);
-  console.log('Navigation methods:', Object.keys(navigation));
-  
-  try {
-    // Explicitly log available routes
-    console.log('Available routes:', navigation.getState()?.routeNames);
+    console.log('Navigation object existence:', !!navigation);
+    console.log('Navigation methods:', Object.keys(navigation));
     
-    // Use navigation.push instead of navigate as a fallback
-    if (navigation.navigate) {
-      navigation.navigate('Cart');
-    } else if (navigation.push) {
-      navigation.push('Cart');
-    } else {
+    try {
+      console.log('Available routes:', navigation.getState()?.routeNames);
+      
+      if (navigation.navigate) {
+        navigation.navigate('Cart');
+      } else if (navigation.push) {
+        navigation.push('Cart');
+      } else {
+        Alert.alert(
+          "Navigation Error",
+          "Unable to navigate to Cart",
+          [{ text: "OK" }]
+        );
+      }
+    } catch (error) {
+      console.error('Cart navigation error:', error);
       Alert.alert(
         "Navigation Error",
-        "Unable to navigate to Cart",
+        `Failed to navigate: ${error.message}`,
         [{ text: "OK" }]
       );
     }
-  } catch (error) {
-    console.error('Cart navigation error:', error);
-    Alert.alert(
-      "Navigation Error",
-      `Failed to navigate: ${error.message}`,
-      [{ text: "OK" }]
-    );
-  }
-};
-
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -354,24 +980,6 @@ export default function MedInfo({ route, navigation }) {
         await fetchMedicineData(name);
       }
     };
-  
-    // navigation.setOptions({
-    //   headerRight: () => (
-    //     <TouchableOpacity 
-    //       onPress={navigateToCart}
-    //       style={styles.cartIconContainer}
-    //       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} // Increases touch area
-    //     >
-    //       <Ionicons 
-    //         name="cart-outline" 
-    //         size={24} 
-    //         color="#064D65"
-    //         testID="cart-icon" 
-    //       />
-    //     </TouchableOpacity>
-    //   ),
-    // });
-  
     
     loadData();
   
@@ -436,19 +1044,19 @@ export default function MedInfo({ route, navigation }) {
   }
 
   return (
-  <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-    <View style={styles.topIcons}>
-      <TouchableOpacity 
-        onPress={() => navigation.navigate('homepagetest')}
-        style={styles.backIconContainer}
-      >
-        <Ionicons name="arrow-back" size={24} color="#064D65" />
-      </TouchableOpacity>
+    <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+      <View style={styles.topIcons}>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('homepagetest')}
+          style={styles.backIconContainer}
+        >
+          <Ionicons name="arrow-back" size={24} color="#064D65" />
+        </TouchableOpacity>
 
-      <TouchableOpacity 
+        <TouchableOpacity 
           style={styles.headerIcon}
           onPress={() => {
-            fetchCartCount(); // Refresh cart count before navigating
+            fetchCartCount();
             navigation.navigate('Cart');
           }}
         >
@@ -461,120 +1069,112 @@ export default function MedInfo({ route, navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* <TouchableOpacity 
-        onPress={() => navigation.navigate('Cart')}
-        style={styles.cartIconContainer}
+      <ScrollView 
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
       >
-        <Ionicons name="cart-outline" size={24} color="#064D65" />
-      </TouchableOpacity>
-    </View> */}
-
-    <ScrollView 
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-          resizeMode="contain"
-          onError={() => setImageUrl('https://via.placeholder.com/300')}
-        />
-      </View>
-
-      <View style={styles.infoContainer}>
-        <Text style={styles.title}>{medicine.drug_name}</Text>
-        {medicine.generic_name && (
-          <Text style={styles.genericName}>{medicine.generic_name}</Text>
-        )}
-        <Text style={styles.price}>{price}</Text>
-
-        <View style={styles.quantityContainer}>
-          <TouchableOpacity 
-            onPress={() => handleQuantityChange(-1)} 
-            style={styles.quantityButton}
-          >
-            <Ionicons name="remove" size={24} color="#007AFF" />
-          </TouchableOpacity>
-          <Text style={styles.quantityText}>{quantity}</Text>
-          <TouchableOpacity 
-            onPress={() => handleQuantityChange(1)} 
-            style={styles.quantityButton}
-          >
-            <Ionicons name="add" size={24} color="#007AFF" />
-          </TouchableOpacity>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.image}
+            resizeMode="contain"
+            onError={() => setImageUrl('https://via.placeholder.com/300')}
+          />
         </View>
-        
-        <TouchableOpacity 
-          style={styles.addToCartButton} 
-          onPress={handleAddToCart}
-        >
-          <Ionicons name="cart-outline" size={20} color="#FFFFFF" style={styles.addToCartIcon} />
-          <Text style={styles.addToCartButtonText}>Add to Cart</Text>
-        </TouchableOpacity>
 
-        {medicationDetails && (
-          <View style={styles.detailsContainer}>
-            {/* Active Ingredients Dropdown */}
-            {medicationDetails.ingredients.length > 0 && (
-              <DropdownSection 
-                title="Active Ingredients" 
-                icon={<Ionicons name="medical" size={20} color="#064D65" />}
-              >
-                {medicationDetails.ingredients.map((ingredient, index) => (
-                  <Text key={index} style={styles.dropdownItemText}>
-                    • {ingredient}
-                  </Text>
-                ))}
-              </DropdownSection>
-            )}
+        <View style={styles.infoContainer}>
+          <Text style={styles.title}>{medicine.drug_name}</Text>
+          {medicine.generic_name && (
+            <Text style={styles.genericName}>{medicine.generic_name}</Text>
+          )}
+          <Text style={styles.price}>{price}</Text>
 
-            {/* Available Brands Dropdown */}
-            {medicationDetails.brands.length > 0 && (
-              <DropdownSection 
-                title="Available Brands" 
-                icon={<Ionicons name="logo-bitcoin" size={20} color="#064D65" />}
-              >
-                {medicationDetails.brands.map((brand, index) => (
-                  <Text key={index} style={styles.dropdownItemText}>
-                    • {brand}
-                  </Text>
-                ))}
-              </DropdownSection>
-            )}
-
-            {/* Medical Condition Dropdown */}
-            {medicine.medical_condition && (
-              <DropdownSection 
-                title="Medical Condition" 
-                icon={<Ionicons name="body" size={20} color="#064D65" />}
-              >
-                <Text style={styles.dropdownItemText}>
-                  {medicine.medical_condition}
-                </Text>
-              </DropdownSection>
-            )}
-
-            {/* Reported Adverse Effects Dropdown */}
-            {medicationDetails.sideEffects.length > 0 && (
-              <DropdownSection 
-                title="Reported Adverse Effects" 
-                icon={<Ionicons name="warning" size={20} color="#FF6B6B" />}
-              >
-                <Text style={styles.disclaimerText}>
-                  Based on FDA adverse event reports. These events may not be directly caused by the medication.
-                </Text>
-                {medicationDetails.sideEffects.map((effect, index) => (
-                  <Text key={index} style={styles.dropdownItemText}>
-                    • {effect.reaction} ({effect.count} reports, {effect.percentage}% of cases)
-                  </Text>
-                ))}
-              </DropdownSection>
-            )}
+          <View style={styles.quantityContainer}>
+            <TouchableOpacity 
+              onPress={() => handleQuantityChange(-1)} 
+              style={styles.quantityButton}
+            >
+              <Ionicons name="remove" size={24} color="#007AFF" />
+            </TouchableOpacity>
+            <Text style={styles.quantityText}>{quantity}</Text>
+            <TouchableOpacity 
+              onPress={() => handleQuantityChange(1)} 
+              style={styles.quantityButton}
+            >
+              <Ionicons name="add" size={24} color="#007AFF" />
+            </TouchableOpacity>
           </View>
-        )}
-      </View>
-    </ScrollView>
+          
+          <TouchableOpacity 
+            style={styles.addToCartButton} 
+            onPress={handleAddToCart}
+          >
+            <Ionicons name="cart-outline" size={20} color="#FFFFFF" style={styles.addToCartIcon} />
+            <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+          </TouchableOpacity>
+
+          {medicationDetails && (
+            <View style={styles.detailsContainer}>
+              {/* Active Ingredients Dropdown */}
+              {medicationDetails.ingredients.length > 0 && (
+                <DropdownSection 
+                  title="Active Ingredients" 
+                  icon={<Ionicons name="medical" size={20} color="#064D65" />}
+                >
+                  {medicationDetails.ingredients.map((ingredient, index) => (
+                    <Text key={index} style={styles.dropdownItemText}>
+                      • {ingredient}
+                    </Text>
+                  ))}
+                </DropdownSection>
+              )}
+
+              {/* Available Brands Dropdown */}
+              {medicationDetails.brands.length > 0 && (
+                <DropdownSection 
+                  title="Available Brands" 
+                  icon={<Ionicons name="logo-bitcoin" size={20} color="#064D65" />}
+                >
+                  {medicationDetails.brands.map((brand, index) => (
+                    <Text key={index} style={styles.dropdownItemText}>
+                      • {brand}
+                    </Text>
+                  ))}
+                </DropdownSection>
+              )}
+
+              {/* Medical Condition Dropdown */}
+              {medicine.medical_condition && (
+                <DropdownSection 
+                  title="Medical Condition" 
+                  icon={<Ionicons name="body" size={20} color="#064D65" />}
+                >
+                  <Text style={styles.dropdownItemText}>
+                    {medicine.medical_condition}
+                  </Text>
+                </DropdownSection>
+              )}
+
+              {/* Reported Adverse Effects Dropdown */}
+              {medicationDetails.sideEffects.length > 0 && (
+                <DropdownSection 
+                  title="Reported Adverse Effects" 
+                  icon={<Ionicons name="warning" size={20} color="#FF6B6B" />}
+                >
+                  <Text style={styles.disclaimerText}>
+                    Based on FDA adverse event reports. These events may not be directly caused by the medication.
+                  </Text>
+                  {medicationDetails.sideEffects.map((effect, index) => (
+                    <Text key={index} style={styles.dropdownItemText}>
+                      • {effect.reaction} ({effect.count} reports, {effect.percentage}% of cases)
+                    </Text>
+                  ))}
+                </DropdownSection>
+              )}
+            </View>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 }

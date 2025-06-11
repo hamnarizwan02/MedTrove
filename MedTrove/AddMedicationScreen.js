@@ -594,6 +594,419 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Notifications from 'expo-notifications';
 import { scheduleNotifications, requestNotificationPermissions, scheduleAllNotifications} from './notificationScheduler';
 
+// const AddMedicationScreen = ({ navigation }) => {
+//   const [currentUserId, setCurrentUserId] = useState(null);  
+//   const [name, setName] = useState('');
+//   const [dosage, setDosage] = useState({
+//     amount: '',
+//     unit: 'pill',
+//     notes: ''
+//   });
+//   const [frequency, setFrequency] = useState('1');
+//   const [selectedDays, setSelectedDays] = useState({
+//     Sun: false,
+//     Mon: false,
+//     Tue: false,
+//     Wed: false,
+//     Thu: false,
+//     Fri: false,
+//     Sat: false
+//   });
+//   const [duration, setDuration] = useState('');
+//   const [startDate, setStartDate] = useState(new Date());
+//   const [showDatePicker, setShowDatePicker] = useState(false);
+  
+//   // Notification time management
+//   const [notificationTimes, setNotificationTimes] = useState([{ 
+//     hour: new Date().getHours(),
+//     minute: new Date().getMinutes(),
+//     id: '1'
+//   }]);
+//   const [showTimePicker, setShowTimePicker] = useState(false);
+//   const [activeTimeIndex, setActiveTimeIndex] = useState(0);
+
+//   const units = [
+//     { label: 'Tablet', value: 'tablet' },
+//     { label: 'Pill', value: 'pill' },
+//     { label: 'ML', value: 'ml' },
+//     { label: 'Puff', value: 'puff' },
+//     { label: 'Pump', value: 'pump' },
+//     { label: 'Application', value: 'application' }
+//   ];
+
+//   useEffect(() => {
+//     fetchCurrentUser();
+//     // Update notification time slots when frequency changes
+//     updateNotificationTimeSlots();
+//   }, [frequency]);
+
+//   const fetchCurrentUser = async () => {
+//     try {
+//       const response = await axios.get(`${CONFIG.backendUrl}/api/user/current`);
+//       if (response.data.success) {
+//         setCurrentUserId(response.data.userID);
+//       }
+//     } catch (error) {
+//       console.error('Error fetching current user:', error);
+//     }
+//   };
+
+//   const updateNotificationTimeSlots = () => {
+//     const freq = parseInt(frequency) || 1;
+    
+//     // If we need more time slots, add them
+//     if (freq > notificationTimes.length) {
+//       const newTimes = [...notificationTimes];
+//       for (let i = notificationTimes.length; i < freq; i++) {
+//         newTimes.push({
+//           hour: new Date().getHours(),
+//           minute: new Date().getMinutes(),
+//           id: (i + 1).toString()
+//         });
+//       }
+//       setNotificationTimes(newTimes);
+//     } 
+//     // If we need fewer, remove them
+//     else if (freq < notificationTimes.length) {
+//       setNotificationTimes(notificationTimes.slice(0, freq));
+//     }
+//   };
+
+//   const handleDateChange = (event, selectedDate) => {
+//     setShowDatePicker(false);
+//     if (selectedDate) {
+//       setStartDate(selectedDate);
+//     }
+//   };
+
+//   const handleTimeChange = (event, selectedTime) => {
+//     setShowTimePicker(false);
+//     if (selectedTime) {
+//       const newTimes = [...notificationTimes];
+//       newTimes[activeTimeIndex] = {
+//         ...newTimes[activeTimeIndex],
+//         hour: selectedTime.getHours(),
+//         minute: selectedTime.getMinutes()
+//       };
+//       setNotificationTimes(newTimes);
+//     }
+//   };
+
+//   const formatDate = (date) => {
+//     return date.toLocaleDateString('en-US', {
+//       year: 'numeric',
+//       month: 'long',
+//       day: 'numeric'
+//     });
+//   };
+
+//   const formatTime = (hour, minute) => {
+//     const ampm = hour >= 12 ? 'PM' : 'AM';
+//     const formattedHour = hour % 12 || 12;
+//     const formattedMinute = minute.toString().padStart(2, '0');
+//     return `${formattedHour}:${formattedMinute} ${ampm}`;
+//   };
+
+//   const openTimePicker = (index) => {
+//     setActiveTimeIndex(index);
+//     setShowTimePicker(true);
+//   };
+
+//   const testQuickNotification = async () => {
+//     // Request permissions first
+//     const { status } = await Notifications.requestPermissionsAsync();
+//     if (status !== 'granted') {
+//       Alert.alert('Permission required', 'You need to grant notification permissions to receive medication reminders.');
+//       return;
+//     }
+
+//     const fifteenSecondsFromNow = new Date();
+//     fifteenSecondsFromNow.setSeconds(fifteenSecondsFromNow.getSeconds() + 15);
+
+//     try {
+//       await Notifications.scheduleNotificationAsync({
+//         content: {
+//           title: `Time to take ${name || 'your medication'}`,
+//           body: `Take ${dosage.amount || '1'} ${dosage.unit} ${dosage.notes ? '(' + dosage.notes + ')' : ''}`,
+//         },
+//         trigger: {
+//           date: fifteenSecondsFromNow,
+//         },
+//       });
+      
+//       Alert.alert('Test notification scheduled', 'You should receive a notification in 15 seconds');
+//     } catch (error) {
+//       console.error('Error scheduling test notification:', error);
+//       Alert.alert('Error', 'Failed to schedule test notification');
+//     }
+//   };
+
+//   const scheduleAllNotifications = async (medicationData) => {
+//     try {
+//       // Request notification permissions first
+//       const { status } = await Notifications.requestPermissionsAsync();
+//       if (status !== 'granted') {
+//         throw new Error('Notification permissions are required for medication reminders');
+//       }
+      
+//       const selectedDaysArray = Object.entries(selectedDays)
+//         .filter(([day, selected]) => selected)
+//         .map(([day]) => day);
+      
+//       if (selectedDaysArray.length === 0) {
+//         throw new Error('Please select at least one day of the week');
+//       }
+
+//       const notificationIds = [];
+//       const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      
+//       // Calculate end date
+//       const endDate = new Date(startDate);
+//       endDate.setDate(endDate.getDate() + parseInt(duration || 30));
+      
+//       // Schedule a notification for each selected day and each time slot
+//       for (const time of notificationTimes) {
+//         for (const day of selectedDaysArray) {
+//           const dayIndex = daysOfWeek.indexOf(day);
+          
+//           // Create a trigger for this specific day and time
+//           const trigger = {
+//             hour: time.hour,
+//             minute: time.minute,
+//             repeats: true,
+//             weekday: dayIndex + 1, // Expo uses 1-7 for days of the week (Sunday is 1)
+//           };
+          
+//           // Schedule the notification
+//           const notificationId = await Notifications.scheduleNotificationAsync({
+//             content: {
+//               title: `Time to take ${name}`,
+//               body: `Take ${dosage.amount} ${dosage.unit} ${dosage.notes ? '(' + dosage.notes + ')' : ''}`,
+//               data: { medicationId: medicationData.id },
+//             },
+//             trigger,
+//           });
+          
+//           notificationIds.push(notificationId);
+//         }
+//       }
+      
+//       return notificationIds;
+//     } catch (error) {
+//       console.error('Error scheduling notifications:', error);
+//       throw error;
+//     }
+//   };
+
+//   const handleSave = async () => {
+//     if (!currentUserId) {
+//       Alert.alert('Error', 'User not found. Please try again.');
+//       return;
+//     }
+    
+//     if (!name || !dosage.amount || !frequency || !duration) {
+//       Alert.alert('Error', 'Please fill all required fields.');
+//       return;
+//     }
+    
+//     try {
+//       const medicationData = {
+//         userId: currentUserId,
+//         name,
+//         dosage,
+//         frequency: parseInt(frequency),
+//         times: notificationTimes,
+//         selectedDays,
+//         duration: parseInt(duration),
+//         startDate,
+//         endDate: new Date(startDate.getTime() + parseInt(duration) * 24 * 60 * 60 * 1000),
+//         isActive: true
+//       };
+      
+//       // Schedule all notifications
+//       const notificationIds = await scheduleAllNotifications(medicationData);
+      
+//       // Save medication data along with notification IDs
+//       const response = await axios.post(`${CONFIG.backendUrl}/api/medications`, {
+//         ...medicationData,
+//         notificationIds
+//       });
+      
+//       if (response.data.success) {
+//         Alert.alert('Success', 'Medication and notifications added successfully');
+//         navigation.goBack();
+//       }
+//     } catch (error) {
+//       console.error('Error saving medication:', error);
+//       Alert.alert('Error', error.message || 'Failed to save medication');
+//     }
+//   };
+
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       <ScrollView>
+//         <View style={styles.header}>
+//           <TouchableOpacity onPress={() => navigation.goBack()}>
+//             <Text style={styles.backButton}>←</Text>
+//           </TouchableOpacity>
+//           <Text style={styles.title}>Add New Medicine</Text>
+//         </View>
+
+//         <View style={styles.form}>
+//           <View style={styles.inputGroup}>
+//             <Text style={styles.label}>Medicine Name</Text>
+//             <TextInput
+//               style={styles.input}
+//               value={name}
+//               onChangeText={setName}
+//               placeholder="Enter medicine name"
+//             />
+//           </View>
+
+//           <View style={styles.inputGroup}>
+//             <Text style={styles.label}>Dosage</Text>
+//             <View style={styles.dosageContainer}>
+//               <TextInput
+//                 style={[styles.input, styles.dosageAmount]}
+//                 value={dosage.amount}
+//                 onChangeText={(value) => setDosage({ ...dosage, amount: value })}
+//                 keyboardType="numeric"
+//                 placeholder="Amount"
+//               />
+//               <View style={styles.pickerContainer}>
+//                 <Picker
+//                   selectedValue={dosage.unit}
+//                   onValueChange={(value) => setDosage({ ...dosage, unit: value })}
+//                   style={styles.picker}
+//                 >
+//                   {units.map((unit) => (
+//                     <Picker.Item 
+//                       key={unit.value} 
+//                       label={unit.label} 
+//                       value={unit.value} 
+//                     />
+//                   ))}
+//                 </Picker>
+//               </View>
+//             </View>
+//             <TextInput
+//               style={styles.input}
+//               value={dosage.notes}
+//               onChangeText={(value) => setDosage({ ...dosage, notes: value })}
+//               placeholder="Additional notes (e.g., with water)"
+//             />
+//           </View>
+
+//           <View style={styles.inputGroup}>
+//             <Text style={styles.label}>Start Date</Text>
+//             <TouchableOpacity 
+//               style={styles.dateButton}
+//               onPress={() => setShowDatePicker(true)}
+//             >
+//               <Text style={styles.dateButtonText}>
+//                 {formatDate(startDate)}
+//               </Text>
+//             </TouchableOpacity>
+//             {showDatePicker && (
+//               <DateTimePicker
+//                 value={startDate}
+//                 mode="date"
+//                 display="default"
+//                 onChange={handleDateChange}
+//                 minimumDate={new Date()}
+//               />
+//             )}
+//           </View>
+
+//           <View style={styles.inputGroup}>
+//             <Text style={styles.label}>Frequency (times per day)</Text>
+//             <TextInput
+//               style={styles.input}
+//               value={frequency}
+//               onChangeText={setFrequency}
+//               keyboardType="numeric"
+//               placeholder="How many times per day?"
+//             />
+//           </View>
+          
+//           {/* Notification Time Slots */}
+//           <View style={styles.inputGroup}>
+//             <Text style={styles.label}>Notification Times</Text>
+//             {notificationTimes.map((time, index) => (
+//               <TouchableOpacity
+//                 key={time.id}
+//                 style={styles.timeButton}
+//                 onPress={() => openTimePicker(index)}
+//               >
+//                 <Text style={styles.timeButtonText}>
+//                   Dose {index + 1}: {formatTime(time.hour, time.minute)}
+//                 </Text>
+//               </TouchableOpacity>
+//             ))}
+//             {showTimePicker && (
+//               <DateTimePicker
+//                 value={(() => {
+//                   const date = new Date();
+//                   date.setHours(notificationTimes[activeTimeIndex].hour);
+//                   date.setMinutes(notificationTimes[activeTimeIndex].minute);
+//                   return date;
+//                 })()}
+//                 mode="time"
+//                 is24Hour={false}
+//                 display="default"
+//                 onChange={handleTimeChange}
+//               />
+//             )}
+//           </View>
+
+//           <View style={styles.inputGroup}>
+//             <Text style={styles.label}>Days of Week</Text>
+//             <View style={styles.daysContainer}>
+//               {Object.keys(selectedDays).map((day) => (
+//                 <TouchableOpacity
+//                   key={day}
+//                   style={[
+//                     styles.dayButton,
+//                     selectedDays[day] && styles.selectedDayButton
+//                   ]}
+//                   onPress={() => setSelectedDays({
+//                     ...selectedDays,
+//                     [day]: !selectedDays[day]
+//                   })}
+//                 >
+//                   <Text style={[
+//                     styles.dayButtonText,
+//                     selectedDays[day] && styles.selectedDayButtonText
+//                   ]}>{day}</Text>
+//                 </TouchableOpacity>
+//               ))}
+//             </View>
+//           </View>
+
+//           <View style={styles.inputGroup}>
+//             <Text style={styles.label}>Duration (days)</Text>
+//             <TextInput
+//               style={styles.input}
+//               value={duration}
+//               onChangeText={setDuration}
+//               keyboardType="numeric"
+//               placeholder="Enter number of days"
+//             />
+//           </View>
+          
+//           {/* <TouchableOpacity style={styles.testButton} onPress={testQuickNotification}>
+//             <Text style={styles.testButtonText}>Test Notification (0s)</Text>
+//           </TouchableOpacity> */}
+
+//           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+//             <Text style={styles.saveButtonText}>Save Medicine</Text>
+//           </TouchableOpacity>
+//         </View>
+//       </ScrollView>
+//     </SafeAreaView>
+//   );
+// };
+
 const AddMedicationScreen = ({ navigation }) => {
   const [currentUserId, setCurrentUserId] = useState(null);  
   const [name, setName] = useState('');
@@ -633,6 +1046,14 @@ const AddMedicationScreen = ({ navigation }) => {
     { label: 'Pump', value: 'pump' },
     { label: 'Application', value: 'application' }
   ];
+
+  // Helper function to format date consistently (avoids timezone issues)
+  const formatDateForAPI = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   useEffect(() => {
     fetchCurrentUser();
@@ -810,6 +1231,10 @@ const AddMedicationScreen = ({ navigation }) => {
     }
     
     try {
+      // Calculate end date properly
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + parseInt(duration));
+      
       const medicationData = {
         userId: currentUserId,
         name,
@@ -818,10 +1243,12 @@ const AddMedicationScreen = ({ navigation }) => {
         times: notificationTimes,
         selectedDays,
         duration: parseInt(duration),
-        startDate,
-        endDate: new Date(startDate.getTime() + parseInt(duration) * 24 * 60 * 60 * 1000),
+        startDate: formatDateForAPI(startDate), // Send date as string in consistent format
+        endDate: formatDateForAPI(endDate), // Send date as string in consistent format
         isActive: true
       };
+      
+      console.log('Saving medication with data:', medicationData); // Debug log
       
       // Schedule all notifications
       const notificationIds = await scheduleAllNotifications(medicationData);
