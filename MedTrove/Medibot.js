@@ -463,7 +463,8 @@ const Medibot = () => {
       console.log("API Response:", data);
       
       // Process the response to remove the question part
-      const rawResponse = data[0]?.generated_text?.trim() || "I'm not sure how to respond to that.";
+   const rawResponse = data?.response?.trim() || "I'm not sure how to respond to that.";
+
       const processedResponse = extractAnswer(rawResponse, inputText);
       
       const botResponse = {
