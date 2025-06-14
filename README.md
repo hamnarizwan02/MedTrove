@@ -35,11 +35,14 @@ Users can register or log in to access app features.
   <img src="ReadMeFolder/login.png" alt="Login Screen" width="250">
 </p>
 
- 
 
-### 3️⃣ **Home Page**  
-The main dashboard displaying featured medicines, quick search, and navigation to other features.  
-![Home Page](your-image-link-here)  
+
+
+ **Login:** The main dashboard displaying featured medicines, quick search, and navigation to other features.  
+<p align="center">
+  <img src="ReadMeFolder/home.png" alt="Login Screen" width="250">
+</p>
+
 
 ### 4️⃣ **Search Medicine**  
 Users can search for a medicine and view its alternatives.  
